@@ -1,0 +1,129 @@
+//#ifdef BLUEWAP_CLIENT
+package fi.gtrxac.bluewap.client;
+
+import fi.gtrxac.bluewap.*;
+import fi.gtrxac.bluewap.http.*;
+import fi.gtrxac.bluewap.ui.*;
+import java.io.*;
+import java.util.Vector;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.TextField;
+import org.kxml2.io.*;
+import org.xmlpull.v1.*;
+import com.gtrxac.discord.HTTPQueue;
+
+public class MenuScreen extends ListScreen implements CommandListener {
+    public static final int CMD_BACK = 0;
+    public static final int CMD_SELECT = 1;
+
+//#ifndef NO_BLUETOOTH
+    public static final boolean supportsBluetooth = Util.checkClass("javax.bluetooth.RemoteDevice");
+//#endif
+
+    String url = History.getCurrent().url.toString(false);
+    TextFieldItem urlField = new TextFieldItem("Address", url, 2000, 0);
+    ButtonItem goButton = new ButtonItem("Go!");
+
+//#ifndef NO_BLUETOOTH
+    RadioButtonItem standardItem;
+    RadioButtonItem bluetoothItem;
+    private int connectionMode = HTTP.CONNECTION_TYPE;
+//#endif
+
+    public MenuScreen() {
+        super();
+
+        addItem("Address:");
+        addItem(urlField);
+        addItem(goButton);
+
+//#ifndef NO_BLUETOOTH
+        if (supportsBluetooth) {
+            addItem("Connection mode:");
+            RadioButtonGroup g = new RadioButtonGroup();
+            addItem(standardItem = new RadioButtonItem(g, "Cellular/Wi-Fi"));
+            addItem(bluetoothItem = new RadioButtonItem(g, "Bluetooth"));
+            g.setTickedIndex(connectionMode);
+        } else {
+            addItem("Connecting via cellular/Wi-Fi. This device does not support Java Bluetooth API.");
+        }
+//#endif
+
+        addItem("Bookmarks:");
+
+        for (int i = 0; i < Settings.bookmarks.size(); i++) {
+            String url = (String) Settings.bookmarks.elementAt(i);
+            addItem(new SingleLineLinkItem(url));
+        }
+        
+        addItem("History:");
+
+        for (int i = History.menuUrls.size() - 1; i >= 0; i--) {
+            String url = (String) History.menuUrls.elementAt(i);
+            addItem(new SingleLineLinkItem(url));
+        }
+
+        setCommandListener(this);
+        addCommand(new Command("Back", Command.BACK, CMD_BACK));
+        
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
+    }
+
+    public void commandAction(Command c, Displayable d) {
+        switch (c.getPriority()) {
+            case CMD_BACK: {
+                App.popScreen();
+                break;
+            }
+            case CMD_SELECT: {
+                selectItem();
+                break;
+            }
+        }
+    }
+
+    protected void itemSelected(Item i) {
+        if (i instanceof SingleLineLinkItem) {
+            visit(((SingleLineLinkItem) i).fullText);
+        }
+//#ifndef NO_BLUETOOTH
+        if (i == standardItem) {
+            setConnectionMode(HTTP.CONNECTION_TYPE_STANDARD);
+        }
+        else if (i == bluetoothItem) {
+            setConnectionMode(HTTP.CONNECTION_TYPE_BLUETOOTH);
+            App.pushScreen(new BluetoothDeviceScreen());
+        }
+//#endif
+        else if (i == goButton) {
+            visit(urlField.getValue());
+        }
+    }
+
+    private void visit(String url) {
+//#ifndef NO_BLUETOOTH
+        if (connectionMode == HTTP.CONNECTION_TYPE_BLUETOOTH && BluetoothHTTP.selectedConnectionUrl == null) {
+            App.pushScreen(new BluetoothDeviceScreen());
+            return;
+        }
+//#endif
+        App.popScreen();
+        History.visit(url, false, null, false);
+    }
+
+//#ifndef NO_BLUETOOTH
+    private void setConnectionMode(int mode) {
+        connectionMode = mode;
+        HTTP.setConnectionType(mode);
+        if (mode == HTTP.CONNECTION_TYPE_BLUETOOTH) {
+            BluetoothHTTP.selectedConnectionUrl = null;
+        }
+    }
+//#endif
+}
+//#endif

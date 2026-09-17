@@ -1,0 +1,60 @@
+package fi.gtrxac.bluewap.ui;
+
+import fi.gtrxac.bluewap.*;
+import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Graphics;
+
+public class ButtonItem extends Item {
+    public String text;
+    int bgColor;
+    int darkerBgColor;
+    int selectedBgColor;
+    int textColor;
+    int selectedTextColor;
+
+    public ButtonItem(String text) {
+        this(text, 0xDDDDDD, 0xAADDFF);
+    }
+
+    public ButtonItem(String text, int bgColor) {
+        this(text, bgColor, bgColor, 0, 0);
+        textColor = Util.higherContrast(0x111111, 0xEEEEEE, bgColor);
+        selectedTextColor = textColor;
+    }
+
+    public ButtonItem(String text, int bgColor, int selectedBgColor) {
+        this(text, bgColor, selectedBgColor, 0, 0);
+        textColor = Util.higherContrast(0x111111, 0xEEEEEE, bgColor);
+        selectedTextColor = Util.higherContrast(0x000000, 0xFFFFFF, selectedBgColor);
+    }
+
+    public ButtonItem(String text, int bgColor, int selectedBgColor, int textColor, int selectedTextColor) {
+        super(true);
+        this.text = text;
+        this.bgColor = bgColor;
+        this.darkerBgColor = Util.blend(bgColor, 0x000000, 7);
+        this.selectedBgColor = selectedBgColor;
+        this.textColor = textColor;
+        this.selectedTextColor = selectedTextColor;
+    }
+
+    public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
+        g.setColor(highlighted ? selectedBgColor : bgColor);
+        g.fillRect(0, 0, width, height);
+
+        if (highlighted) {
+            drawHighlight(g, width);
+        } else {
+            g.setColor(darkerBgColor);
+            g.drawRect(0, 0, width - 1, height - 1);
+        }
+        
+        g.setFont(Fonts.bold);
+        g.setColor(highlighted ? selectedTextColor : textColor);
+        g.drawString(text, width/2, (height - Fonts.boldHeight)/2, Graphics.HCENTER | Graphics.TOP);
+    }
+
+    public void recalc(int width) {
+        height = Math.max(Fonts.height*3/2, Fonts.height + 6);
+    }
+}

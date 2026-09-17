@@ -1,0 +1,207 @@
+//#ifdef BLUEWAP_CLIENT
+package fi.gtrxac.bluewap.client;
+
+import fi.gtrxac.bluewap.*;
+import fi.gtrxac.bluewap.http.*;
+import java.util.*;
+
+public class History implements Runnable {
+    public URL url;
+    public byte[] wml;
+    public String card;
+    public boolean loaded;
+    public String contentType;
+    public String postData;
+    public int highlightedItemIndex;
+
+    private static Vector list = new Vector();
+    public static Vector menuUrls = new Vector();
+    private static int currentIndex = -1;
+    
+    private History(String url, boolean relative, String postData) {
+        this.postData = postData;
+
+        if (url.equals("warnings://")) {
+            try {
+                this.url = new URL(url);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            this.wml = MainScreen.warningsWml;
+            this.card = null;
+            this.loaded = true;
+            return;
+        }
+
+        try {
+            History curr = getCurrent();
+            if (relative) {
+                this.url = new URL(url, curr.url);
+            } else {
+                this.url = new URL(url);
+            }
+            if (curr != null && this.url.isSamePage(curr.url) && postData == null) {
+                this.wml = curr.wml;
+                this.card = this.url.card;
+                this.loaded = true;
+            } else {
+                this.card = this.url.card;
+                showLoading();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            try {
+                this.url = new URL("jar://home.wml");
+            }
+            catch (Exception ee) {}
+
+            this.wml = Util.stringToBytes(WmlTemplates.ERROR_BEGIN + e.toString() + WmlTemplates.ERROR_END);
+            this.card = null;
+            this.loaded = false;
+        }
+    }
+
+    private static void addMenuUrlsItem(String url) {
+        if (url.startsWith("warnings://")) return;
+
+        while (menuUrls.size() > 8) {
+            menuUrls.removeElementAt(0);
+        }
+        if (menuUrls.indexOf(url) != -1) return;
+        menuUrls.addElement(url);
+    }
+
+    public static synchronized void visit(String url, boolean relative, Hashtable postfields, boolean isPost) {
+        saveHighlightedItem();
+
+        String postData = null;
+
+        if (postfields != null && (isPost || postfields.size() >= 1)) {
+            StringBuffer queryBuf = new StringBuffer();
+            
+            if (!isPost) {
+                queryBuf.append(url);
+                queryBuf.append((url.indexOf("?") != -1) ? "&" : "?");
+            }
+
+            boolean isFirst = true;
+
+            for (Enumeration e = postfields.keys(); e.hasMoreElements(); ) {
+                String key = (String) e.nextElement();
+                String value = (String) postfields.get(key);
+                
+                if (!isFirst) queryBuf.append("&");
+                
+                queryBuf.append(Util.urlEncode(WmlVariables.parse(key, false)))
+                    .append("=")
+                    .append(Util.urlEncode(WmlVariables.parse(value, false)));
+
+                isFirst = false;
+            }
+
+            if (isPost) postData = queryBuf.toString();
+            else url = queryBuf.toString();
+        }
+
+        // if we've gone back in the history, remove all entries after the current one
+        if (currentIndex < list.size() - 1) {
+            list.setSize(currentIndex + 1);
+        }
+        History hist = new History(url, relative, postData);
+        list.addElement(hist);
+        addMenuUrlsItem(hist.url.toString(false));
+        forward();
+
+        if (!hist.loaded) {
+            new Thread(hist).start();
+        }
+    }
+
+    public static void back() {
+        if (currentIndex <= 0) {
+            App.askQuit();
+            return;
+        }
+        saveHighlightedItem();
+        currentIndex--;
+        screenChanged(true);
+    }
+
+    public static void forward() {
+        if (currentIndex >= list.size() - 1) return;
+        currentIndex++;
+
+        History curr = getCurrent();
+        boolean keepInputs = (curr != null && curr.loaded);
+        screenChanged(keepInputs);
+    }
+
+    public static void onFontSizeChange() {
+        // re-parse the current page to make sure all fonts are recalculated
+        saveHighlightedItem();
+        screenChanged(true);
+    }
+
+    private void showLoading() {
+        this.wml = Util.stringToBytes(WmlTemplates.LOADING);
+        this.loaded = false;
+        this.highlightedItemIndex = 0;
+    }
+
+    public void refresh() {
+        showLoading();
+        screenChanged(false);
+        new Thread(this).start();
+    }
+
+    public static synchronized History getCurrent() {
+        if (list.size() == 0 || currentIndex < 0) return null;
+        return (History) list.elementAt(currentIndex);
+    }
+
+    private static void screenChanged(boolean keepInputs) {
+        History curr = getCurrent();
+        if (curr == null) return;
+        
+        String card = (curr.loaded) ? curr.card : null;
+        MainScreen.instance.displayWml(curr.wml, card, curr.contentType, keepInputs);
+        MainScreen.instance.setHighlightedItem(curr.highlightedItemIndex);
+    }
+
+    private static void saveHighlightedItem() {
+        History curr = getCurrent();
+        if (curr == null) return;
+
+        curr.highlightedItemIndex = MainScreen.instance.getHighlightedIndex();
+    }
+
+    public void run() {
+        try {
+            this.wml = fetch(getCurrent().url);
+            this.loaded = true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            this.wml = Util.stringToBytes(WmlTemplates.ERROR_BEGIN + e.toString() + WmlTemplates.ERROR_END);
+            this.loaded = false;
+        }
+        screenChanged(false);
+    }
+
+    private byte[] fetch(URL url) throws Exception {
+        String urlStr = url.toString(false);
+        return fetchHttp(urlStr);
+    }
+
+    private byte[] fetchHttp(String url) throws Exception {
+        HTTP http = HTTP.createRequest((postData != null) ? "POST" : "GET", url);
+        if (postData != null) http.setData(postData);
+        contentType = http.getResponseHeader("Content-Type");
+        byte[] result = http.getResponseBytes();
+        this.url = new URL(http.getUrl());
+        return result;
+    }
+}
+//#endif
