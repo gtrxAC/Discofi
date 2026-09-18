@@ -15,6 +15,7 @@ public class StringItem extends Item {
     private String[] textLines;
     private int align;
     private int x;
+    public int color;
 
     public StringItem(String text) {
         this(text, null);
@@ -29,11 +30,12 @@ public class StringItem extends Item {
         this.text = text;
         this.definedFont = font;
         this.align = align;
+        this.color = 0x111111;
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         g.setFont(font);
-        g.setColor(0x111111);
+        g.setColor(color);
         int y = 0;
 
         for (int i = 0; i < textLines.length; i++) {

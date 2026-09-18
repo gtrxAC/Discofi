@@ -5,6 +5,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.Font;
 
 public class LoginScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
@@ -13,7 +14,8 @@ public class LoginScreen extends ListScreen implements CommandListener {
     private TextFieldItem emailField;
     private TextFieldItem passwordField;
     private TextFieldItem tokenField;
-    private ButtonItem continueButton;
+    private ButtonItem loginButton;
+    private ButtonItem tokenLoginButton;
 
     public LoginScreen() {
         super();
@@ -21,18 +23,26 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
         addItem("To log in with email and password, enable multi-factor authentication (authenticator app) on your account.");
 
-        addItem("Email");
+        addItem(new LabelItem("Email"));
         addItem(emailField = new TextFieldItem("Email", "", 100, TextField.EMAILADDR));
 
-        addItem("Password");
+        addItem(new LabelItem("Password"));
         addItem(passwordField = new TextFieldItem("Password", "", 100, TextField.PASSWORD));
+
+        addItem(new BlankItem(0));
+
+        addItem(loginButton = new ButtonItem("Log in"));
+
+        addItem(new BlankItem(0));
 
         addItem("Token login is unsafe and only intended for advanced users.");
 
-        addItem("Token");
+        addItem(new LabelItem("Token"));
         addItem(tokenField = new TextFieldItem("Token", "", 80, 0));
 
-        addItem(continueButton = new ButtonItem("Continue"));
+        addItem(new BlankItem(0));
+
+        addItem(tokenLoginButton = new ButtonItem("Use token"));
 
         setCommandListener(this);
         addCommand(new Command("Select", Command.OK, CMD_SELECT));
