@@ -27,14 +27,16 @@ public class DiscordException extends Exception {
     }
 
     public void show() {
-        StringBuffer textBuf = new StringBuffer()
-            .append(friendlyMessage)
-            .append("\n\nPlease try the following:");
+        StringBuffer textBuf = new StringBuffer(friendlyMessage);
+            
+        if (tips != null) {
+            textBuf.append("\n\nPlease try the following:");
 
-        for (int i = 0; i < tips.size(); i++) {
-            String tip = (String) tips.elementAt(i);
+            for (int i = 0; i < tips.size(); i++) {
+                String tip = (String) tips.elementAt(i);
 
-            textBuf.append("\n- ").append(tip);
+                textBuf.append("\n- ").append(tip);
+            }
         }
 
         textBuf.append("\n\nDetails:\n")

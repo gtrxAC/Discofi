@@ -68,6 +68,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
             case CMD_SELECT: {
+                selectItem();
                 break;
             }
             case CMD_BACK: {
@@ -100,7 +101,18 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             App.pendingAccount.useProxy = useProxy;
 
             if (useProxy) {
-                App.pendingAccount.apiUrl = apiUrlField.getValue();
+                String apiUrl = apiUrlField.getValue();
+
+                if (apiUrl.trim().length() == 0) {
+                    new DiscordException(
+                        "Please enter an API URL or use a different connection mode",
+                        "Proxy API URL is required when using a proxy", null)
+                        .show();
+
+                    return;
+                }
+
+                App.pendingAccount.apiUrl = apiUrl;
             }
 
             App.pushScreen(new LoginScreen());

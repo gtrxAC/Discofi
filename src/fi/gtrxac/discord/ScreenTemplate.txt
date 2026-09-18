@@ -23,6 +23,7 @@ public class MyScreen extends ListScreen implements CommandListener {
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
             case CMD_SELECT: {
+                selectItem();
                 break;
             }
             case CMD_BACK: {
