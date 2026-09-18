@@ -57,6 +57,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
         if (i == directOption) {
             if (apiUrlField == null) return;
 
+            App.pendingAccount.apiUrl = apiUrlField.getValue();
             removeItem(apiUrlFieldPosition);
             removeItem(apiUrlFieldPosition);
             apiUrlField = null;
@@ -69,7 +70,14 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             insertItem("API URL", apiUrlFieldPosition);
         }
         else if (i == continueButton) {
-            
+            boolean useProxy = (apiUrlField != null);
+            App.pendingAccount.useProxy = useProxy;
+
+            if (useProxy) {
+                App.pendingAccount.apiUrl = apiUrlField.getValue();
+            }
+
+            App.pushScreen(new LoginScreen());
         }
     }
 }
