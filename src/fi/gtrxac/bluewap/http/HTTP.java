@@ -2,7 +2,6 @@ package fi.gtrxac.bluewap.http;
 
 import fi.gtrxac.bluewap.*;
 import fi.gtrxac.bluewap.ui.*;
-import fi.gtrxac.bluewap.client.*;
 import java.io.*;
 import java.util.*;
 import javax.microedition.lcdui.Image;

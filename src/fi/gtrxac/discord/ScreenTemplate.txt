@@ -1,0 +1,28 @@
+package fi.gtrxac.discord;
+
+import fi.gtrxac.bluewap.ui.*;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
+
+public class MyScreen extends ListScreen implements CommandListener {
+    public static final int CMD_ = 0;
+
+    public MyScreen() {
+        super();
+        setTitle("");
+
+        addItem();
+
+        setCommandListener(this);
+        addCommand(new Command("", Command., CMD_))
+    }
+
+    public void commandAction(Command c, Displayable d) {
+        switch (c.getPriority()) {
+            case CMD_: {
+                break;
+            }
+        }
+    }
+}

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding='utf-8'?>
-<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
-<wml>
-<card title="Welcome">
-    <p>Welcome to BlueWAP by gtrxAC</p>
-    <p>Select 'Menu' to choose your connection mode and enter an address.</p>
-</card>
-</wml>
