@@ -306,9 +306,12 @@ public class AppCanvas extends Canvas {
     }
 
     public void updateTitle() {
+        Screen curr = AppBase.getCurrentScreen();
+        if (curr == null) return;
+        
         int availableWidth = getWidth() - Fonts.boldHeight/4*2 - Fonts.plain.stringWidth("88:88");
 
-        String title = AppBase.getCurrentScreen().getTitle();
+        String title = curr.getTitle();
         currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
         setTitle(currentTitle);
     }
