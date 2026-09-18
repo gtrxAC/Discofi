@@ -11,8 +11,10 @@ import javax.microedition.lcdui.Displayable;
 import java.util.*;
 
 public class App extends AppBase implements CommandListener {
-    private static final int CMD_YES = 0;
-    private static final int CMD_NO = 1;
+    public static Account pendingAccount;
+
+    // private static final int CMD_YES = 0;
+    // private static final int CMD_NO = 1;
 
     public void init() {
         Fonts.loadFonts(Font.SIZE_SMALL);

@@ -6,7 +6,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
 public class MyScreen extends ListScreen implements CommandListener {
-    public static final int CMD_ = 0;
+    public static final int CMD_SELECT = 0;
+    public static final int CMD_BACK = 1;
 
     public MyScreen() {
         super();
@@ -15,14 +16,21 @@ public class MyScreen extends ListScreen implements CommandListener {
         addItem();
 
         setCommandListener(this);
-        addCommand(new Command("", Command., CMD_))
+        addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        addCommand(new Command("Back", Command.BACK, CMD_BACK));
     }
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_: {
+            case CMD_SELECT: {
+                break;
+            }
+            case CMD_BACK: {
                 break;
             }
         }
+    }
+
+    public void itemSelected(Item i) {
     }
 }

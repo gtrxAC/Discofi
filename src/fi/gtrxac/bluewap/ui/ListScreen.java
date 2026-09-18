@@ -426,6 +426,15 @@ public class ListScreen extends Screen implements Runnable {
         addItem(new StringItem(str));
     }
 
+    public synchronized void insertItem(Item i, int index) {
+        items.insertElementAt(i, index);
+        needRecalc();
+    }
+
+    public void insertItem(String str, int index) {
+        insertItem(new StringItem(str), index);
+    }
+
     public synchronized void removeItem(int index) {
         items.removeElementAt(index);
         needRecalc();
