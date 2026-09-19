@@ -22,7 +22,7 @@ public class TextFieldItem extends Item implements CommandListener {
         super(true);
         this.title = title;
         this.value = (value != null) ? value : "";
-        this.maxSize = Math.max(maxSize, value.length());
+        this.maxSize = maxSize;
         this.constraints = constraints;
     }
 
@@ -53,7 +53,17 @@ public class TextFieldItem extends Item implements CommandListener {
     }
 
     public void itemSelected() {
-        TextBox t = new TextBox(title, value, maxSize, constraints);
+        int textBoxMaxSize = Math.max(maxSize, value.length());
+        TextBox t = null;
+
+        try {
+            t = new TextBox(title, value, textBoxMaxSize, constraints);
+        }
+        catch (IllegalArgumentException e) {
+            // value was invalid for the constraints - try with no constraints
+            t = new TextBox(title, value, textBoxMaxSize, 0);
+        }
+        
         t.addCommand(new Command("OK", Command.OK, 0));
         t.addCommand(new Command("Cancel", Command.BACK, 1));
         t.setCommandListener(this);

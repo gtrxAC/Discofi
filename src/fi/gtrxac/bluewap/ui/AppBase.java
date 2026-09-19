@@ -83,6 +83,14 @@ public abstract class AppBase extends MIDlet {
     }
 
     /**
+     * Close all screens from the screen stack and show a new screen.
+     */
+    public static void replaceAllScreens(Screen s) {
+        screens.setSize(0);
+        pushScreen(s);
+    }
+
+    /**
      * Get the currently shown screen.
      */
     public static Screen getCurrentScreen() {
@@ -90,6 +98,9 @@ public abstract class AppBase extends MIDlet {
         return (Screen) screens.peek();
     }
 
+    /**
+     * Get the screen that is below the currently shown screen.
+     */
     public static Screen getPreviousScreen() {
         if (screens.size() <= 1) return null;
         return (Screen) screens.elementAt(screens.size() - 2);

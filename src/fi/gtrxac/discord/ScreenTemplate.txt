@@ -27,6 +27,7 @@ public class MyScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_BACK: {
+                App.popScreen();
                 break;
             }
         }

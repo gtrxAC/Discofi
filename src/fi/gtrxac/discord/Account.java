@@ -18,8 +18,8 @@ public class Account {
     public boolean useProxy;
     public String apiUrl;
 
-    public String email;
-    public String password;
+    // public String email;
+    // public String password;
 
     private Vector guilds;
     private Vector dmChannels;

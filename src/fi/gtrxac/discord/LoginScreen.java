@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.bluewap.Util;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -64,47 +65,70 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
     public void itemSelected(Item i) {
         if (i == loginButton) {
-            String email = emailField.getValue();
-
-            if (email.trim().length() == 0 || email.indexOf("@") == -1) {
-                new DiscordException(
-                    "Please enter an email address",
-                    "A valid email address is required when using password login. You may also try token login (not recommended).",
-                    null)
-                    .show();
-
-                return;
-            }
-
-            String password = passwordField.getValue();
-
-            if (password.trim().length() == 0) {
-                new DiscordException(
-                    "Please enter a password",
-                    "A password is required when using password login. You may also try token login (not recommended).",
-                    null)
-                    .show();
-
-                return;
-            }
-
-            App.pendingAccount.email = email;
-            App.pendingAccount.password = password;
+            passwordLogin();
         }
         else if (i == tokenLoginButton) {
-            String token = tokenField.getValue();
-
-            if (token.trim().length() == 0) {
-                new DiscordException(
-                    "Please enter your token",
-                    "A token is required when using token login. You may also try password login.",
-                    null)
-                    .show();
-
-                return;
-            }
-
-            App.pendingAccount.token = token;
+            tokenLogin();
         }
+    }
+
+    public void passwordLogin() {
+        String email = emailField.getValue();
+
+        if (email.trim().length() == 0 || email.indexOf("@") == -1) {
+            new DiscordException(
+                "Please enter an email address",
+                "A valid email address is required when using password login. You may also try token login (not recommended).",
+                null)
+                .show();
+
+            return;
+        }
+
+        String password = passwordField.getValue();
+
+        if (password.trim().length() == 0) {
+            new DiscordException(
+                "Please enter a password",
+                "A password is required when using password login. You may also try token login (not recommended).",
+                null)
+                .show();
+
+            return;
+        }
+
+        // App.pendingAccount.email = email;
+
+        HTTPThread h = new HTTPThread(HTTPThread.ACTION_PASSWORD_LOGIN);
+        h.email = email;
+        h.password = password;
+        h.start();
+    }
+
+    public void tokenLogin() {
+        String token = tokenField.getValue();
+
+        if (token.trim().length() == 0) {
+            new DiscordException(
+                "Please enter your token",
+                "A token is required when using token login. You may also try password login.",
+                null)
+                .show();
+
+            return;
+        }
+
+        try {
+            DiscordUtil.getUserIDFromToken(token);
+        }
+        catch (DiscordException e) {
+            e.show();
+            return;
+        }
+
+        App.pendingAccount.token = token;
+
+        Accounts.list.addElement(App.pendingAccount);
+        App.pendingAccount = null;
     }
 }
