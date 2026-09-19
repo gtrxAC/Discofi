@@ -42,6 +42,6 @@ public class HTTPThread extends Thread {
 
         Util.sleep(5000);
 
-        App.replaceAllScreens(new AccountSelectionScreen());
+        App.loginCompleted("Mzk4ODc4NzI3OTM4ODk5OTc3.AAAAAA.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 }

@@ -39,4 +39,12 @@ public class App extends AppBase implements CommandListener {
         //     popScreen();
         // }
     }
+
+    public static void loginCompleted(String token) {
+        pendingAccount.token = token;
+        Accounts.list.addElement(pendingAccount);
+        Settings.save();
+        pendingAccount = null;
+        replaceAllScreens(new AccountSelectionScreen());
+    }
 }

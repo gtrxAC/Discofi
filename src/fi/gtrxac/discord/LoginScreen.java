@@ -126,9 +126,6 @@ public class LoginScreen extends ListScreen implements CommandListener {
             return;
         }
 
-        App.pendingAccount.token = token;
-
-        Accounts.list.addElement(App.pendingAccount);
-        App.pendingAccount = null;
+        App.loginCompleted(token);
     }
 }
