@@ -45,4 +45,8 @@ public class DiscordException extends Exception {
         Dialog d = new Dialog(textBuf.toString());
         App.pushScreen(d);
     }
+
+    public String toString() {
+        return friendlyMessage + " (" + message + ")";
+    }
 }

@@ -15,16 +15,29 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
         super();
         setTitle("Select account");
 
-        if (Accounts.list.size() == 0) {
+        int numAccounts = Accounts.list.size();
+
+        if (numAccounts == 0) {
             addItem("No accounts defined. Select 'Add account' to log in.");
         }
+        else {
+            addItem(new BlankItem(0));
 
-        else addItem("" + Accounts.list.size());
+            for (int i = 0; i < numAccounts; i++) {
+                Account acc = (Account) Accounts.list.elementAt(i);
 
-        addAccountButton = new ButtonItem("Add account");
-        addItem(addAccountButton);
+                try {
+                    addItem(new ListItem(acc.getDisplayTitle()));
+                }
+                catch (DiscordException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-        if (Accounts.list.size() == 0) {
+        addItem(addAccountButton = new ButtonItem("Add account"));
+
+        if (numAccounts == 0) {
             setHighlightedItem(addAccountButton);
         }
 
