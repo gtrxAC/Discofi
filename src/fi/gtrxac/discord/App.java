@@ -17,7 +17,7 @@ public class App extends AppBase implements CommandListener {
     // private static final int CMD_NO = 1;
 
     public void init() {
-        Fonts.loadFonts(Font.SIZE_SMALL);
+        Fonts.loadFonts(Settings.fontSize);
         pushScreen(new AccountSelectionScreen());
         // History.visit("jar://home.wml", false, null, false);
     }

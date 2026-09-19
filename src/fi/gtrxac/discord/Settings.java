@@ -4,9 +4,13 @@ import java.io.*;
 import java.util.*;
 import javax.microedition.io.*;
 import javax.microedition.rms.*;
+import javax.microedition.lcdui.Font;
 import fi.gtrxac.bluewap.Util;
 
 public class Settings {
+    public static int fontSize = Font.SIZE_SMALL;
+    public static boolean getPairedDeviceNames = true;
+    public static Hashtable deviceNameCache = new Hashtable();
 
     private static void readData(DataInputStream dis) throws Exception {
         int numAccounts = dis.readInt();
@@ -21,6 +25,16 @@ public class Settings {
             int activeAccount = dis.readInt();
             Accounts.setActive(activeAccount);
         }
+
+        fontSize = dis.readUnsignedByte();
+        getPairedDeviceNames = dis.readBoolean();
+
+        int deviceNameCount = dis.readInt();
+        deviceNameCache = new Hashtable(deviceNameCount);
+
+        for (int i = 0; i < deviceNameCount; i++) {
+            deviceNameCache.put(dis.readUTF(), dis.readUTF());
+        }
     }
 
     private static void writeData(DataOutputStream dos) throws Exception {
@@ -32,6 +46,18 @@ public class Settings {
         }
 
         dos.writeInt(Accounts.getActiveIndex());
+
+        dos.writeByte(fontSize);
+        dos.writeBoolean(getPairedDeviceNames);
+
+        dos.writeInt(deviceNameCache.size());
+
+        for (Enumeration e = deviceNameCache.keys(); e.hasMoreElements(); ) {
+            String key = (String) e.nextElement();
+            String value = (String) deviceNameCache.get(key);
+            dos.writeUTF(key);
+            dos.writeUTF(value);
+        }
     }
 
     static {

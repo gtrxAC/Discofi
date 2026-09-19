@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 import javax.microedition.io.*;
 import javax.bluetooth.*;
+import fi.gtrxac.discord.Settings;
 
 public class BluetoothHTTP extends HTTP implements BluetoothHTTPProtocol {
 	private static final Object CONNECTION_LOCK = new Object();
