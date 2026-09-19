@@ -64,5 +64,11 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
             App.pendingAccount = new Account();
             App.pushScreen(new ConnectionModeScreen());
         }
+        else {
+            // -1 because of the blank item
+            int accountIndex = getHighlightedIndex() - 1;
+            Accounts.setActive(accountIndex);
+            App.replaceScreen(new MainScreen());
+        }
     }
 }
