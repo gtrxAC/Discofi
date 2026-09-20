@@ -27,6 +27,8 @@ public class DiscordException extends Exception {
     }
 
     public void show() {
+        printStackTrace();
+        
         StringBuffer textBuf = new StringBuffer(friendlyMessage);
             
         if (tips != null) {

@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import java.util.*;
 import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -12,15 +13,19 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     public static final int CMD_QUIT_PROMPT_YES = 3;
     public static final int CMD_QUIT_PROMPT_NO = 4;
 
+    private Account acc;
     private ListView guildsTab;
     private ListView dmsTab;
+    private boolean dmChannelsLoaded;
 
     public MainScreen() {
         super();
         setTitle("");
 
-        guildsTab = new ListView();
-        dmsTab = new ListView();
+        acc = Accounts.getActive();
+
+        createGuildsTab();
+        createDmsTab();
 
         addTab("Servers", guildsTab);
         addTab("DMs", dmsTab);
@@ -29,6 +34,76 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
         addCommand(new Command("Log out", Command.BACK, CMD_LOG_OUT));
+    }
+
+    private void createGuildsTab() {
+        guildsTab = new ListView();
+
+        if (acc.guildsAvailable()) {
+            try {
+                Vector guilds = acc.getGuilds(false);
+                populateGuildsTab(guilds);
+            }
+            catch (DiscordException e) {
+                e.show();
+            }
+        }
+        else {
+            guildsTab.addItem("Loading...");
+            fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_GUILDS);
+        }
+    }
+
+    private void createDmsTab() {
+        dmsTab = new ListView();
+
+        if (acc.dmChannelsAvailable()) {
+            try {
+                Vector dmChannels = acc.getDMChannels(false);
+                populateDMsTab(dmChannels);
+            }
+            catch (DiscordException e) {
+                e.show();
+            }
+        }
+        else {
+            dmsTab.addItem("Loading...");
+            // DMs fetching is started when the DMs tab is selected
+        }
+    }
+
+    public void populateGuildsTab(Vector guilds) {
+        guildsTab.removeAllItems();
+
+        for (int i = 0; i < guilds.size(); i++) {
+            Guild g = (Guild) guilds.elementAt(i);
+            
+            guildsTab.addItem(new ListItem(g.getName()));
+        }
+    }
+
+    public void populateDMsTab(Vector dmChannels) {
+        dmsTab.removeAllItems();
+
+        for (int i = 0; i < dmChannels.size(); i++) {
+            DMChannel c = (DMChannel) dmChannels.elementAt(i);
+            
+            dmsTab.addItem(new ListItem(c.getName()));
+        }
+        dmChannelsLoaded = true;
+    }
+
+    private void fetchGuildsOrDMChannels(int action) {
+        HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_GUILDS);
+        h.mainScreen = this;
+        h.start();
+        // HTTPThread calls populateGuilds/DMsTab
+    }
+
+    public void currentTabChanged(int currentTabIndex) {
+        if (currentTabIndex == 1 && !dmChannelsLoaded) {
+            fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_DM_CHANNELS);
+        }
     }
 
     public void commandAction(Command c, Displayable d) {

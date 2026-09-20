@@ -6,7 +6,7 @@ import java.util.*;
 import fi.gtrxac.bluewap.*;
 
 public class TabbedListScreen extends Screen {
-    public int activeTabIndex;
+    public int currentTabIndex;
     public Vector tabNames;
     public Vector truncatedTabNames;
     public Vector tabs;
@@ -17,7 +17,7 @@ public class TabbedListScreen extends Screen {
 
     public TabbedListScreen(int margin) {
         super(margin);
-        activeTabIndex = -1;
+        currentTabIndex = -1;
         tabNames = new Vector();
         truncatedTabNames = new Vector();
         tabs = new Vector();
@@ -42,7 +42,7 @@ public class TabbedListScreen extends Screen {
         int tabDrawWidth = tabWidth - tabMargin;
 
         for (int i = 0; i < tabs.size(); i++) {
-            boolean selected = (i == activeTabIndex);
+            boolean selected = (i == currentTabIndex);
             String tabName = (String) truncatedTabNames.elementAt(i);
 
             int tabX = i*tabWidth + tabMargin;
@@ -66,7 +66,7 @@ public class TabbedListScreen extends Screen {
         }
 
         // bottom line before and after the currently selected tab
-        int selectedTabBegin = tabMargin + tabWidth*activeTabIndex;
+        int selectedTabBegin = tabMargin + tabWidth*currentTabIndex;
         int selectedTabEnd = selectedTabBegin + tabWidth - tabMargin;
         int lineY = tabBarHeight - 1;
 
@@ -96,7 +96,11 @@ public class TabbedListScreen extends Screen {
         synchronized (tabs) {
             tabNames.addElement(name);
             tabs.addElement(view);
-            if (activeTabIndex == -1) activeTabIndex = 0;
+
+            if (currentTabIndex == -1) {
+                currentTabIndex = 0;
+                currentTabChanged(currentTabIndex);
+            }
         }
         needRecalc();
         AppBase.repaint();
@@ -106,25 +110,33 @@ public class TabbedListScreen extends Screen {
         synchronized (tabs) {
             tabNames.removeElementAt(index);
             tabs.removeElementAt(index);
-            if (activeTabIndex >= index) activeTabIndex--;
+
+            if (currentTabIndex >= index) {
+                currentTabIndex--;
+                currentTabChanged(currentTabIndex);
+            }
         }
         AppBase.repaint();
     }
 
     public ListView getCurrentTab() {
-        if (activeTabIndex == -1 || activeTabIndex >= tabs.size()) return null;
-        return (ListView) tabs.elementAt(activeTabIndex);
+        if (currentTabIndex == -1 || currentTabIndex >= tabs.size()) return null;
+        return (ListView) tabs.elementAt(currentTabIndex);
     }
+
+    public void currentTabChanged(int currentTabIndex) {}
 
     public void keyEvent(int keyCode, int gameAction) {
         if (gameAction == Canvas.LEFT) {
-            activeTabIndex--;
-            if (activeTabIndex < 0) activeTabIndex = tabs.size() - 1;
+            currentTabIndex--;
+            if (currentTabIndex < 0) currentTabIndex = tabs.size() - 1;
+            currentTabChanged(currentTabIndex);
             AppBase.repaint();
         }
         else if (gameAction == Canvas.RIGHT) {
-            activeTabIndex++;
-            if (activeTabIndex >= tabs.size()) activeTabIndex = 0;
+            currentTabIndex++;
+            if (currentTabIndex >= tabs.size()) currentTabIndex = 0;
+            currentTabChanged(currentTabIndex);
             AppBase.repaint();
         }
         else {
@@ -152,10 +164,12 @@ public class TabbedListScreen extends Screen {
     public void pointerReleased(int x, int y) {
         if (tappedOnBar) {
             // handle tab selection
-            activeTabIndex = (x - tabMargin)/tabWidth;
+            currentTabIndex = (x - tabMargin)/tabWidth;
 
-            if (activeTabIndex < 0) activeTabIndex = 0;
-            else if (activeTabIndex >= tabs.size()) activeTabIndex = tabs.size() - 1;
+            if (currentTabIndex < 0) currentTabIndex = 0;
+            else if (currentTabIndex >= tabs.size()) currentTabIndex = tabs.size() - 1;
+
+            currentTabChanged(currentTabIndex);
         }
         else {
             ListView tab = getCurrentTab();

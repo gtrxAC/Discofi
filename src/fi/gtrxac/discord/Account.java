@@ -111,7 +111,7 @@ public class Account {
         return dmChannels.size() != 0;
     }
 
-    private JSONArray fetchGuildsOrDms(String route) throws DiscordException {
+    private JSONArray fetchGuildsOrDMs(String route) throws DiscordException {
         int responseCode;
         String responseText;
 
@@ -134,7 +134,7 @@ public class Account {
     public Vector getGuilds(boolean refresh) throws DiscordException {
         if (!refresh && guildsAvailable()) return guilds;
 
-        JSONArray guildsJson = fetchGuildsOrDms("/users/@me/guilds");
+        JSONArray guildsJson = fetchGuildsOrDMs("/users/@me/guilds");
 
         for (int i = 0; i < guildsJson.size(); i++) {
             JSONObject guildJson = guildsJson.getObject(i);
@@ -144,10 +144,10 @@ public class Account {
         return guilds;
     }
 
-    public Vector getDmChannels(boolean refresh) throws DiscordException {
+    public Vector getDMChannels(boolean refresh) throws DiscordException {
         if (!refresh && dmChannelsAvailable()) return dmChannels;
 
-        JSONArray dmsJson = fetchGuildsOrDms("/users/@me/channels");
+        JSONArray dmsJson = fetchGuildsOrDMs("/users/@me/channels");
 
         for (int i = 0; i < dmsJson.size(); i++) {
             JSONObject dmJson = dmsJson.getObject(i);
