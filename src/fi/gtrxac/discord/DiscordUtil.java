@@ -4,6 +4,8 @@ import java.util.*;
 import util.*;
 
 public class DiscordUtil {
+    public static final Random random = new Random();
+
     private static Vector getInvalidTokenTips() {
         Vector result = new Vector();
         result.addElement("use password login instead of your token");
@@ -36,5 +38,30 @@ public class DiscordUtil {
                 "Failed to decode ID: " + e.toString(),
                 getInvalidTokenTips());
         }
+    }
+
+    public static String generateRandomUUID() {
+        byte[] bytes = new byte[16];
+
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) (random.nextInt() & 0xff);
+        }
+
+        bytes[6] = (byte) ((bytes[6] & 0x0f) | 0x40);
+        bytes[8] = (byte) ((bytes[8] & 0x3f) | 0x80);
+
+        StringBuffer uuid = new StringBuffer(36);
+        for (int i = 0; i < bytes.length; i++) {
+            if (i == 4 || i == 6 || i == 8 || i == 10) {
+                uuid.append('-');
+            }
+
+            int value = bytes[i] & 0xff;
+            if (value < 0x10) {
+                uuid.append('0');
+            }
+            uuid.append(Integer.toHexString(value));
+        }
+        return uuid.toString();
     }
 }

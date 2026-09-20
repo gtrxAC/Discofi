@@ -11,7 +11,8 @@ public class Settings {
     public static int fontSize = Font.SIZE_SMALL;
     public static boolean getPairedDeviceNames = true;
     public static Hashtable deviceNameCache = new Hashtable();
-
+    public static String deviceVendorID = DiscordUtil.generateRandomUUID();
+    
     private static void readData(DataInputStream dis) throws Exception {
         int numAccounts = dis.readInt();
 
@@ -35,6 +36,8 @@ public class Settings {
         for (int i = 0; i < deviceNameCount; i++) {
             deviceNameCache.put(dis.readUTF(), dis.readUTF());
         }
+
+        deviceVendorID = dis.readUTF();
     }
 
     private static void writeData(DataOutputStream dos) throws Exception {
@@ -58,6 +61,8 @@ public class Settings {
             dos.writeUTF(key);
             dos.writeUTF(value);
         }
+
+        dos.writeUTF(deviceVendorID);
     }
 
     static {

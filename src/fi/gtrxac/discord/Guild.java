@@ -16,13 +16,11 @@ public class Guild {
         id = data.getString("id");
 
         if (data.has("name")) {
-            System.out.println("Guild name from 'name'");
             name = data.getString("name");
         }
-        else if (data.has("properties")) {
-            System.out.println("Guild name from 'properties.name'");
-            name = data.getObject("properties").getString("name");
-        }
+        // else if (data.has("properties")) {
+        //     name = data.getObject("properties").getString("name");
+        // }
         else {
             name = "(unknown)";
         }
