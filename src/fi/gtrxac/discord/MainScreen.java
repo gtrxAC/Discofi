@@ -51,7 +51,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             }
         }
         else {
-            guildsTab.addItem("Loading...");
+            guildsTab.addItem(new LoadingItem());
             fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_GUILDS);
         }
     }
@@ -69,7 +69,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             }
         }
         else {
-            dmsTab.addItem("Loading...");
+            dmsTab.addItem(new LoadingItem());
             // DMs fetching is started when the DMs tab is selected
         }
     }
@@ -123,12 +123,12 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             case CMD_REFRESH: {
                 if (currentTabIndex == 0) {
                     guildsTab.removeAllItems();
-                    guildsTab.addItem("Loading...");
+                    guildsTab.addItem(new LoadingItem());
                     fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_GUILDS);
                 }
                 else {
                     dmsTab.removeAllItems();
-                    dmsTab.addItem("Loading...");
+                    dmsTab.addItem(new LoadingItem());
                     fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_DM_CHANNELS);
                 }
                 break;

@@ -37,7 +37,7 @@ public class HTTPThread extends Thread {
 
     private void runPasswordLogin() {
         ListScreen l = new ListScreen();
-        l.addItem("Loading...");
+        l.addItem(new LoadingItem());
         App.pushScreen(l);
 
         Util.sleep(5000);
@@ -48,7 +48,7 @@ public class HTTPThread extends Thread {
 
     private void runSubmitTotp() {
         ListScreen l = new ListScreen();
-        l.addItem("Loading...");
+        l.addItem(new LoadingItem());
         App.pushScreen(l);
 
         Util.sleep(5000);
