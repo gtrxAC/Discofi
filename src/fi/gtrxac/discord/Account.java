@@ -13,13 +13,19 @@ import java.io.*;
  */
 
 public class Account {
+    // HTTP connection methods (direct over system HTTP, direct over BlueWAP, proxy over system HTTP)
+    public static final int CONNECTION_MODE_DIRECT = 0;
+    public static final int CONNECTION_MODE_BLUETOOTH = 1;
+    public static final int CONNECTION_MODE_PROXY = 2;
+
+    // Version numbers for account save data.
+    public static final int VERSION_BASE = 1;
+    public static final int VERSION_CURRENT = 1;
+
     public String token;
     public String username;
-    public boolean useProxy;
+    public int connectionMode;
     public String apiUrl;
-
-    // public String email;
-    // public String password;
 
     private Vector guilds;
     private Vector dmChannels;
@@ -32,9 +38,10 @@ public class Account {
 
     public Account(DataInputStream saveDataStream) throws Exception {
         this();
+        int version = saveDataStream.readUnsignedByte();
         token = saveDataStream.readUTF();
         username = saveDataStream.readUTF();
-        useProxy = saveDataStream.readBoolean();
+        connectionMode = saveDataStream.readUnsignedByte();
         apiUrl = saveDataStream.readUTF();
 
         if ("".equals(username)) username = null;
@@ -53,9 +60,10 @@ public class Account {
     }
 
     public void writeSaveData(DataOutputStream saveDataStream) throws Exception {
+        saveDataStream.writeByte(VERSION_CURRENT);
         saveDataStream.writeUTF(token);
         saveDataStream.writeUTF((username != null) ? username : "");
-        saveDataStream.writeBoolean(useProxy);
+        saveDataStream.writeByte(connectionMode);
         saveDataStream.writeUTF(apiUrl);
 
         saveDataStream.writeInt(guilds.size());
@@ -83,7 +91,7 @@ public class Account {
     }
 
     public String getApiUrl() {
-        return useProxy ? apiUrl : "https://discord.com";
+        return (connectionMode == CONNECTION_MODE_PROXY) ? apiUrl : "https://discord.com";
     }
 
     public HTTP createApiRequest(String method, String route) throws Exception {

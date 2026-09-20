@@ -19,25 +19,12 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     public ConnectionModeScreen() {
         super();
         setTitle("Connection setup");
+        
+        App.pendingAccount.connectionMode = Account.CONNECTION_MODE_DIRECT;
 
         addItem(new StringItem("Select your connection method.", Fonts.get(0, true, false, false)));
 
-        // addItem(new StringItem(
-        //     "Using a proxy is unsafe and may lead to account restrictions, but it is required on devices where TLS 1.2 is unavailable.",
-        //     Fonts.get(0, true, false, false)));
-
-        // addItem(new StringItem(
-        //     "Using a proxy is unsafe and may lead to account restrictions.",
-        //     Fonts.get(0, true, false, false)));
-
-        // addItem("TLS 1.2 is available on Symbian with nnproject's TLS patch, and on select Nokia S40 and Sony Ericsson devices.");
-
-        // addItem("To use Bluetooth tethering, connect to a device running BlueWAP Server. This is useful when TLS 1.2 or 2G/3G networks are unavailable. The server device must be accessible at all times.");
-
         RadioButtonGroup group = new RadioButtonGroup();
-
-        // addItem(directOption = new RadioButtonItem(group, "Direct"));
-        // addItem(proxyOption = new RadioButtonItem(group, "Proxy"));
 
         addItem(new BlankItem(0));
 
@@ -80,6 +67,10 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
     public void itemSelected(Item i) {
         if (i == directOption || i == btOption) {
+            App.pendingAccount.connectionMode = (i == directOption) ?
+                Account.CONNECTION_MODE_DIRECT :
+                Account.CONNECTION_MODE_BLUETOOTH;
+
             if (apiUrlField == null) return;
 
             App.pendingAccount.apiUrl = apiUrlField.getValue();
@@ -89,6 +80,8 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             apiUrlField = null;
         }
         else if (i == proxyOption) {
+            App.pendingAccount.connectionMode = Account.CONNECTION_MODE_PROXY;
+
             if (apiUrlField != null) return;
 
             apiUrlField = new TextFieldItem("API URL", App.pendingAccount.apiUrl, 1000, 0);
@@ -97,10 +90,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             insertItem(new LabelItem("API URL"), apiUrlFieldPosition);
         }
         else if (i == continueButton) {
-            boolean useProxy = (apiUrlField != null);
-            App.pendingAccount.useProxy = useProxy;
-
-            if (useProxy) {
+            if (apiUrlField != null) {
                 String apiUrl = apiUrlField.getValue();
 
                 if (apiUrl.trim().length() == 0) {

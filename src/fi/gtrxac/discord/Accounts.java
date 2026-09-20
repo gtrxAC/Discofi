@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import java.util.Vector;
+import fi.gtrxac.bluewap.http.HTTP;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -12,6 +13,15 @@ public class Accounts {
 
     public static void setActive(int index) {
         activeIndex = index;
+
+        Account acc = getActive();
+
+        if (acc != null) {
+            HTTP.CONNECTION_TYPE =
+                (acc.connectionMode == Account.CONNECTION_MODE_BLUETOOTH) ?
+                HTTP.CONNECTION_TYPE_BLUETOOTH :
+                HTTP.CONNECTION_TYPE_STANDARD;
+        }
     }
 
     public static int getActiveIndex() {
