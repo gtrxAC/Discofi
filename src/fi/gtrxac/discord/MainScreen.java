@@ -74,6 +74,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     public void populateGuildsTab(Vector guilds) {
         guildsTab.removeAllItems();
+        guildsTab.addItem(new BlankItem(0));
 
         for (int i = 0; i < guilds.size(); i++) {
             Guild g = (Guild) guilds.elementAt(i);
@@ -84,6 +85,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     public void populateDMsTab(Vector dmChannels) {
         dmsTab.removeAllItems();
+        dmsTab.addItem(new BlankItem(0));
 
         for (int i = 0; i < dmChannels.size(); i++) {
             DMChannel c = (DMChannel) dmChannels.elementAt(i);
@@ -94,7 +96,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     private void fetchGuildsOrDMChannels(int action) {
-        HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_GUILDS);
+        HTTPThread h = new HTTPThread(action);
         h.mainScreen = this;
         h.start();
         // HTTPThread calls populateGuilds/DMsTab
