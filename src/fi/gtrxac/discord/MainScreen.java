@@ -9,9 +9,10 @@ import javax.microedition.lcdui.Displayable;
 public class MainScreen extends TabbedListScreen implements CommandListener, ListViewItemListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
-    public static final int CMD_LOG_OUT = 2;
-    public static final int CMD_QUIT_PROMPT_YES = 3;
-    public static final int CMD_QUIT_PROMPT_NO = 4;
+    public static final int CMD_REFRESH = 2;
+    public static final int CMD_LOG_OUT = 3;
+    public static final int CMD_QUIT_PROMPT_YES = 100;
+    public static final int CMD_QUIT_PROMPT_NO = 101;
 
     private Account acc;
     private ListView guildsTab;
@@ -33,6 +34,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         setCommandListener(this);
         addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
+        addCommand(new Command("Refresh", Command.EXIT, CMD_REFRESH));
         addCommand(new Command("Log out", Command.BACK, CMD_LOG_OUT));
     }
 
@@ -116,6 +118,19 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             }
             case CMD_QUIT: {
                 promptQuit();
+                break;
+            }
+            case CMD_REFRESH: {
+                if (currentTabIndex == 0) {
+                    guildsTab.removeAllItems();
+                    guildsTab.addItem("Loading...");
+                    fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_GUILDS);
+                }
+                else {
+                    dmsTab.removeAllItems();
+                    dmsTab.addItem("Loading...");
+                    fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_DM_CHANNELS);
+                }
                 break;
             }
             case CMD_QUIT_PROMPT_YES: {

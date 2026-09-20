@@ -58,14 +58,14 @@ public class HTTPThread extends Thread {
 
     private void runFetchGuilds() throws DiscordException {
         Account acc = Accounts.getActive();
-        Vector guilds = acc.getGuilds(false);
+        Vector guilds = acc.getGuilds(true);
         Settings.save();
         mainScreen.populateGuildsTab(guilds);
     }
 
     private void runFetchDMChannels() throws DiscordException {
         Account acc = Accounts.getActive();
-        Vector dmChannels = acc.getDMChannels(false);
+        Vector dmChannels = acc.getDMChannels(true);
         Settings.save();
         mainScreen.populateDMsTab(dmChannels);
     }
