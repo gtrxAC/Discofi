@@ -33,8 +33,13 @@ public class TabbedListScreen extends Screen {
 
         drawTabs(g);
 
+        g.setColor(0xFFFFFF);
+        g.fillRect(0, tabBarHeight, getWidth(), tabMargin);
+
         ListView tab = getCurrentTab();
-        if (tab != null) tab.prepareAndDraw(g);
+        if (tab != null) {
+            tab.prepareAndDraw(g);
+        }
     }
 
     private void drawTabs(Graphics g) {
@@ -80,11 +85,13 @@ public class TabbedListScreen extends Screen {
         tabWidth = (getWidth() - tabMargin)/tabs.size();
         tabBarHeight = Fonts.height*3/2;
 
+        int tabBeginY = tabBarHeight + tabMargin;
+
         truncatedTabNames.setSize(0);
 
         for (int i = 0; i < tabs.size(); i++) {
             ListView tab = (ListView) tabs.elementAt(i);
-            tab.setPosition(0, tabBarHeight, getWidth(), getHeight() - tabBarHeight);
+            tab.setPosition(0, tabBeginY, getWidth(), getHeight() - tabBeginY);
 
             String tabName = (String) tabNames.elementAt(i);
             String truncatedName = Util.stringToWidth(tabName, Fonts.plain, tabWidth - tabMargin*2);
