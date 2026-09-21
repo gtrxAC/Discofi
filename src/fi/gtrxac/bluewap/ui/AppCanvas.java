@@ -329,7 +329,16 @@ public class AppCanvas extends Canvas {
 
     public void updateClock() {
         Calendar now = Calendar.getInstance();
-        currentClock = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+
+        StringBuffer clock = new StringBuffer()
+            .append(now.get(Calendar.HOUR_OF_DAY))
+            .append(":");
+
+        int minute = now.get(Calendar.MINUTE);
+        if (minute < 10) clock.append("0");
+        clock.append(minute);
+        
+        currentClock = clock.toString();
 
         if (AppCanvas.instance != null) {
             AppBase.repaint();
