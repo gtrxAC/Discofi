@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import fi.gtrxac.bluewap.Util;
 import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -8,6 +9,7 @@ import javax.microedition.lcdui.Displayable;
 public class AccountSelectionScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
+    public static final int CMD_ADD_ACCOUNT = 2;
 
     private ButtonItem addAccountButton;
 
@@ -35,15 +37,23 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
             }
         }
 
-        addItem(addAccountButton = new ButtonItem("Add account"));
+        if (!Util.hideSelectCommand) {
+            addItem(addAccountButton = new ButtonItem("Add account"));
 
-        if (numAccounts == 0) {
-            setHighlightedItem(addAccountButton);
+            if (numAccounts == 0) {
+                setHighlightedItem(addAccountButton);
+            }
         }
 
         setCommandListener(this);
-        addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
+
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
+        else {
+            addCommand(new Command("Add", Command.OK, CMD_ADD_ACCOUNT));
+        }
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -56,13 +66,16 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
                 App.instance.notifyDestroyed();
                 break;
             }
+            case CMD_ADD_ACCOUNT: {
+                addAccount();
+                break;
+            }
         }
     }
 
     public void itemSelected(Item i) {
         if (i == addAccountButton) {
-            App.pendingAccount = new Account();
-            App.pushScreen(new ConnectionModeScreen());
+            addAccount();
         }
         else {
             // -1 because of the blank item
@@ -70,5 +83,10 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
             Accounts.setActive(accountIndex);
             App.replaceScreen(new MainScreen());
         }
+    }
+
+    private void addAccount() {
+        App.pendingAccount = new Account();
+        App.pushScreen(new ConnectionModeScreen());
     }
 }

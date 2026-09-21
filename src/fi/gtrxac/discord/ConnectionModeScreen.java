@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.bluewap.Util;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -8,6 +9,7 @@ import javax.microedition.lcdui.Displayable;
 public class ConnectionModeScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
+    public static final int CMD_CONTINUE = 2;
 
     private RadioButtonItem directOption;
     private RadioButtonItem btOption;
@@ -45,11 +47,19 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
         apiUrlFieldPosition = items.size();
 
-        addItem(continueButton = new ButtonItem("Continue"));
+        if (!Util.hideSelectCommand) {
+            addItem(continueButton = new ButtonItem("Continue"));
+        }
 
         setCommandListener(this);
-        addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
+
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
+        else {
+            addCommand(new Command("Continue", Command.OK, CMD_CONTINUE));
+        }
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -60,6 +70,10 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             }
             case CMD_BACK: {
                 App.popScreen();
+                break;
+            }
+            case CMD_CONTINUE: {
+                continueLogin();
                 break;
             }
         }
@@ -90,22 +104,26 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             insertItem(new LabelItem("API URL"), apiUrlFieldPosition);
         }
         else if (i == continueButton) {
-            if (apiUrlField != null) {
-                String apiUrl = apiUrlField.getValue();
+            continueLogin();
+        }
+    }
 
-                if (apiUrl.trim().length() == 0) {
-                    new DiscordException(
-                        "Please enter an API URL or use a different connection mode",
-                        "Proxy API URL is required when using a proxy", null)
-                        .show();
+    private void continueLogin() {
+        if (apiUrlField != null) {
+            String apiUrl = apiUrlField.getValue();
 
-                    return;
-                }
+            if (apiUrl.trim().length() == 0) {
+                new DiscordException(
+                    "Please enter an API URL or use a different connection mode",
+                    "Proxy API URL is required when using a proxy", null)
+                    .show();
 
-                App.pendingAccount.apiUrl = apiUrl;
+                return;
             }
 
-            App.pushScreen(new LoginScreen());
+            App.pendingAccount.apiUrl = apiUrl;
         }
+
+        App.pushScreen(new LoginScreen());
     }
 }

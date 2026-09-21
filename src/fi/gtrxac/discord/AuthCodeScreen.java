@@ -10,6 +10,7 @@ import javax.microedition.lcdui.TextField;
 public class AuthCodeScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
+    public static final int CMD_CONTINUE = 2;
 
     private TextFieldItem authCodeField;
     private ButtonItem continueButton;
@@ -25,11 +26,19 @@ public class AuthCodeScreen extends ListScreen implements CommandListener {
         addItem(new LabelItem("Authentication code"));
         addItem(authCodeField = new TextFieldItem("Authentication code", "", 6, TextField.NUMERIC));
 
-        addItem(continueButton = new ButtonItem("Continue"));
+        if (!Util.hideSelectCommand) {
+            addItem(continueButton = new ButtonItem("Continue"));
+        }
 
         setCommandListener(this);
-        addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
+
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
+        else {
+            addCommand(new Command("Continue", Command.OK, CMD_CONTINUE));
+        }
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -40,6 +49,10 @@ public class AuthCodeScreen extends ListScreen implements CommandListener {
             }
             case CMD_BACK: {
                 App.popScreen();
+                break;
+            }
+            case CMD_CONTINUE: {
+                submitAuthCode();
                 break;
             }
         }

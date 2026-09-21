@@ -46,8 +46,11 @@ public class LoginScreen extends ListScreen implements CommandListener {
         addItem(tokenLoginButton = new ButtonItem("Use token"));
 
         setCommandListener(this);
-        addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
+
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
     }
 
     public void commandAction(Command c, Displayable d) {

@@ -2,6 +2,7 @@ package fi.gtrxac.discord;
 
 import java.util.*;
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.bluewap.Util;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -32,10 +33,13 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         addTab("DMs", dmsTab);
 
         setCommandListener(this);
-        addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
         addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
         addCommand(new Command("Log out", Command.SCREEN, CMD_LOG_OUT));
+
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
     }
 
     private void createGuildsTab() {
