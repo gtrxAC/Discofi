@@ -25,15 +25,13 @@ public class Account {
     public String token;
     public String username;
     public int connectionMode;
-    public String apiUrl;
+    public String apiUrl = "";
 
-    private Vector guilds;
-    private Vector dmChannels;
+    // private final Vector guildsUnsorted = new Vector();
+    private final Vector guilds = new Vector();
+    private final Vector dmChannels = new Vector();
 
     public Account() {
-        guilds = new Vector();
-        dmChannels = new Vector();
-        apiUrl = "";
     }
 
     public Account(DataInputStream saveDataStream) throws Exception {
@@ -143,9 +141,11 @@ public class Account {
         if (!refresh && guildsAvailable()) return guilds;
 
         JSONArray guildsJson = fetchGuildsOrDMs("/users/@me/guilds");
+        // guildsUnsorted.setSize(0);
 
         for (int i = 0; i < guildsJson.size(); i++) {
             JSONObject guildJson = guildsJson.getObject(i);
+            // guildsUnsorted.addElement(new Guild(guildJson));
             guilds.addElement(new Guild(guildJson));
         }
 
@@ -155,13 +155,49 @@ public class Account {
     public Vector getDMChannels(boolean refresh) throws DiscordException {
         if (!refresh && dmChannelsAvailable()) return dmChannels;
 
-        JSONArray dmsJson = fetchGuildsOrDMs("/users/@me/channels");
+        JSONArray dmChannelsJson = fetchGuildsOrDMs("/users/@me/channels");
+        Vector dmChannelsUnsorted = new Vector();
 
-        for (int i = 0; i < dmsJson.size(); i++) {
-            JSONObject dmJson = dmsJson.getObject(i);
-            dmChannels.addElement(new DMChannel(dmJson));
+        for (int i = 0; i < dmChannelsJson.size(); i++) {
+            JSONObject dmChannelJson = dmChannelsJson.getObject(i);
+            dmChannelsUnsorted.addElement(new DMChannel(dmChannelJson));
         }
 
+        dmChannels.setSize(0);
+        sortDMChannels(dmChannelsUnsorted);
         return dmChannels;
+    }
+
+    private void sortDMChannels(Vector dmChannelsUnsorted) {
+        // Get the 20 latest DMs (add into another vector sorted by highest to lowest last message ID)
+        int count = Math.min(20, dmChannelsUnsorted.size());
+        
+        for (int i = 0; i < count; i++) {
+            long highestID = 0;
+            int highestIndex = 0;
+
+            for (int u = 0; u < dmChannelsUnsorted.size(); u++) {
+                DMChannel ch = (DMChannel) dmChannelsUnsorted.elementAt(u);
+
+                if (ch.lastMessageID <= highestID) continue;
+
+                // Don't repeat ones that we've already added
+                boolean alreadyHave = false;
+
+                for (int l = 0; l < dmChannels.size(); l++) {
+                    DMChannel compare = (DMChannel) dmChannels.elementAt(l);
+
+                    if (compare.lastMessageID == ch.lastMessageID) {
+                        alreadyHave = true;
+                        break;
+                    }
+                }
+                if (alreadyHave) continue;
+
+                highestID = ch.lastMessageID;
+                highestIndex = u;
+            }
+            dmChannels.addElement(dmChannelsUnsorted.elementAt(highestIndex));
+        }
     }
 }
