@@ -55,9 +55,6 @@ public abstract class Screen implements CommandListener {
     }
 
     public String getTitle() {
-        if (title == null) {
-            return AppBase.instance.getAppProperty("MIDlet-Name");
-        }
         return title;
     }
 

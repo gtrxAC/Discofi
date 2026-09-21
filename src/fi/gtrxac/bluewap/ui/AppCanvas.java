@@ -312,8 +312,17 @@ public class AppCanvas extends Canvas {
         int availableWidth = getWidth() - Fonts.boldHeight/4*2 - Fonts.plain.stringWidth("88:88");
 
         String title = curr.getTitle();
-        currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
-        setTitle(currentTitle);
+
+        // Set title shown in LCDUI canvas (usually hidden when using custom softkeys/title bar)
+        setTitle(title);
+        
+        // Set title shown in custom title bar
+        if (Util.useCustomSoftkeys) {
+            if (title == null) {
+                title = AppBase.instance.getAppProperty("MIDlet-Name");
+            }
+            currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
+        }
     }
 
     public void updateClock() {
