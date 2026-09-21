@@ -34,8 +34,8 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         setCommandListener(this);
         addCommand(new Command("Select", Command.OK, CMD_SELECT));
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
-        addCommand(new Command("Refresh", Command.EXIT, CMD_REFRESH));
-        addCommand(new Command("Log out", Command.BACK, CMD_LOG_OUT));
+        addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
+        addCommand(new Command("Log out", Command.SCREEN, CMD_LOG_OUT));
     }
 
     private void createGuildsTab() {

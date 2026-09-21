@@ -269,12 +269,14 @@ public class AppCanvas extends Canvas {
             remainingCommands.addElement(canvasCommands.elementAt(i));
         }
 
-        // right softkey goes to the command with lowest priority number (and with command type BACK if there are any)
+        // right softkey goes to the command with lowest priority number (and with command type BACK or EXIT if there are any)
         boolean seenBackCommand = false;
 
         for (int i = 0; i < remainingCommands.size(); i++) {
             Command c = (Command) remainingCommands.elementAt(i);
-            boolean isBackCommand = (c.getCommandType() == Command.BACK);
+
+            boolean isBackCommand =
+                (c.getCommandType() == Command.BACK || c.getCommandType() == Command.EXIT);
 
             if (seenBackCommand && !isBackCommand) {
                 continue;
