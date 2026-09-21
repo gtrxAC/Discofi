@@ -59,7 +59,7 @@ public class LoadingItem extends Item {
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         // Draw current animation frame
         int iconHeight = 48*scale;
-        int padding = Fonts.height*3/4;
+        int padding = Fonts.height*3/5;
         int containerHeight = iconHeight + padding + Fonts.height*2;
         int containerBegin = (screen.getHeight() - containerHeight)/2;
 
