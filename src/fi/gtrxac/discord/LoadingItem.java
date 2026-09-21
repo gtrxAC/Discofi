@@ -12,10 +12,11 @@ import tube42.lib.imagelib.*;
  * Item that shows a loading animation.
  * This is meant to be the only item shown on the screen at a time, and it draws on the center of the screen.
  */
-public class LoadingItem extends Item implements Runnable {
+public class LoadingItem extends Item {
     private int curFrame;
     private int animDirection;
-    private int drawCount;
+    private long animDeltaTime;
+    private long lastFrameTime;
 
     private static int scale;
     private static int phoneOffset;
@@ -25,11 +26,8 @@ public class LoadingItem extends Item implements Runnable {
 
     public LoadingItem() {
         super(false);
-        curFrame = 0;
         animDirection = 1;
-
-        // Start loading icon animation
-        new Thread(this).start();
+        lastFrameTime = System.currentTimeMillis();
     }
 
     private static void loadFrames() {
@@ -60,15 +58,17 @@ public class LoadingItem extends Item implements Runnable {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         // Draw current animation frame
-        int halfContainerHeight = 24*scale + Fonts.height*3/4;
-        int halfScreenHeight = screen.getHeight()/2;
+        int iconHeight = 48*scale;
+        int padding = Fonts.height*3/4;
+        int containerHeight = iconHeight + padding + Fonts.height*2;
+        int containerBegin = (screen.getHeight() - containerHeight)/2;
 
         int curPhoneFrame = Math.min(curFrame, 3);
 
         g.drawImage(
             phoneFrames[curPhoneFrame],
             width/2 + phoneOffset,
-            halfScreenHeight - halfContainerHeight,
+            containerBegin,
             Graphics.LEFT | Graphics.TOP);
 
         int curBubbleFrame = curFrame - 4;
@@ -77,14 +77,24 @@ public class LoadingItem extends Item implements Runnable {
             g.drawImage(
                 bubbleFrames[curBubbleFrame],
                 width/2 + bubbleOffset,
-                halfScreenHeight - halfContainerHeight,
+                containerBegin,
                 Graphics.LEFT | Graphics.TOP);
         }
 
-        int y = screen.getHeight()/2;
-        g.setColor(0x000000);
+        g.setColor(0x333333);
         g.setFont(Fonts.plain);
-        g.drawString("Loading...", 0, y, 0);
+        g.drawString(
+            "Loading...",
+            width/2,
+            containerBegin + iconHeight + padding,
+            Graphics.TOP | Graphics.HCENTER);
+        
+        // Issue another repaint to draw the next animation frame.
+        // Ideally we would use a thread to time these correctly and avoid unnecessary repaints,
+        // but our current architecture doesn't really allow for that,
+        // as the thread would have to be stopped when the loading icon is no longer visible
+        advanceAnimation();
+        AppCanvas.instance.repaint();
     }
 
     public void recalc(int width) {
@@ -104,22 +114,25 @@ public class LoadingItem extends Item implements Runnable {
         bubbleOffset = (-3 - 24)*scale;
     }
 
-    // Icon animation thread
-    public void run() {
-        while (true) {
-            long paintTime = System.currentTimeMillis();
-            AppCanvas.instance.repaint();
-            AppCanvas.instance.serviceRepaints();
-            paintTime = System.currentTimeMillis() - paintTime;
+    /**
+     * Advance the animation by the appropriate amount of frames that have passed
+     * since the last screen frame was drawn.
+     */
+    private void advanceAnimation() {
+        long now = System.currentTimeMillis();
+        animDeltaTime += (now - lastFrameTime);
 
-            // Sleep based on the frame number that was just drawn (first frame = 167 ms, last frame = 500 ms)
-            int sleepTime;
+        while (true) {
+            int nextFrameWait;
+
             switch (curFrame) {
-                case 0: sleepTime = 167; break;
-                case 7: sleepTime = 500; break;
-                default: sleepTime = 83; break;
+                case 0: nextFrameWait = 167; break;
+                case 7: nextFrameWait = 500; break;
+                default: nextFrameWait = 83; break;
             }
-            Util.sleep(sleepTime - (int) paintTime);
+
+            if (animDeltaTime < nextFrameWait) break;
+            animDeltaTime -= nextFrameWait;
 
             // Go to next animation frame.
             // If end reached, start going through frames in descending order.
@@ -128,5 +141,7 @@ public class LoadingItem extends Item implements Runnable {
             if (curFrame == 7) animDirection = -1;
             if (curFrame == 0) animDirection = 1;
         }
+
+        lastFrameTime = now;
     }
 }
