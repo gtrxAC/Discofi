@@ -13,8 +13,6 @@ public class DMChannel {
     public String username;
     public boolean isGroup;
     public long lastMessageID;
-    public String iconID;  // for groups, group ID. for users, recipient ID (not DM channel ID)
-    public String iconHash;
 
     public DMChannel(JSONObject data) {
         id = data.getString("id");
@@ -33,6 +31,8 @@ public class DMChannel {
 
     private void populateGroupInfo(JSONObject data) {
         name = data.getString("name", null);
+
+        // No group name -> list the names of up to 3 participants
         if (name == null) {
             JSONArray recipients = data.getArray("recipients");
             StringBuffer nameBuf = new StringBuffer();
@@ -51,9 +51,6 @@ public class DMChannel {
             }
             name = nameBuf.toString();
         }
-
-        iconID = id;
-        iconHash = data.getString("icon", null);
     }
 
     private void populateRecipientInfo(JSONObject data) {
@@ -66,9 +63,6 @@ public class DMChannel {
             } else {
                 username = recipient.getString("username", null);
             }
-
-            iconID = recipient.getString("id");
-            iconHash = recipient.getString("avatar");
         }
         catch (Exception e) {}
     }
@@ -79,11 +73,8 @@ public class DMChannel {
         username = saveDataStream.readUTF();
         isGroup = saveDataStream.readBoolean();
         lastMessageID = saveDataStream.readLong();
-        iconID = Long.toString(saveDataStream.readLong());
-        iconHash = saveDataStream.readUTF();
 
         if ("".equals(username)) username = null;
-        if ("".equals(iconHash)) iconHash = null;
     }
 
     public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
@@ -92,8 +83,6 @@ public class DMChannel {
         saveDataStream.writeUTF((username != null) ? username : "");
         saveDataStream.writeBoolean(isGroup);
         saveDataStream.writeLong(lastMessageID);
-        saveDataStream.writeLong((iconID != null) ? Long.parseLong(iconID) : 0);
-        saveDataStream.writeUTF((iconHash != null) ? iconHash : "");
     }
 
     public String getName() {

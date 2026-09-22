@@ -10,7 +10,6 @@ import java.io.*;
 public class Guild {
     public String id;
     private String name;
-    public String iconHash;
 
     public Guild(JSONObject data) {
         id = data.getString("id");
@@ -24,22 +23,16 @@ public class Guild {
         else {
             name = "(unknown)";
         }
-
-        iconHash = data.getString("icon", null);
     }
 
     public Guild(DataInputStream saveDataStream) throws IOException {
         id = Long.toString(saveDataStream.readLong());
         name = saveDataStream.readUTF();
-        iconHash = saveDataStream.readUTF();
-
-        if ("".equals(iconHash)) iconHash = null;
     }
 
     public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
         saveDataStream.writeLong(Long.parseLong(id));
         saveDataStream.writeUTF(name);
-        saveDataStream.writeUTF((iconHash != null) ? iconHash : "");
     }
 
     public String getName() {
