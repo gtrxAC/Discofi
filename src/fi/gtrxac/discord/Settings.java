@@ -8,9 +8,26 @@ import javax.microedition.lcdui.Font;
 import fi.gtrxac.bluewap.Util;
 
 public class Settings {
+    /**
+     * Global font size preset used by the UI framework.
+     */
     public static int fontSize = Font.SIZE_SMALL;
+    
+    /**
+     * Whether to fetch paired BT device names. On some devices this is instant,
+     * while on some this may freeze the app for e.g. up to 10 seconds per device.
+     * This gets automatically disabled if fetching takes too long.
+     */
     public static boolean getPairedDeviceNames = true;
+
+    /**
+     * MAC address - name mappings of Bluetooth devices
+     */
     public static Hashtable deviceNameCache = new Hashtable();
+
+    /**
+     * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
+     */
     public static String deviceVendorID = DiscordUtil.generateRandomUUID();
     
     private static void readData(DataInputStream dis) throws Exception {
