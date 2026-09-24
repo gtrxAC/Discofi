@@ -93,7 +93,7 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
                 App.popScreen();
 
                 AccountSelectionScreen newScreen = new AccountSelectionScreen();
-                newScreen.setHighlightedItem(getHighlightedIndex() - 1);
+                newScreen.setHighlightedIndex(getHighlightedIndex() - 1);
                 App.replaceScreen(newScreen);
                 break;
             }

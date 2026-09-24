@@ -500,10 +500,10 @@ public class ListScreen extends Screen implements Runnable {
     public void setHighlightedItem(Item item) {
         int index = items.indexOf(item);
         if (index == -1) return;
-        setHighlightedItem(index);
+        setHighlightedIndex(index);
     }
 
-    public void setHighlightedItem(int index) {
+    public void setHighlightedIndex(int index) {
         if (index < 0 || index >= getItemCount()) {
             throw new ArrayIndexOutOfBoundsException();
         }
