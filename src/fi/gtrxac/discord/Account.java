@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import fi.gtrxac.discord.model.*;
 import java.util.Vector;
 import cc.nnproject.json.JSON;
 import cc.nnproject.json.JSONArray;

@@ -1,15 +1,15 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.*;
 
 public class User {
-    String id;
-    String name;
-    // String iconHash;
+    public String id;
+    public String name;
+    // public String iconHash;
 
     // For placeholder icon
-    // int iconColor;
-    // String initials;
+    // public int iconColor;
+    // public String initials;
 
     public User(JSONObject data) {
         id = data.getString("id");

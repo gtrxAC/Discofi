@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.*;
 
