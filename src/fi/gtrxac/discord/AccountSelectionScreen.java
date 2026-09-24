@@ -10,6 +10,10 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
     public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
     public static final int CMD_ADD_ACCOUNT = 2;
+    public static final int CMD_EDIT = 3;
+    public static final int CMD_DELETE = 4;
+    public static final int CMD_DELETE_PROMPT_YES = 5;
+    public static final int CMD_DELETE_PROMPT_NO = 6;
 
     private ButtonItem addAccountButton;
 
@@ -47,6 +51,8 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
 
         setCommandListener(this);
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
+        addCommand(new Command("Edit", Command.ITEM, CMD_EDIT));
+        addCommand(new Command("Delete", Command.ITEM, CMD_DELETE));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
@@ -70,6 +76,31 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
                 addAccount();
                 break;
             }
+            case CMD_EDIT: {
+                break;
+            }
+            case CMD_DELETE: {
+                promptDelete();
+                break;
+            }
+            case CMD_DELETE_PROMPT_YES: {
+                Account acc = getHighlightedAccount();
+                if (acc == null) break;
+
+                Accounts.list.removeElement(acc);
+                Settings.save();
+
+                App.popScreen();
+
+                AccountSelectionScreen newScreen = new AccountSelectionScreen();
+                newScreen.setHighlightedItem(getHighlightedIndex() - 1);
+                App.replaceScreen(newScreen);
+                break;
+            }
+            case CMD_DELETE_PROMPT_NO: {
+                App.popScreen();
+                break;
+            }
         }
     }
 
@@ -88,5 +119,33 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
     private void addAccount() {
         App.pendingAccount = new Account();
         App.pushScreen(new ConnectionModeScreen());
+    }
+
+    private Account getHighlightedAccount() {
+        int accountIndex = getHighlightedIndex() - 1;
+        if (accountIndex < 0 || accountIndex >= Accounts.list.size()) return null;
+
+        return (Account) Accounts.list.elementAt(accountIndex);
+    }
+
+    private void promptDelete() {
+        Account acc = getHighlightedAccount();
+        if (acc == null) return;
+        
+        try {
+            Dialog prompt = new Dialog(
+                "Are you sure you want to delete the account '" +
+                acc.getDisplayTitle() +
+                "' from the list?");
+
+            prompt.addCommand(new Command("Yes", Command.OK, CMD_DELETE_PROMPT_YES));
+            prompt.addCommand(new Command("No", Command.BACK, CMD_DELETE_PROMPT_NO));
+            prompt.setCommandListener(this);
+
+            App.pushScreen(prompt);
+        }
+        catch (DiscordException e) {
+            e.show();
+        }
     }
 }
