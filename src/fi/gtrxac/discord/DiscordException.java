@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
+import javax.microedition.lcdui.Font;
 import java.util.*;
 
 public class DiscordException extends Exception {
@@ -40,23 +41,30 @@ public class DiscordException extends Exception {
 
     public void show() {
         printStackTrace();
-        
-        StringBuffer textBuf = new StringBuffer(friendlyMessage);
-            
+
+        Dialog d = new Dialog();
+
+        Font largerBold = Fonts.get(1, true, false, false);
+        String title = (friendlyMessage != null) ? friendlyMessage : message;
+
+        d.listView.addItem(new StringItem(title, largerBold));
+
         if (tips != null) {
-            textBuf.append("\n\nPlease try the following:");
+            StringBuffer tipsBuf = new StringBuffer("Please try the following:");
 
             for (int i = 0; i < tips.size(); i++) {
                 String tip = (String) tips.elementAt(i);
 
-                textBuf.append("\n- ").append(tip);
+                tipsBuf.append("\n- ").append(tip);
             }
+
+            d.listView.addItem(tipsBuf.toString());
         }
 
-        textBuf.append("\n\nDetails:\n")
-            .append(message);
+        if (friendlyMessage != null) {
+            d.listView.addItem("Details:\n" + message);
+        }
 
-        Dialog d = new Dialog(textBuf.toString());
         App.pushScreen(d);
     }
 

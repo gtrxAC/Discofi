@@ -6,18 +6,23 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.CommandListener;
 import java.util.*;
 
-public class PopupScreen extends Screen {
-    protected ListView listView;
+public class PopupScreen extends Screen implements CommandListener {
+    public final ListView listView;
+
     protected int viewX;
     protected int viewY;
     protected int viewWidth;
     protected int viewHeight;
 
-    public PopupScreen() {
+    public PopupScreen(int margin, int itemPadding) {
         super(0);
         setTitle(AppBase.getCurrentScreen().getTitle());
 
-        listView = new ListView(Fonts.height/6, Fonts.height/6);
+        listView = new ListView(margin, itemPadding);
+    }
+
+    public PopupScreen() {
+        this(Fonts.height/6, Fonts.height/6);
     }
 
     public void draw(Graphics g) {
