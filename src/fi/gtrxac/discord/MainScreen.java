@@ -18,6 +18,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     private Account acc;
     private ListView guildsTab;
     private ListView dmsTab;
+    private ListView inboxTab;
     private boolean dmChannelsLoaded;
 
     public MainScreen() {
@@ -28,9 +29,11 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
         createGuildsTab();
         createDmsTab();
+        createInboxTab();
 
         addTab("Servers", guildsTab);
         addTab("DMs", dmsTab);
+        addTab("Inbox", inboxTab);
 
         setCommandListener(this);
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
@@ -76,6 +79,12 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             dmsTab.addItem(new LoadingItem());
             // DMs fetching is started when the DMs tab is selected
         }
+    }
+
+    private void createInboxTab() {
+        inboxTab = new ListView();
+
+        inboxTab.addItem("TEST");
     }
 
     public void populateGuildsTab(Vector guilds) {
@@ -135,12 +144,12 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
                 }
                 break;
             }
-            case CMD_QUIT_PROMPT_YES: {
-                App.instance.notifyDestroyed();
-                break;
-            }
             case CMD_LOG_OUT: {
                 App.replaceScreen(new AccountSelectionScreen());
+                break;
+            }
+            case CMD_QUIT_PROMPT_YES: {
+                App.instance.notifyDestroyed();
                 break;
             }
             case CMD_QUIT_PROMPT_NO: {
