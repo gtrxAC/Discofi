@@ -83,16 +83,12 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
                 e.show();
             }
         }
-        else {
-            dmsTab.addItem(new LoadingItem());
-            // DMs fetching is started when the DMs tab is selected
-        }
+        // If tab data is unavailable, it is only fetched when the tab is selected
     }
 
     private void createInboxTab() {
         inboxTab = new ListView();
-
-        inboxTab.addItem("TEST");
+        // Tab data is only fetched when the tab is selected
     }
 
     public void populateGuildsTab(Vector guilds) {
