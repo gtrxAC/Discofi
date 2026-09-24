@@ -85,13 +85,14 @@ public class HTTPThread extends Thread {
     }
 
     private void runFetchInbox() throws DiscordException {
-        // try {
-            Util.sleep(5000);
-            mainScreen.populateInboxTab();
-        // }
-        // catch (DiscordException e) {
-        //     mainScreen.showErrorOnTab(MainScreen.TAB_INBOX);
-        //     throw e;
-        // }
+        try {
+            Account acc = Accounts.getActive();
+            Vector inbox = acc.getInbox(true);
+            mainScreen.populateInboxTab(inbox);
+        }
+        catch (DiscordException e) {
+            mainScreen.showErrorOnTab(MainScreen.TAB_INBOX);
+            throw e;
+        }
     }
 }

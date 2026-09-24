@@ -30,6 +30,7 @@ public class Account {
     // private final Vector guildsUnsorted = new Vector();
     private final Vector guilds = new Vector();
     private final Vector dmChannels = new Vector();
+    private final Vector inbox = new Vector();
 
     public Account() {
     }
@@ -117,7 +118,11 @@ public class Account {
         return dmChannels.size() != 0;
     }
 
-    private JSONArray fetchGuildsOrDMs(String route) throws DiscordException {
+    public boolean inboxAvailable() {
+        return inbox.size() != 0;
+    }
+
+    private JSONArray fetchJSONArray(String route) throws DiscordException {
         int responseCode;
         String responseText;
 
@@ -140,7 +145,7 @@ public class Account {
     public Vector getGuilds(boolean refresh) throws DiscordException {
         if (!refresh && guildsAvailable()) return guilds;
 
-        JSONArray guildsJson = fetchGuildsOrDMs("/users/@me/guilds");
+        JSONArray guildsJson = fetchJSONArray("/users/@me/guilds");
         // guildsUnsorted.setSize(0);
 
         for (int i = 0; i < guildsJson.size(); i++) {
@@ -155,7 +160,7 @@ public class Account {
     public Vector getDMChannels(boolean refresh) throws DiscordException {
         if (!refresh && dmChannelsAvailable()) return dmChannels;
 
-        JSONArray dmChannelsJson = fetchGuildsOrDMs("/users/@me/channels");
+        JSONArray dmChannelsJson = fetchJSONArray("/users/@me/channels");
         Vector dmChannelsUnsorted = new Vector();
 
         for (int i = 0; i < dmChannelsJson.size(); i++) {
@@ -199,5 +204,18 @@ public class Account {
             }
             dmChannels.addElement(dmChannelsUnsorted.elementAt(highestIndex));
         }
+    }
+
+    public Vector getInbox(boolean refresh) throws DiscordException {
+        if (!refresh && inboxAvailable()) return inbox;
+
+        JSONArray inboxJson = fetchJSONArray("/users/@me/mentions");
+
+        for (int i = 0; i < inboxJson.size(); i++) {
+            JSONObject mentionJson = inboxJson.getObject(i);
+            inbox.addElement(new Message(mentionJson));
+        }
+
+        return inbox;
     }
 }

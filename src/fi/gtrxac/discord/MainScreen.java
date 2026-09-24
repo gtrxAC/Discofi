@@ -112,10 +112,14 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         dmChannelsLoaded = true;
     }
 
-    public void populateInboxTab() {
+    public void populateInboxTab(Vector inbox) {
         inboxTab.removeAllItems();
 
-        inboxTab.addItem("LOADED");
+        for (int i = 0; i < inbox.size(); i++) {
+            Message m = (Message) inbox.elementAt(i);
+            
+            inboxTab.addItem(new MessageItem(m));
+        }
         inboxLoaded = true;
     }
 
