@@ -6,20 +6,11 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.CommandListener;
 import java.util.*;
 
-public class OptionsScreen extends Screen implements CommandListener, ListViewItemListener {
-    private ListView listView;
-    private int viewX;
-    private int viewY;
-    private int viewWidth;
-    private int viewHeight;
+public class OptionsScreen extends PopupScreen implements CommandListener, ListViewItemListener {
     private Vector commands;
 
     public OptionsScreen(Vector commands) {
-        super(0);
-        setTitle(AppBase.getCurrentScreen().getTitle());
-
-        listView = new ListView(Fonts.height/6, Fonts.height/6);
-        listView.setItemListener(this);
+        super();
 
         this.commands = createSortedCommands(commands);
 
@@ -30,6 +21,8 @@ public class OptionsScreen extends Screen implements CommandListener, ListViewIt
 
         addCommand(new Command("Back", Command.BACK, 0));
         setCommandListener(this);
+
+        listView.setItemListener(this);
     }
 
     // sort commands by increasing priority number into a separate vector
@@ -54,29 +47,6 @@ public class OptionsScreen extends Screen implements CommandListener, ListViewIt
         return result;
     }
 
-    public void draw(Graphics g) {
-        drawPreviousScreenDimmed(g);
-        listView.prepareAndDraw(g);
-    }
-
-    public void recalc() {
-        viewWidth = Math.min(Fonts.height*12, getWidth()*19/20);
-        listView.setPosition(0, 0, viewWidth, 100);
-        listView.fullRecalc();
-
-        Item viewLastItem = (Item) listView.items.lastElement();
-
-        int viewContentHeight = (viewLastItem == null) ? 0 :
-            (viewLastItem.y + viewLastItem.height + listView.itemPadding*2);
-
-        viewHeight = Math.min(getHeight()*9/10, viewContentHeight);
-        viewX = (getWidth() - viewWidth)/2;
-        viewY = getHeight() - viewHeight;
-
-        listView.setPosition(viewX, viewY, viewWidth, viewHeight);
-        listView.fullRecalc();
-    }
-
     public void itemSelected(Item i) {
         AppBase.popScreen();
         CommandListener l = AppBase.getCurrentScreen().getCommandListener();
@@ -92,16 +62,6 @@ public class OptionsScreen extends Screen implements CommandListener, ListViewIt
 
     public void keyEvent(int keyCode, int gameAction) {
         listView.keyEvent(keyCode, gameAction);
-    }
-
-    public void pointerPressed(int x, int y) {
-        if (y < viewY || x < viewX) return;
-        listView.pointerPressed(x, y);
-    }
-
-    public void pointerDragged(int x, int y) {
-        if (y < viewY || x < viewX) return;
-        listView.pointerDragged(x, y);
     }
     
     public void pointerReleased(int x, int y) {
