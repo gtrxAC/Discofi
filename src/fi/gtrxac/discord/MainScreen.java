@@ -6,6 +6,7 @@ import fi.gtrxac.bluewap.Util;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 
 public class MainScreen extends TabbedListScreen implements CommandListener, ListViewItemListener {
     public static final int CMD_SELECT = 0;
@@ -15,11 +16,18 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     public static final int CMD_QUIT_PROMPT_YES = 100;
     public static final int CMD_QUIT_PROMPT_NO = 101;
 
+    public static final int TAB_GUILDS = 0;
+    public static final int TAB_DMS = 1;
+    public static final int TAB_INBOX = 2;
+
     private Account acc;
     private ListView guildsTab;
     private ListView dmsTab;
     private ListView inboxTab;
     private boolean dmChannelsLoaded;
+    private boolean inboxLoaded;
+
+    private final ButtonItem refreshButton = new ButtonItem("Refresh");
 
     public MainScreen() {
         super();
@@ -59,7 +67,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         }
         else {
             guildsTab.addItem(new LoadingItem());
-            fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_GUILDS);
+            fetchTabData(HTTPThread.ACTION_FETCH_GUILDS);
         }
     }
 
@@ -108,23 +116,45 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         dmChannelsLoaded = true;
     }
 
-    private void fetchGuildsOrDMChannels(int action) {
+    public void populateInboxTab() {
+        inboxTab.removeAllItems();
+
+        inboxTab.addItem("LOADED");
+        inboxLoaded = true;
+    }
+
+    public void showErrorOnTab(int tabIndex) {
+        ListView tab = (ListView) tabs.elementAt(tabIndex);
+        tab.removeAllItems();
+
+        int align = Graphics.HCENTER | Graphics.TOP;
+        tab.addItem(new StringItem("Failed to load data", Fonts.bold, align));
+        tab.addItem(new StringItem("Check your connection and login details, then try again.", Fonts.plain, align));
+        tab.addItem(new BlankItem(0));
+        tab.addItem(refreshButton);
+        tab.setHighlightedItem(refreshButton);
+    }
+
+    private void fetchTabData(int action) {
         HTTPThread h = new HTTPThread(action);
         h.mainScreen = this;
         h.start();
-        // HTTPThread calls populateGuilds/DMsTab
+        // HTTPThread calls populate*Tab or showErrorOnTab
+    }
+
+    private boolean currentTabNeedsLoading() {
+        return (currentTabIndex == TAB_DMS && !dmChannelsLoaded) ||
+            (currentTabIndex == TAB_INBOX && !inboxLoaded);
     }
 
     public void currentTabChanged(int currentTabIndex) {
-        if (currentTabIndex == 1 && !dmChannelsLoaded) {
-            fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_DM_CHANNELS);
-        }
+        if (currentTabNeedsLoading()) refreshCurrentTab();
     }
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
             case CMD_SELECT: {
-                // selectItem();
+                getCurrentTab().selectItem();
                 break;
             }
             case CMD_QUIT: {
@@ -132,16 +162,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
                 break;
             }
             case CMD_REFRESH: {
-                if (currentTabIndex == 0) {
-                    guildsTab.removeAllItems();
-                    guildsTab.addItem(new LoadingItem());
-                    fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_GUILDS);
-                }
-                else {
-                    dmsTab.removeAllItems();
-                    dmsTab.addItem(new LoadingItem());
-                    fetchGuildsOrDMChannels(HTTPThread.ACTION_FETCH_DM_CHANNELS);
-                }
+                refreshCurrentTab();
                 break;
             }
             case CMD_LOG_OUT: {
@@ -160,6 +181,9 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     public void itemSelected(Item i) {
+        if (i == refreshButton) {
+            refreshCurrentTab();
+        }
     }
 
     private void promptQuit() {
@@ -168,5 +192,26 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         quitPrompt.addCommand(new Command("Yes", Command.OK, CMD_QUIT_PROMPT_YES));
         quitPrompt.addCommand(new Command("No", Command.BACK, CMD_QUIT_PROMPT_NO));
         App.pushScreen(quitPrompt);
+    }
+
+    private void refreshCurrentTab() {
+        ListView tab = getCurrentTab();
+        tab.removeAllItems();
+        tab.addItem(new LoadingItem());
+
+        switch (currentTabIndex) {
+            case TAB_GUILDS: {
+                fetchTabData(HTTPThread.ACTION_FETCH_GUILDS);
+                break;
+            }
+            case TAB_DMS: {
+                fetchTabData(HTTPThread.ACTION_FETCH_DM_CHANNELS);
+                break;
+            }
+            case TAB_INBOX: {
+                fetchTabData(HTTPThread.ACTION_FETCH_INBOX);
+                break;
+            }
+        }
     }
 }

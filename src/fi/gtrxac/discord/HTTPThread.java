@@ -9,6 +9,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_SUBMIT_TOTP = 1;
     public static final int ACTION_FETCH_GUILDS = 2;
     public static final int ACTION_FETCH_DM_CHANNELS = 3;
+    public static final int ACTION_FETCH_INBOX = 4;
 
     private int action;
 
@@ -28,6 +29,7 @@ public class HTTPThread extends Thread {
                 case ACTION_SUBMIT_TOTP: runSubmitTotp(); break;
                 case ACTION_FETCH_GUILDS: runFetchGuilds(); break;
                 case ACTION_FETCH_DM_CHANNELS: runFetchDMChannels(); break;
+                case ACTION_FETCH_INBOX: runFetchInbox(); break;
             }
         }
         catch (DiscordException e) {
@@ -57,16 +59,39 @@ public class HTTPThread extends Thread {
     }
 
     private void runFetchGuilds() throws DiscordException {
-        Account acc = Accounts.getActive();
-        Vector guilds = acc.getGuilds(true);
-        Settings.save();
-        mainScreen.populateGuildsTab(guilds);
+        try {
+            Account acc = Accounts.getActive();
+            Vector guilds = acc.getGuilds(true);
+            Settings.save();
+            mainScreen.populateGuildsTab(guilds);
+        }
+        catch (DiscordException e) {
+            mainScreen.showErrorOnTab(MainScreen.TAB_GUILDS);
+            throw e;
+        }
     }
 
     private void runFetchDMChannels() throws DiscordException {
-        Account acc = Accounts.getActive();
-        Vector dmChannels = acc.getDMChannels(true);
-        Settings.save();
-        mainScreen.populateDMsTab(dmChannels);
+        try {
+            Account acc = Accounts.getActive();
+            Vector dmChannels = acc.getDMChannels(true);
+            Settings.save();
+            mainScreen.populateDMsTab(dmChannels);
+        }
+        catch (DiscordException e) {
+            mainScreen.showErrorOnTab(MainScreen.TAB_DMS);
+            throw e;
+        }
+    }
+
+    private void runFetchInbox() throws DiscordException {
+        // try {
+            Util.sleep(5000);
+            mainScreen.populateInboxTab();
+        // }
+        // catch (DiscordException e) {
+        //     mainScreen.showErrorOnTab(MainScreen.TAB_INBOX);
+        //     throw e;
+        // }
     }
 }
