@@ -56,6 +56,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     private void createGuildsTab() {
         guildsTab = new ListView();
+        guildsTab.setItemListener(this);
 
         if (acc.guildsAvailable()) {
             try {
@@ -74,6 +75,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     private void createDmsTab() {
         dmsTab = new ListView();
+        dmsTab.setItemListener(this);
 
         if (acc.dmChannelsAvailable()) {
             try {
@@ -89,6 +91,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     private void createInboxTab() {
         inboxTab = new ListView();
+        inboxTab.setItemListener(this);
         // Tab data is only fetched when the tab is selected
     }
 
@@ -184,6 +187,18 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     public void itemSelected(Item i) {
         if (i == refreshButton) {
             refreshCurrentTab();
+        }
+        else if (currentTabIndex == TAB_GUILDS) {
+            try {
+                Vector guilds = acc.getGuilds(false);
+                int selectedIndex = guildsTab.getHighlightedIndex();
+                Guild selected = (Guild) guilds.elementAt(selectedIndex);
+
+                App.pushScreen(new ChannelListScreen(selected));
+            }
+            catch (DiscordException e) {
+                e.show();
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.bluewap.Util;
 import javax.microedition.lcdui.Command;
