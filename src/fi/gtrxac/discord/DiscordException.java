@@ -29,7 +29,7 @@ public class DiscordException extends Exception {
             this.tips.addElement("log in again");
             this.tips.addElement("if you're using token login, make sure the token is written correctly");
             this.tips.addElement("use a different connection method");
-            this.tips.addElement("try with a different account");
+            this.tips.addElement("use a different account");
         }
     }
 
@@ -50,15 +50,11 @@ public class DiscordException extends Exception {
         d.listView.addItem(new StringItem(title, largerBold));
 
         if (tips != null) {
-            StringBuffer tipsBuf = new StringBuffer("Please try the following:");
+            d.listView.addItem("Please try the following:");
 
-            for (int i = 0; i < tips.size(); i++) {
-                String tip = (String) tips.elementAt(i);
-
-                tipsBuf.append("\n- ").append(tip);
-            }
-
-            d.listView.addItem(tipsBuf.toString());
+            String[] tipsArray = new String[tips.size()];
+            tips.copyInto(tipsArray);
+            d.listView.addItem(new StringListItem(tipsArray));
         }
 
         if (friendlyMessage != null) {
