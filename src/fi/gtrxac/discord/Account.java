@@ -23,10 +23,12 @@ public class Account {
     public static final int VERSION_BASE = 1;
     public static final int VERSION_CURRENT = 1;
 
-    public String token;
+    public String token = "";
     public String username;
     public int connectionMode;
     public String apiUrl = "";
+    public String email = "";
+    public String password = "";
 
     // private final Vector guildsUnsorted = new Vector();
     private final Vector guilds = new Vector();
@@ -43,6 +45,8 @@ public class Account {
         username = saveDataStream.readUTF();
         connectionMode = saveDataStream.readUnsignedByte();
         apiUrl = saveDataStream.readUTF();
+        email = saveDataStream.readUTF();
+        password = saveDataStream.readUTF();
 
         if ("".equals(username)) username = null;
 
@@ -65,6 +69,8 @@ public class Account {
         saveDataStream.writeUTF((username != null) ? username : "");
         saveDataStream.writeByte(connectionMode);
         saveDataStream.writeUTF(apiUrl);
+        saveDataStream.writeUTF(email);
+        saveDataStream.writeUTF(password);
 
         saveDataStream.writeInt(guilds.size());
 

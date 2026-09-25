@@ -77,6 +77,11 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
                 break;
             }
             case CMD_EDIT: {
+                Account acc = getHighlightedAccount();
+                if (acc == null) break;
+
+                App.pendingAccount = acc;
+                App.pushScreen(new ConnectionModeScreen());
                 break;
             }
             case CMD_DELETE: {

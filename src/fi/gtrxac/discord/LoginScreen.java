@@ -8,6 +8,9 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.lcdui.Font;
 
+/**
+ * Screen used for entering email/password or token when adding a new account or editing an existing account.
+ */
 public class LoginScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
@@ -15,6 +18,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
     private TextFieldItem emailField;
     private TextFieldItem passwordField;
     private TextFieldItem tokenField;
+    private ButtonItem continueButton;
     private ButtonItem loginButton;
     private ButtonItem tokenLoginButton;
 
@@ -22,24 +26,40 @@ public class LoginScreen extends ListScreen implements CommandListener {
         super();
         setTitle("Log in");
 
+        boolean hasToken = (App.pendingAccount.token.trim().length() != 0);
+
+        if (hasToken) {
+            addItem("To keep using your previous session, select 'Continue'.");
+            addItem(continueButton = new ButtonItem("Continue"));
+            setHighlightedItem(continueButton);
+        }
+
         addItem("To log in with email and password, enable multi-factor authentication (authenticator app) on your account.");
 
         addItem(new LabelItem("Email"));
-        addItem(emailField = new TextFieldItem("Email", "", 100, TextField.EMAILADDR));
+        addItem(emailField = new TextFieldItem("Email", App.pendingAccount.email, 100, TextField.EMAILADDR));
 
         addItem(new LabelItem("Password"));
         addItem(passwordField = new TextFieldItem("Password", "", 100, TextField.PASSWORD));
 
+        if (App.pendingAccount.password.trim().length() != 0) {
+            addItem(new LabelItem("Leave blank to use existing password"));
+        }
+
         addItem(new BlankItem(0));
 
-        addItem(loginButton = new ButtonItem("Log in"));
+        addItem(loginButton = new ButtonItem(hasToken ? "Log in again" : "Log in"));
 
         addItem(new BlankItem(0));
 
         addItem("Token login is unsafe and only intended for advanced users.");
 
+        if (hasToken) {
+            addItem(new StringItem("Don't share your token with others!", Fonts.bold));
+        }
+
         addItem(new LabelItem("Token"));
-        addItem(tokenField = new TextFieldItem("Token", "", 80, 0));
+        addItem(tokenField = new TextFieldItem("Token", App.pendingAccount.token, 80, 0));
 
         addItem(new BlankItem(0));
 
@@ -67,7 +87,10 @@ public class LoginScreen extends ListScreen implements CommandListener {
     }
 
     public void itemSelected(Item i) {
-        if (i == loginButton) {
+        if (i == continueButton) {
+            App.loginCompleted(App.pendingAccount.token);
+        }
+        else if (i == loginButton) {
             passwordLogin();
         }
         else if (i == tokenLoginButton) {
@@ -91,16 +114,22 @@ public class LoginScreen extends ListScreen implements CommandListener {
         String password = passwordField.getValue();
 
         if (password.trim().length() == 0) {
-            new DiscordException(
-                "Please enter a password",
-                "A password is required when using password login. You may also try token login (not recommended).",
-                null)
-                .show();
+            if (App.pendingAccount.password.trim().length() != 0) {
+                password = App.pendingAccount.password;
+            }
+            else {
+                new DiscordException(
+                    "Please enter a password",
+                    "A password is required when using password login. You may also try token login (not recommended).",
+                    null)
+                    .show();
 
-            return;
+                return;
+            }
         }
 
-        // App.pendingAccount.email = email;
+        App.pendingAccount.email = email;
+        App.pendingAccount.password = password;
 
         HTTPThread h = new HTTPThread(HTTPThread.ACTION_PASSWORD_LOGIN);
         h.email = email;

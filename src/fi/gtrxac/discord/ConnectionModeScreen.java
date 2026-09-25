@@ -21,8 +21,6 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     public ConnectionModeScreen() {
         super();
         setTitle("Connection setup");
-        
-        App.pendingAccount.connectionMode = Account.CONNECTION_MODE_DIRECT;
 
         addItem(new StringItem("Select your connection method.", Fonts.get(0, true, false, false)));
 
@@ -44,6 +42,8 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
         addItem("Unsafe - may lead to account restrictions. Hosting your own proxy is recommended when using this option.");
 
         addItem(new BlankItem(0));
+
+        group.setTickedIndex(App.pendingAccount.connectionMode);
 
         apiUrlFieldPosition = items.size();
 
