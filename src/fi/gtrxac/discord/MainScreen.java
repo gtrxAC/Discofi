@@ -28,8 +28,6 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     private boolean dmChannelsLoaded;
     private boolean inboxLoaded;
 
-    private final ButtonItem refreshButton = new ButtonItem("Refresh");
-
     public MainScreen() {
         super();
         setTitle("");
@@ -129,20 +127,11 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     public void showErrorOnTab(int tabIndex) {
         ListView tab = (ListView) tabs.elementAt(tabIndex);
-        tab.removeAllItems();
-
-        int align = Graphics.HCENTER | Graphics.TOP;
-        tab.addItem(new StringItem("Failed to load data", Fonts.bold, align));
-        tab.addItem(new StringItem("Check your connection and login details, then try again.", Fonts.plain, align));
-        tab.addItem(new BlankItem(0));
-        tab.addItem(refreshButton);
-        tab.setHighlightedItem(refreshButton);
+        App.showLoadError(tab);
     }
 
     private void fetchTabData(int action) {
-        HTTPThread h = new HTTPThread(action);
-        h.mainScreen = this;
-        h.start();
+        new HTTPThread(action).start();
         // HTTPThread calls populate*Tab or showErrorOnTab
     }
 
@@ -185,7 +174,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     public void itemSelected(Item i) {
-        if (i == refreshButton) {
+        if (i == App.refreshButton) {
             refreshCurrentTab();
         }
         else if (currentTabIndex == TAB_GUILDS) {

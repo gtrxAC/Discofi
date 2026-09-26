@@ -2,10 +2,7 @@ package fi.gtrxac.discord;
 
 import fi.gtrxac.discord.model.*;
 import java.util.Vector;
-import cc.nnproject.json.JSON;
-import cc.nnproject.json.JSONArray;
-import cc.nnproject.json.JSONException;
-import cc.nnproject.json.JSONObject;
+import cc.nnproject.json.*;
 import fi.gtrxac.bluewap.http.HTTP;
 import java.io.*;
 
@@ -129,7 +126,7 @@ public class Account {
         return inbox.size() != 0;
     }
 
-    private JSONArray fetchJSONArray(String route) throws DiscordException {
+    public JSONArray fetchJSONArray(String route) throws DiscordException {
         int responseCode;
         String responseText;
 

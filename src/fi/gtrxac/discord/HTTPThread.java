@@ -3,6 +3,8 @@ package fi.gtrxac.discord;
 import java.util.*;
 import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.discord.model.*;
+import cc.nnproject.json.*;
 
 public class HTTPThread extends Thread {
     public static final int ACTION_PASSWORD_LOGIN = 0;
@@ -10,16 +12,23 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_GUILDS = 2;
     public static final int ACTION_FETCH_DM_CHANNELS = 3;
     public static final int ACTION_FETCH_INBOX = 4;
+    public static final int ACTION_FETCH_GUILD_CHANNELS = 5;
 
     private int action;
+    private Screen callerScreen;
 
     public String email;
     public String password;
     public String totp;
-    public MainScreen mainScreen;
+    public Guild guild;
 
     public HTTPThread(int action) {
+        this(action, App.getCurrentScreen());
+    }
+
+    public HTTPThread(int action, Screen callerScreen) {
         this.action = action;
+        this.callerScreen = callerScreen;
     }
 
     public void run() {
@@ -30,6 +39,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_GUILDS: runFetchGuilds(); break;
                 case ACTION_FETCH_DM_CHANNELS: runFetchDMChannels(); break;
                 case ACTION_FETCH_INBOX: runFetchInbox(); break;
+                case ACTION_FETCH_GUILD_CHANNELS: runFetchGuildChannels(); break;
             }
         }
         catch (DiscordException e) {
@@ -59,6 +69,8 @@ public class HTTPThread extends Thread {
     }
 
     private void runFetchGuilds() throws DiscordException {
+        MainScreen mainScreen = (MainScreen) callerScreen;
+
         try {
             Account acc = Accounts.getActive();
             Vector guilds = acc.getGuilds(true);
@@ -72,6 +84,8 @@ public class HTTPThread extends Thread {
     }
 
     private void runFetchDMChannels() throws DiscordException {
+        MainScreen mainScreen = (MainScreen) callerScreen;
+
         try {
             Account acc = Accounts.getActive();
             Vector dmChannels = acc.getDMChannels(true);
@@ -85,6 +99,8 @@ public class HTTPThread extends Thread {
     }
 
     private void runFetchInbox() throws DiscordException {
+        MainScreen mainScreen = (MainScreen) callerScreen;
+
         try {
             Account acc = Accounts.getActive();
             Vector inbox = acc.getInbox(true);
@@ -92,6 +108,20 @@ public class HTTPThread extends Thread {
         }
         catch (DiscordException e) {
             mainScreen.showErrorOnTab(MainScreen.TAB_INBOX);
+            throw e;
+        }
+    }
+
+    private void runFetchGuildChannels() throws DiscordException {
+        ChannelListScreen list = (ChannelListScreen) callerScreen;
+
+        try {
+            Account acc = Accounts.getActive();
+            JSONArray channels = acc.fetchJSONArray("/guilds/" + guild.id + "/channels");
+            list.populate(channels);
+        }
+        catch (DiscordException e) {
+            list.showError();
             throw e;
         }
     }
