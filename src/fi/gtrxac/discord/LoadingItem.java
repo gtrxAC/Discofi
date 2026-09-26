@@ -18,11 +18,15 @@ public class LoadingItem extends Item {
     private long animDeltaTime;
     private long lastFrameTime;
 
+    private static Image animationSheet;
     private static int scale;
     private static int phoneOffset;
     private static int bubbleOffset;
-    private static Image[] phoneFrames;
-    private static Image[] bubbleFrames;
+
+    private static final int[] phoneFrameY = { 6, 28, 50, 85 };
+    private static final int[] phoneFrameHeights = { 22, 22, 35, 41 };
+    private static final int[] bubbleFrameY = { 126, 134, 148, 167 };
+    private static final int[] bubbleFrameHeights = { 8, 14, 19, 24 };
 
     public LoadingItem() {
         super(false);
@@ -30,29 +34,16 @@ public class LoadingItem extends Item {
         lastFrameTime = System.currentTimeMillis();
     }
 
-    private static void loadFrames() {
-        Image sheet;
-        phoneFrames = new Image[4];
-        bubbleFrames = new Image[4];
-
+    private static void loadAnimationSheet() {
         try {
-            sheet = Image.createImage("/l.png");
+            animationSheet = Image.createImage("/l.png");
         }
         catch (Exception e) {
             return;
         }
 
-        for (int i = 0; i < 4; i++) {
-            try {
-                phoneFrames[i] = Image.createImage(sheet, i*32, 0, 32, 48, Sprite.TRANS_NONE);
-                bubbleFrames[i] = Image.createImage(sheet, 128 + i*31, 0, 31, 24, Sprite.TRANS_NONE);
-
-                if (scale > 1) {
-                    phoneFrames[i] = ImageUtils.resize(phoneFrames[i], 32*scale, 48*scale, false, false);
-                    bubbleFrames[i] = ImageUtils.resize(bubbleFrames[i], 31*scale, 24*scale, false, false);
-                }
-            }
-            catch (Exception e) {}
+        if (scale > 1) {
+            animationSheet = ImageUtils.resize(animationSheet, 32*scale, 195*scale, false, false);
         }
     }
 
@@ -65,20 +56,34 @@ public class LoadingItem extends Item {
 
         int curPhoneFrame = Math.min(curFrame, 3);
 
-        g.drawImage(
-            phoneFrames[curPhoneFrame],
-            width/2 + phoneOffset,
-            containerBegin,
-            Graphics.LEFT | Graphics.TOP);
+        int phoneX = width/2 + phoneOffset;
+
+        // phone bottom part (common across all frames)
+        g.drawRegion(
+            animationSheet,
+            1, 0, 20, 6,
+            Sprite.TRANS_NONE,
+            phoneX + 1, containerBegin + 42,
+            Graphics.TOP | Graphics.LEFT);
+
+        // phone top part
+        g.drawRegion(
+            animationSheet,
+            0, phoneFrameY[curPhoneFrame], 32, phoneFrameHeights[curPhoneFrame],
+            Sprite.TRANS_NONE,
+            phoneX, containerBegin + 42,
+            Graphics.BOTTOM | Graphics.LEFT);
 
         int curBubbleFrame = curFrame - 4;
 
         if (curBubbleFrame >= 0) {
-            g.drawImage(
-                bubbleFrames[curBubbleFrame],
+            g.drawRegion(
+                animationSheet,
+                0, bubbleFrameY[curBubbleFrame], 31, bubbleFrameHeights[curBubbleFrame],
+                Sprite.TRANS_NONE,
                 width/2 + bubbleOffset,
-                containerBegin,
-                Graphics.LEFT | Graphics.TOP);
+                containerBegin + 24,
+                Graphics.BOTTOM | Graphics.LEFT);
         }
 
         g.setColor(0x333333);
@@ -102,9 +107,9 @@ public class LoadingItem extends Item {
 
         int newScale = width/270 + 1;
 
-        if (phoneFrames == null || scale != newScale) {
+        if (animationSheet == null || scale != newScale) {
             scale = newScale;
-            loadFrames();
+            loadAnimationSheet();
         }
 
         // -24 (half of full frame width to center it on screen)
