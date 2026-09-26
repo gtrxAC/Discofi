@@ -30,7 +30,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     public MainScreen() {
         super();
-        setTitle("");
+        setTitle(null);
 
         acc = Accounts.getActive();
 
@@ -128,10 +128,14 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     public void showErrorOnTab(int tabIndex) {
         ListView tab = (ListView) tabs.elementAt(tabIndex);
         App.showLoadError(tab);
+
+        // Mark tab as loaded so it won't immediately reload when switching to it again
+        if (tabIndex == TAB_DMS) dmChannelsLoaded = true;
+        else if (tabIndex == TAB_INBOX) inboxLoaded = true;
     }
 
     private void fetchTabData(int action) {
-        new HTTPThread(action).start();
+        new HTTPThread(action, this).start();
         // HTTPThread calls populate*Tab or showErrorOnTab
     }
 

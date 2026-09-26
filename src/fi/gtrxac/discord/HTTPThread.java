@@ -16,6 +16,7 @@ public class HTTPThread extends Thread {
 
     private int action;
     private Screen callerScreen;
+    private Account acc;
 
     public String email;
     public String password;
@@ -29,6 +30,7 @@ public class HTTPThread extends Thread {
     public HTTPThread(int action, Screen callerScreen) {
         this.action = action;
         this.callerScreen = callerScreen;
+        this.acc = Accounts.getActive();
     }
 
     public void run() {
@@ -72,7 +74,6 @@ public class HTTPThread extends Thread {
         MainScreen mainScreen = (MainScreen) callerScreen;
 
         try {
-            Account acc = Accounts.getActive();
             Vector guilds = acc.getGuilds(true);
             Settings.save();
             mainScreen.populateGuildsTab(guilds);
@@ -87,7 +88,6 @@ public class HTTPThread extends Thread {
         MainScreen mainScreen = (MainScreen) callerScreen;
 
         try {
-            Account acc = Accounts.getActive();
             Vector dmChannels = acc.getDMChannels(true);
             Settings.save();
             mainScreen.populateDMsTab(dmChannels);
@@ -102,7 +102,6 @@ public class HTTPThread extends Thread {
         MainScreen mainScreen = (MainScreen) callerScreen;
 
         try {
-            Account acc = Accounts.getActive();
             Vector inbox = acc.getInbox(true);
             mainScreen.populateInboxTab(inbox);
         }
@@ -116,7 +115,6 @@ public class HTTPThread extends Thread {
         ChannelListScreen list = (ChannelListScreen) callerScreen;
 
         try {
-            Account acc = Accounts.getActive();
             JSONArray channels = acc.fetchJSONArray("/guilds/" + guild.id + "/channels");
             list.populate(channels);
         }
