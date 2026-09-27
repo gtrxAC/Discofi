@@ -27,7 +27,7 @@ public class Account {
     public String email = "";
     public String password = "";
 
-    // private final Vector guildsUnsorted = new Vector();
+    private final Vector guildsUnsorted = new Vector();
     private final Vector guilds = new Vector();
     private final Vector dmChannels = new Vector();
     private final Vector inbox = new Vector();
@@ -126,7 +126,7 @@ public class Account {
         return inbox.size() != 0;
     }
 
-    public JSONArray fetchJSONArray(String route) throws DiscordException {
+    public AbstractJSON fetchJSON(String route) throws DiscordException {
         int responseCode;
         String responseText;
 
@@ -143,20 +143,57 @@ public class Account {
             throw new DiscordException(getApiErrorMessage(responseCode, responseText));
         }
 
-        return JSON.getArray(responseText);
+        return JSON.get(responseText);
     }
 
+    /**
+     * Get user's guild (server) list. Returns vector of Guilds.
+     * As the list is sorted by user-defined order, this makes two HTTP requests; the second one is for the user's settings.
+     */
     public Vector getGuilds(boolean refresh) throws DiscordException {
         if (!refresh && guildsAvailable()) return guilds;
 
-        JSONArray guildsJson = fetchJSONArray("/users/@me/guilds");
-        // guildsUnsorted.setSize(0);
+        if (refresh || guildsUnsorted.size() == 0) {
+            JSONArray guildsJson = (JSONArray) fetchJSON("/users/@me/guilds");
+            guildsUnsorted.setSize(0);
 
-        for (int i = 0; i < guildsJson.size(); i++) {
-            JSONObject guildJson = guildsJson.getObject(i);
-            // guildsUnsorted.addElement(new Guild(guildJson));
-            guilds.addElement(new Guild(guildJson));
+            for (int i = 0; i < guildsJson.size(); i++) {
+                JSONObject guildJson = guildsJson.getObject(i);
+                guildsUnsorted.addElement(new Guild(guildJson));
+            }
         }
+
+        // fetch user's guild folders which we can use to sort guilds by
+        // user-defined order like in official clients
+        JSONObject userSettings = (JSONObject) fetchJSON("/users/@me/settings");
+        JSONArray guildFolders = userSettings.getArray("guild_folders");
+
+        guilds.setSize(0);
+
+        for (int i = 0; i < guildFolders.size(); i++) {
+            JSONArray guildIds = guildFolders.getObject(i).getArray("guild_ids");
+
+            for (int j = 0; j < guildIds.size(); j++) {
+                String guildId = guildIds.getString(j);
+
+                for (int k = 0; k < guildsUnsorted.size(); k++) {
+                    Guild guild = (Guild) guildsUnsorted.elementAt(k);
+
+                    if (guild.id.equals(guildId)) {
+                        guilds.addElement(guild);
+                        guildsUnsorted.removeElementAt(k);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If the user doesn't have guild folders, some or all of the guilds may have been
+        // missed by the above sort, so add them at the end of the list
+        for (int i = 0; i < guildsUnsorted.size(); i++) {
+            guilds.addElement(guildsUnsorted.elementAt(i));
+        }
+        guildsUnsorted.setSize(0);
 
         return guilds;
     }
@@ -164,7 +201,7 @@ public class Account {
     public Vector getDMChannels(boolean refresh) throws DiscordException {
         if (!refresh && dmChannelsAvailable()) return dmChannels;
 
-        JSONArray dmChannelsJson = fetchJSONArray("/users/@me/channels");
+        JSONArray dmChannelsJson = (JSONArray) fetchJSON("/users/@me/channels");
         Vector dmChannelsUnsorted = new Vector();
 
         for (int i = 0; i < dmChannelsJson.size(); i++) {
@@ -213,7 +250,7 @@ public class Account {
     public Vector getInbox(boolean refresh) throws DiscordException {
         if (!refresh && inboxAvailable()) return inbox;
 
-        JSONArray inboxJson = fetchJSONArray("/users/@me/mentions");
+        JSONArray inboxJson = (JSONArray) fetchJSON("/users/@me/mentions");
 
         for (int i = 0; i < inboxJson.size(); i++) {
             JSONObject mentionJson = inboxJson.getObject(i);

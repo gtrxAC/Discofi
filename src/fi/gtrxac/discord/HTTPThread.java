@@ -115,7 +115,7 @@ public class HTTPThread extends Thread {
         ChannelListScreen list = (ChannelListScreen) callerScreen;
 
         try {
-            JSONArray channels = acc.fetchJSONArray("/guilds/" + guild.id + "/channels");
+            JSONArray channels = (JSONArray) acc.fetchJSON("/guilds/" + guild.id + "/channels");
             list.populate(channels);
         }
         catch (DiscordException e) {
