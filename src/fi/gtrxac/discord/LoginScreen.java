@@ -21,6 +21,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
     private ButtonItem continueButton;
     private ButtonItem loginButton;
     private ButtonItem tokenLoginButton;
+    private ButtonItem tokenJarImportButton;
 
     public LoginScreen() {
         super();
@@ -64,6 +65,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
         addItem(new BlankItem(0));
 
         addItem(tokenLoginButton = new ButtonItem("Use token"));
+        addItem(tokenJarImportButton = new ButtonItem("Import from JAR"));
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
@@ -95,6 +97,21 @@ public class LoginScreen extends ListScreen implements CommandListener {
         }
         else if (i == tokenLoginButton) {
             tokenLogin();
+        }
+        else if (i == tokenJarImportButton) {
+            String jarToken = App.instance.getAppProperty("Token");
+
+            if (jarToken == null) {
+                new DiscordException(
+                    "Token not found",
+                    "To use this option, add your token to the app's JAR manifest.\nOn your PC or smartphone, open the Microcord JAR as a ZIP, edit the META-INF/MANIFEST.MF file, and add a line containing:\n\"Token: (your token)\"",
+                    null)
+                    .show();
+
+                return;
+            }
+            jarToken = jarToken.replace('"', ' ').trim();
+            verifyAndCompleteLogin(jarToken);
         }
     }
 
@@ -149,15 +166,16 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
             return;
         }
+        verifyAndCompleteLogin(token);
+    }
 
+    private void verifyAndCompleteLogin(String token) {
         try {
             DiscordUtil.getUserIDFromToken(token);
+            App.loginCompleted(token);
         }
         catch (DiscordException e) {
             e.show();
-            return;
         }
-
-        App.loginCompleted(token);
     }
 }
