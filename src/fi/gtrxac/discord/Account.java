@@ -148,7 +148,7 @@ public class Account {
 
     /**
      * Get user's guild (server) list. Returns vector of Guilds.
-     * As the list is sorted by user-defined order, this makes two HTTP requests; the second one is for the user's settings.
+     * As the list is sorted by user-defined order, this makes up to two HTTP requests; the second one is for the user's settings.
      */
     public Vector getGuilds(boolean refresh) throws DiscordException {
         if (!refresh && guildsAvailable()) return guilds;

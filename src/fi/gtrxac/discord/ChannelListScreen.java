@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import java.util.*;
 import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
@@ -46,14 +47,18 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
     public void itemSelected(Item i) {
     }
 
-    public void populate(JSONArray channels) {
+    public void populate(Vector categories) {
         removeAllItems();
 
-        for (int i = 0; i < channels.size(); i++) {
-            JSONObject channelJson = channels.getObject(i);
-            Channel channel = new Channel(channelJson);
+        for (int i = 0; i < categories.size(); i++) {
+            ChannelCategory category = (ChannelCategory) categories.elementAt(i);
+            addItem(category.name);
+            
+            for (int j = 0; j < category.children.size(); j++) {
+                Channel channel = (Channel) category.children.elementAt(j);
 
-            addItem(new ListItem(channel.name));
+                addItem(new ListItem(channel.name));
+            }
         }
     }
 
