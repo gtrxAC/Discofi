@@ -43,7 +43,7 @@ public class LoadingItem extends Item {
         }
 
         if (scale > 1) {
-            animationSheet = ImageUtils.resize(animationSheet, 32*scale, 195*scale, false, false);
+            animationSheet = ImageUtils.resize(animationSheet, 32*scale, 191*scale, false, false);
         }
     }
 
@@ -57,21 +57,26 @@ public class LoadingItem extends Item {
         int curPhoneFrame = Math.min(curFrame, 3);
 
         int phoneX = width/2 + phoneOffset;
+        int phoneY = containerBegin + 42*scale;
 
         // phone bottom part (common across all frames)
         g.drawRegion(
             animationSheet,
-            1, 0, 20, 6,
+            1*scale, 0, 20*scale, 6*scale,
             Sprite.TRANS_NONE,
-            phoneX + 1, containerBegin + 42,
+            phoneX + scale,
+            phoneY,
             Graphics.TOP | Graphics.LEFT);
 
         // phone top part
         g.drawRegion(
             animationSheet,
-            0, phoneFrameY[curPhoneFrame], 32, phoneFrameHeights[curPhoneFrame],
+            0,
+            phoneFrameY[curPhoneFrame]*scale,
+            32*scale,
+            phoneFrameHeights[curPhoneFrame]*scale,
             Sprite.TRANS_NONE,
-            phoneX, containerBegin + 42,
+            phoneX, phoneY,
             Graphics.BOTTOM | Graphics.LEFT);
 
         int curBubbleFrame = curFrame - 4;
@@ -79,10 +84,13 @@ public class LoadingItem extends Item {
         if (curBubbleFrame >= 0) {
             g.drawRegion(
                 animationSheet,
-                0, bubbleFrameY[curBubbleFrame], 31, bubbleFrameHeights[curBubbleFrame],
+                0,
+                bubbleFrameY[curBubbleFrame]*scale,
+                31*scale,
+                bubbleFrameHeights[curBubbleFrame]*scale,
                 Sprite.TRANS_NONE,
                 width/2 + bubbleOffset,
-                containerBegin + 24,
+                containerBegin + 24*scale,
                 Graphics.BOTTOM | Graphics.LEFT);
         }
 
