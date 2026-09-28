@@ -13,7 +13,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_BACK = 1;
 
     public ChatScreen(Channel channel) {
-        super();
+        super(Fonts.height/5, Fonts.height/5);
         setTitle(channel.name);
 
         addItem(new LoadingItem());

@@ -6,13 +6,30 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 public class MessageItem extends StringItem {
+    public Message message;
+
+    private static int headerHeight;
+
     public MessageItem(Message m) {
-        super(m.author.name + ": " + m.content);
+        super(m.content);
+        this.message = m;
     }
 
-    // public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
-    // }
+    public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
+        g.setFont(Fonts.bold);
+        g.setColor(0x000000);
+        g.drawString(message.author.name, 0, 0, 0);
 
-    // public void recalc(int width) {
-    // }
+        g.translate(0, headerHeight);
+
+        super.draw(g, screen, width, highlighted);
+
+        g.translate(0, -headerHeight);
+    }
+
+    public void recalc(int width) {
+        super.recalc(width);
+        headerHeight = Fonts.boldHeight + Fonts.boldHeight/5;
+        height += headerHeight;
+    }
 }
