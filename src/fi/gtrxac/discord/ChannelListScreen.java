@@ -45,6 +45,11 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
     }
 
     public void itemSelected(Item i) {
+        if (i instanceof ListItem) {
+            ListItem li = (ListItem) i;
+            Channel channel = (Channel) li.object;
+            App.pushScreen(new ChatScreen(channel));
+        }
     }
 
     public void populate(Vector categories) {
@@ -61,7 +66,7 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
             for (int j = 0; j < category.children.size(); j++) {
                 Channel channel = (Channel) category.children.elementAt(j);
 
-                addItem(new ListItem(channel.name));
+                addItem(new ListItem(channel.name, channel));
             }
         }
     }

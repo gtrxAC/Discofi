@@ -9,6 +9,7 @@ import tube42.lib.imagelib.ImageUtils;
 public class ListItem extends Item {
     public String text;
     private String displayText;
+    public Object object;
 
     private static int imageSize;
     private static Image arrowImage;
@@ -16,6 +17,15 @@ public class ListItem extends Item {
     public ListItem(String text) {
         super(true);
         this.text = text;
+    }
+
+    /**
+     * 'object' can be any application-defined object that this ListItem refers to.
+     * It is simply stored by this class for later retrieval e.g. when the item is selected.
+     */
+    public ListItem(String text, Object object) {
+        this(text);
+        this.object = object;
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {

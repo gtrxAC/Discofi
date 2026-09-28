@@ -99,7 +99,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         for (int i = 0; i < guilds.size(); i++) {
             Guild g = (Guild) guilds.elementAt(i);
             
-            guildsTab.addItem(new ListItem(g.getName()));
+            guildsTab.addItem(new ListItem(g.getName(), g));
         }
     }
 
@@ -182,16 +182,9 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             refreshCurrentTab();
         }
         else if (currentTabIndex == TAB_GUILDS) {
-            try {
-                Vector guilds = acc.getGuilds(false);
-                int selectedIndex = guildsTab.getHighlightedIndex();
-                Guild selected = (Guild) guilds.elementAt(selectedIndex);
-
-                App.pushScreen(new ChannelListScreen(selected));
-            }
-            catch (DiscordException e) {
-                e.show();
-            }
+            ListItem li = (ListItem) i;
+            Guild guild = (Guild) li.object;
+            App.pushScreen(new ChannelListScreen(guild));
         }
     }
 
