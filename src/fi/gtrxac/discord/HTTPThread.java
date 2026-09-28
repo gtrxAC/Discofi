@@ -13,6 +13,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_DM_CHANNELS = 3;
     public static final int ACTION_FETCH_INBOX = 4;
     public static final int ACTION_FETCH_GUILD_CHANNELS = 5;
+    public static final int ACTION_FETCH_MESSAGES = 6;
 
     private int action;
     private Screen callerScreen;
@@ -22,6 +23,7 @@ public class HTTPThread extends Thread {
     public String password;
     public String totp;
     public Guild guild;
+    public Channel channel;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -42,6 +44,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_DM_CHANNELS: runFetchDMChannels(); break;
                 case ACTION_FETCH_INBOX: runFetchInbox(); break;
                 case ACTION_FETCH_GUILD_CHANNELS: runFetchGuildChannels(); break;
+                case ACTION_FETCH_MESSAGES: runFetchMessages(); break;
             }
         }
         catch (DiscordException e) {
@@ -215,6 +218,19 @@ public class HTTPThread extends Thread {
 
             Channel channel = new Channel(channelJson);
             parentCategory.children.addElement(channel);
+        }
+    }
+
+    private void runFetchMessages() throws DiscordException {
+        ChatScreen chatScreen = (ChatScreen) callerScreen;
+
+        try {
+            JSONArray messagesJson = (JSONArray) acc.fetchJSON("/channels/" + channel.id + "/messages?limit=20");
+            chatScreen.populate(messagesJson);
+        }
+        catch (DiscordException e) {
+            chatScreen.showError();
+            throw e;
         }
     }
 }

@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.bluewap.Util;
@@ -24,9 +25,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
         //     addCommand(new Command("Select", Command.OK, CMD_SELECT));
         // }
 
-        // HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_MESSAGES, this);
-        // h.guild = guild;
-        // h.start();
+        HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_MESSAGES, this);
+        h.channel = channel;
+        h.start();
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -43,5 +44,23 @@ public class ChatScreen extends ListScreen implements CommandListener {
     }
 
     public void itemSelected(Item i) {
+    }
+
+    public void populate(JSONArray messages) {
+        removeAllItems();
+
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            JSONObject messageJson = messages.getObject(i);
+            Message message = new Message(messageJson);
+
+            addItem(new MessageItem(message));
+        }
+
+        setHighlightedIndex(items.size() - 1);
+    }
+
+    public void showError() {
+        removeAllItems();
+        App.showLoadError(this);
     }
 }
