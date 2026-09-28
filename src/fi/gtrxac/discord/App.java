@@ -16,7 +16,7 @@ public class App extends AppBase {
 
     public void init() {
         Fonts.loadFonts(Settings.fontSize);
-        pushScreen(new AccountSelectionScreen());
+        pushScreen(new AccountListScreen());
     }
 
     public static void loginCompleted(String token) {
@@ -30,7 +30,7 @@ public class App extends AppBase {
 
         Settings.save();
         pendingAccount = null;
-        replaceAllScreens(new AccountSelectionScreen());
+        replaceAllScreens(new AccountListScreen());
     }
 
     public static void showLoadError(ListScreen target) {

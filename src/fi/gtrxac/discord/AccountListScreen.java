@@ -6,7 +6,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
-public class AccountSelectionScreen extends ListScreen implements CommandListener {
+public class AccountListScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
     public static final int CMD_ADD_ACCOUNT = 2;
@@ -17,7 +17,7 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
 
     private ButtonItem addAccountButton;
 
-    public AccountSelectionScreen() {
+    public AccountListScreen() {
         super();
         setTitle("Select account");
 
@@ -97,7 +97,7 @@ public class AccountSelectionScreen extends ListScreen implements CommandListene
 
                 App.popScreen();
 
-                AccountSelectionScreen newScreen = new AccountSelectionScreen();
+                AccountListScreen newScreen = new AccountListScreen();
                 newScreen.setHighlightedIndex(getHighlightedIndex() - 1);
                 App.replaceScreen(newScreen);
                 break;

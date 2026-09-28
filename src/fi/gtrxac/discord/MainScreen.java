@@ -163,7 +163,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
                 break;
             }
             case CMD_LOG_OUT: {
-                App.replaceScreen(new AccountSelectionScreen());
+                App.replaceScreen(new AccountListScreen());
                 break;
             }
             case CMD_QUIT_PROMPT_YES: {
