@@ -7,15 +7,13 @@ import java.io.*;
  * Created by gtrx on 3.9.2026.
  */
 
-public class DMChannel {
-    public String id;
-    private String name;
+public class DMChannel extends Channel {
     public String username;
     public boolean isGroup;
     public long lastMessageID;
 
     public DMChannel(JSONObject data) {
-        id = data.getString("id");
+        super(data);
         isGroup = data.getInt("type") == 3;
 
         String msgIdStr = data.getString("last_message_id");
@@ -29,9 +27,11 @@ public class DMChannel {
         else populateRecipientInfo(data);
     }
 
-    private void populateGroupInfo(JSONObject data) {
-        name = data.getString("name", null);
+    protected boolean nameHasHashtag() {
+        return false;
+    }
 
+    private void populateGroupInfo(JSONObject data) {
         // No group name -> list the names of up to 3 participants
         if (name == null) {
             JSONArray recipients = data.getArray("recipients");

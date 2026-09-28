@@ -109,7 +109,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         for (int i = 0; i < dmChannels.size(); i++) {
             DMChannel c = (DMChannel) dmChannels.elementAt(i);
             
-            dmsTab.addItem(new ListItem(c.getName()));
+            dmsTab.addItem(new ListItem(c.getName(), c));
         }
         dmChannelsLoaded = true;
     }
@@ -185,6 +185,11 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             ListItem li = (ListItem) i;
             Guild guild = (Guild) li.object;
             App.pushScreen(new ChannelListScreen(guild));
+        }
+        else if (currentTabIndex == TAB_DMS) {
+            ListItem li = (ListItem) i;
+            DMChannel dmChannel = (DMChannel) li.object;
+            App.pushScreen(new ChatScreen(dmChannel));
         }
     }
 
