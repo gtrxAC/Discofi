@@ -16,7 +16,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     private Vector messages;
 
     public ChatScreen(Channel channel) {
-        super(Fonts.height/4, Fonts.height/4);
+        super(0, Fonts.height/4);
         setTitle(channel.name);
 
         addItem(new LoadingItem());

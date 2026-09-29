@@ -11,6 +11,7 @@ public class MessageItem extends Item {
     private String[] textLines;
     private String displayedAuthor;
 
+    private static int leftMargin;
     private static int avatarSize;
     private static int contentX;
     private static int headerHeight;
@@ -26,9 +27,9 @@ public class MessageItem extends Item {
         if (highlighted) {
             g.setColor(0xAADDFF);
             g.fillRect(
-                -pad,
+                0,
                 -pad/2,
-                width + pad,
+                width,
                 height + pad/2*2);
         }
 
@@ -36,7 +37,7 @@ public class MessageItem extends Item {
 
         if (message.showAuthor) {
             g.setColor(0x666666);
-            g.fillArc(0, pad/2, avatarSize, avatarSize, 0, 360);
+            g.fillArc(leftMargin, pad/2, avatarSize, avatarSize, 0, 360);
 
             g.setFont(Fonts.bold);
             g.setColor(0x000000);
@@ -55,8 +56,10 @@ public class MessageItem extends Item {
     }
 
     public void recalc(int width) {
+        leftMargin = Fonts.height/4;
         avatarSize = Fonts.height*5/4;
-        contentX = avatarSize + Fonts.height/3;
+        int avatarRightMargin = Fonts.height/3;
+        contentX = avatarSize + leftMargin + avatarRightMargin;
         int contentWidth = width - contentX;
 
         textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);

@@ -88,7 +88,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     private void createInboxTab() {
-        inboxTab = new ListView(Fonts.height/4, Fonts.height/4);
+        inboxTab = new ListView(0, Fonts.height/4);
         inboxTab.setItemListener(this);
         // Tab data is only fetched when the tab is selected
     }
