@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Graphics;
 public class MessageItem extends Item {
     public Message message;
     private String[] textLines;
+    private String displayedAuthor;
 
     private static int avatarSize;
     private static int contentX;
@@ -31,31 +32,41 @@ public class MessageItem extends Item {
                 height + pad/2*2);
         }
 
-        g.setColor(0x666666);
-        g.fillArc(0, pad/2, avatarSize, avatarSize, 0, 360);
+        int textY = 0;
 
-        g.setFont(Fonts.bold);
-        g.setColor(0x000000);
-        g.drawString(message.author.name, contentX, 0, 0);
+        if (message.showAuthor) {
+            g.setColor(0x666666);
+            g.fillArc(0, pad/2, avatarSize, avatarSize, 0, 360);
+
+            g.setFont(Fonts.bold);
+            g.setColor(0x000000);
+            g.drawString(displayedAuthor, contentX, 0, 0);
+
+            textY = headerHeight;
+        }
 
         g.setFont(Fonts.plain);
         g.setColor(highlighted ? 0x000000 : 0x111111);
-        int y = headerHeight;
 
         for (int i = 0; i < textLines.length; i++) {
-            g.drawString(textLines[i], contentX, y, 0);
-            y += Fonts.height;
+            g.drawString(textLines[i], contentX, textY, 0);
+            textY += Fonts.height;
         }
     }
 
     public void recalc(int width) {
-        avatarSize = Fonts.height*4/3;
+        avatarSize = Fonts.height*5/4;
         contentX = avatarSize + Fonts.height/3;
         int contentWidth = width - contentX;
 
         textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);
-        headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
+        height = Fonts.height*textLines.length;
 
-        height = Fonts.height*textLines.length + headerHeight;
+        if (message.showAuthor) {
+            headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
+            height += headerHeight;
+        }
+
+        displayedAuthor = Util.stringToWidth(message.author.name, Fonts.bold, contentWidth);
     }
 }

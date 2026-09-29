@@ -4,6 +4,7 @@ import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.bluewap.Util;
+import java.util.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -11,6 +12,8 @@ import javax.microedition.lcdui.Displayable;
 public class ChatScreen extends ListScreen implements CommandListener {
     // public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
+
+    private Vector messages;
 
     public ChatScreen(Channel channel) {
         super(Fonts.height/4, Fonts.height/4);
@@ -46,19 +49,45 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public void itemSelected(Item i) {
     }
 
-    public void populate(JSONArray messages) {
+    public void populate(JSONArray messagesJson) {
         removeAllItems();
 
-        for (int i = messages.size() - 1; i >= 0; i--) {
-            JSONObject messageJson = messages.getObject(i);
+        messages = new Vector(messagesJson.size());
+
+        for (int i = messagesJson.size() - 1; i >= 0; i--) {
+            JSONObject messageJson = messagesJson.getObject(i);
             Message message = new Message(messageJson);
 
+            messages.addElement(message);
             addItem(new MessageItem(message));
         }
+
+        calculateMessageGrouping();
 
         BlankItem blank = new BlankItem(-itemPadding);
         addItem(blank);
         setHighlightedItem(blank);
+    }
+
+    public void calculateMessageGrouping() {
+        if (messages.size() == 0) return;
+
+        Message first = (Message) messages.elementAt(0);
+        Message above = first;
+        String clusterStartID = first.id;
+        first.showAuthor = true;
+
+        if (messages.size() == 1) return;
+
+        for (int i = 1; i < messages.size(); i++) {
+            Message msg = (Message) messages.elementAt(i);
+
+            // Recalculate "should show author" value for message
+            msg.showAuthor = msg.shouldShowAuthor(above, clusterStartID);
+
+            if (msg.showAuthor) clusterStartID = msg.id;
+            above = msg;
+        }
     }
 
     public void showError() {
