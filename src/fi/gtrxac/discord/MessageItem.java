@@ -10,6 +10,8 @@ public class MessageItem extends Item {
     public Message message;
     private String[] textLines;
 
+    private static int avatarSize;
+    private static int contentX;
     private static int headerHeight;
 
     public MessageItem(Message m) {
@@ -18,33 +20,40 @@ public class MessageItem extends Item {
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
-        if (highlighted) {
-            g.setColor(0xDDDDDD);
+        int pad = screen.itemPadding;
 
-            int pad = screen.itemPadding;
+        if (highlighted) {
+            g.setColor(0xAADDFF);
             g.fillRect(
                 -pad,
                 -pad/2,
-                width + pad*2,
+                width + pad,
                 height + pad/2*2);
         }
 
+        g.setColor(0x666666);
+        g.fillArc(0, pad/2, avatarSize, avatarSize, 0, 360);
+
         g.setFont(Fonts.bold);
         g.setColor(0x000000);
-        g.drawString(message.author.name, 0, 0, 0);
+        g.drawString(message.author.name, contentX, 0, 0);
 
         g.setFont(Fonts.plain);
         g.setColor(highlighted ? 0x000000 : 0x111111);
         int y = headerHeight;
 
         for (int i = 0; i < textLines.length; i++) {
-            g.drawString(textLines[i], 0, y, 0);
+            g.drawString(textLines[i], contentX, y, 0);
             y += Fonts.height;
         }
     }
 
     public void recalc(int width) {
-        textLines = Util.wordWrap(message.content, width, Fonts.plain);
+        avatarSize = Fonts.height*4/3;
+        contentX = avatarSize + Fonts.height/3;
+        int contentWidth = width - contentX;
+
+        textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);
         headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
 
         height = Fonts.height*textLines.length + headerHeight;
