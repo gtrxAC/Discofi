@@ -121,9 +121,4 @@ public class ChatScreen extends ListScreen implements CommandListener {
             above = msg;
         }
     }
-
-    public void showError() {
-        removeAllItems();
-        App.showLoadError(this);
-    }
 }

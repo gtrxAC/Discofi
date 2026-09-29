@@ -232,7 +232,7 @@ public class HTTPThread extends Thread {
             chatScreen.populate(messagesJson);
         }
         catch (DiscordException e) {
-            chatScreen.showError();
+            App.popScreen();
             throw e;
         }
     }
