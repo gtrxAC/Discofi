@@ -10,23 +10,39 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
 public class ChatScreen extends ListScreen implements CommandListener {
-    // public static final int CMD_SELECT = 0;
+    public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
 
+    private Channel channel;
     private Vector messages;
+    private int page;
+    public String fetchBefore;
+    public String fetchAfter;
+
+    private static ButtonItem olderMessagesButton = new ButtonItem("Older messages");
+    private static ButtonItem newerMessagesButton = new ButtonItem("Newer messages");
 
     public ChatScreen(Channel channel) {
+        this(channel, 0, null, null);
+    }
+
+    public ChatScreen(Channel channel, int page, String fetchBefore, String fetchAfter) {
         super(0, Fonts.height/4);
         setTitle(channel.name);
+
+        this.channel = channel;
+        this.page = page;
+        this.fetchBefore = fetchBefore;
+        this.fetchAfter = fetchAfter;
 
         addItem(new LoadingItem());
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
 
-        // if (!Util.hideSelectCommand) {
-        //     addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        // }
+        if (!Util.hideSelectCommand) {
+            addCommand(new Command("Select", Command.OK, CMD_SELECT));
+        }
 
         HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_MESSAGES, this);
         h.channel = channel;
@@ -35,10 +51,10 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            // case CMD_SELECT: {
-            //     selectItem();
-            //     break;
-            // }
+            case CMD_SELECT: {
+                selectItem();
+                break;
+            }
             case CMD_BACK: {
                 App.popScreen();
                 break;
@@ -47,10 +63,22 @@ public class ChatScreen extends ListScreen implements CommandListener {
     }
 
     public void itemSelected(Item i) {
+        if (i == olderMessagesButton) {
+            Message first = (Message) messages.elementAt(0);
+            App.replaceScreen(new ChatScreen(channel, page + 1, first.id, null));
+        }
+        else if (i == newerMessagesButton) {
+            Message last = (Message) messages.lastElement();
+            App.replaceScreen(new ChatScreen(channel, page - 1, null, last.id));
+        }
     }
 
     public void populate(JSONArray messagesJson) {
         removeAllItems();
+
+        if (messagesJson.size() >= 20) {
+            addItem(olderMessagesButton);
+        }
 
         messages = new Vector(messagesJson.size());
 
@@ -60,6 +88,10 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
             messages.addElement(message);
             addItem(new MessageItem(message));
+        }
+
+        if (page > 0) {
+            addItem(newerMessagesButton);
         }
 
         calculateMessageGrouping();

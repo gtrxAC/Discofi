@@ -224,13 +224,39 @@ public class HTTPThread extends Thread {
     private void runFetchMessages() throws DiscordException {
         ChatScreen chatScreen = (ChatScreen) callerScreen;
 
+        String url = createFetchMessagesUrl(
+            channel.id, chatScreen.fetchBefore, chatScreen.fetchAfter);
+
         try {
-            JSONArray messagesJson = (JSONArray) acc.fetchJSON("/channels/" + channel.id + "/messages?limit=20");
+            JSONArray messagesJson = (JSONArray) acc.fetchJSON(url);
             chatScreen.populate(messagesJson);
         }
         catch (DiscordException e) {
             chatScreen.showError();
             throw e;
         }
+    }
+
+    private String createFetchMessagesUrl(String channelID, String before, String after) {
+        StringBuffer url = new StringBuffer()
+            .append("/channels/")
+            .append(channel.id)
+            .append("/messages");
+
+        boolean hasParameter = false;
+
+        if (before != null) {
+            url.append("?before=").append(before);
+            hasParameter = true;
+        }
+        else if (after != null) {
+            url.append("?after=").append(after);
+            hasParameter = true;
+        }
+
+        url.append(hasParameter ? '&' : '?')
+            .append("limit=20");
+
+        return url.toString();
     }
 }
