@@ -119,6 +119,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
         for (int i = 0; i < inbox.size(); i++) {
             Message m = (Message) inbox.elementAt(i);
+            m.showAuthor = true;
             
             inboxTab.addItem(new MessageItem(m));
         }
