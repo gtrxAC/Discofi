@@ -19,8 +19,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public String fetchBefore;
     public String fetchAfter;
 
-    private static ButtonItem olderMessagesButton = new ButtonItem("Older messages");
-    private static ButtonItem newerMessagesButton = new ButtonItem("Newer messages");
+    private static SmallButtonItem olderMessagesButton = new SmallButtonItem("Older messages");
+    private static SmallButtonItem newerMessagesButton = new SmallButtonItem("Newer messages");
 
     public ChatScreen(Channel channel) {
         this(channel, 0, null, null);

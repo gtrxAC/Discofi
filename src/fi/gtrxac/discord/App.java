@@ -12,7 +12,7 @@ import java.util.*;
 public class App extends AppBase {
     public static Account pendingAccount;
 
-    public static final ButtonItem refreshButton = new ButtonItem("Refresh");
+    public static final SmallButtonItem refreshButton = new SmallButtonItem("Refresh");
 
     public void init() {
         Fonts.loadFonts(Settings.fontSize);
