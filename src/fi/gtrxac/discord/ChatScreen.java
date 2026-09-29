@@ -78,8 +78,31 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
         if (messagesJson.size() >= 20) {
             addItem(olderMessagesButton);
+
+            if (fetchAfter != null) {
+                setHighlightedItem(olderMessagesButton);
+            }
         }
 
+        addMessageItems(messagesJson);
+        calculateMessageGrouping();
+
+        if (page > 0) {
+            addItem(newerMessagesButton);
+
+            if (fetchBefore != null) {
+                setHighlightedItem(newerMessagesButton);
+            }
+        }
+
+        if (fetchBefore == null && fetchAfter == null) {
+            BlankItem blank = new BlankItem(-itemPadding);
+            addItem(blank);
+            setHighlightedItem(blank);
+        }
+    }
+
+    private void addMessageItems(JSONArray messagesJson) {
         messages = new Vector(messagesJson.size());
 
         for (int i = messagesJson.size() - 1; i >= 0; i--) {
@@ -89,19 +112,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
             messages.addElement(message);
             addItem(new MessageItem(message));
         }
-
-        if (page > 0) {
-            addItem(newerMessagesButton);
-        }
-
-        calculateMessageGrouping();
-
-        BlankItem blank = new BlankItem(-itemPadding);
-        addItem(blank);
-        setHighlightedItem(blank);
     }
 
-    public void calculateMessageGrouping() {
+    private void calculateMessageGrouping() {
         if (messages.size() == 0) return;
 
         Message first = (Message) messages.elementAt(0);
