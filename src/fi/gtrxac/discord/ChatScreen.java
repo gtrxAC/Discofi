@@ -74,35 +74,34 @@ public class ChatScreen extends ListScreen implements CommandListener {
     }
 
     public void populate(JSONArray messagesJson) {
-        removeAllItems();
+        Vector newItems = new Vector();
 
         if (messagesJson.size() >= 20) {
-            addItem(olderMessagesButton);
-
-            if (fetchAfter != null) {
-                setHighlightedItem(olderMessagesButton);
-            }
+            newItems.addElement(olderMessagesButton);
         }
 
-        addMessageItems(messagesJson);
+        addMessageItems(messagesJson, newItems);
         calculateMessageGrouping();
 
         if (page > 0) {
-            addItem(newerMessagesButton);
-
-            if (fetchBefore != null) {
-                setHighlightedItem(newerMessagesButton);
-            }
+            newItems.addElement(newerMessagesButton);
+        }
+        else {
+            newItems.addElement(new BlankItem(-itemPadding));
         }
 
-        if (fetchBefore == null && fetchAfter == null) {
-            BlankItem blank = new BlankItem(-itemPadding);
-            addItem(blank);
-            setHighlightedItem(blank);
+        removeAllItems();
+        addItems(newItems);
+
+        if (fetchAfter != null) {
+            setHighlightedItem(olderMessagesButton);
+        }
+        else {
+            setHighlightedItem((Item) items.lastElement());
         }
     }
 
-    private void addMessageItems(JSONArray messagesJson) {
+    private void addMessageItems(JSONArray messagesJson, Vector newItemsOutput) {
         messages = new Vector(messagesJson.size());
 
         for (int i = messagesJson.size() - 1; i >= 0; i--) {
@@ -110,7 +109,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
             Message message = new Message(messageJson);
 
             messages.addElement(message);
-            addItem(new MessageItem(message));
+            newItemsOutput.addElement(new MessageItem(message));
         }
     }
 

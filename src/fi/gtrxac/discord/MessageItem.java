@@ -56,7 +56,7 @@ public class MessageItem extends Item {
     }
 
     public void recalc(int width) {
-        leftMargin = Fonts.height/4;
+        leftMargin = Fonts.height/3;
         avatarSize = Fonts.height*5/4;
         int avatarRightMargin = Fonts.height/3;
         contentX = avatarSize + leftMargin + avatarRightMargin;

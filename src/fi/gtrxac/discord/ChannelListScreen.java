@@ -50,6 +50,9 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
             Channel channel = (Channel) li.object;
             App.pushScreen(new ChatScreen(channel));
         }
+        // else if (i == App.refreshButton) {
+
+        // }
     }
 
     public void populate(Vector categories) {
