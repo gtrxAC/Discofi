@@ -113,7 +113,8 @@ public class LoadingItem extends Item {
     public void recalc(int width) {
         height = 0;
 
-        int newScale = width/270 + 1;
+        int screenHeight = AppCanvas.instance.getHeight();
+        int newScale = Math.min(width/270, screenHeight/270) + 1;
 
         if (animationSheet == null || scale != newScale) {
             scale = newScale;
