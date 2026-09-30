@@ -21,7 +21,7 @@ public class Dialog extends PopupScreen implements CommandListener {
     }
 
     public Dialog(Screen nextScreen) {
-        super(Fonts.height/2, Fonts.height/2);
+        super(Fonts.height/2, Fonts.height/2, Fonts.height*16);
         super.setCommandListener(this);
 
         lastScreen = AppBase.getCurrentScreen();

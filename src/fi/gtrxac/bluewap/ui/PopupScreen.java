@@ -9,20 +9,23 @@ import java.util.*;
 public class PopupScreen extends Screen implements CommandListener {
     public final ListView listView;
 
+    private int maxWidth;
     protected int viewX;
     protected int viewY;
     protected int viewWidth;
     protected int viewHeight;
 
-    public PopupScreen(int margin, int itemPadding) {
+    public PopupScreen(int margin, int itemPadding, int maxWidth) {
         super(0);
         setTitle(AppBase.getCurrentScreen().getTitle());
+
+        this.maxWidth = maxWidth;
 
         listView = new ListView(margin, itemPadding);
     }
 
     public PopupScreen() {
-        this(Fonts.height/6, Fonts.height/6);
+        this(Fonts.height/6, Fonts.height/6, Fonts.height*12);
     }
 
     public void draw(Graphics g) {
@@ -31,7 +34,7 @@ public class PopupScreen extends Screen implements CommandListener {
     }
 
     public void recalc() {
-        viewWidth = Math.min(Fonts.height*12, getWidth()*19/20);
+        viewWidth = Math.min(maxWidth, getWidth()*19/20);
         listView.setPosition(0, 0, viewWidth, 100);
         listView.fullRecalc();
 
