@@ -1,6 +1,31 @@
 # Microcord
 Microcord is a new Discord client for Java devices. Currently only J2ME is supported, but the plan is to add support for other Java platforms like Android and desktop.
 
+## Setup
+The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-template/).
+
+## Status
+### Working
+* Main menu with servers, DMs, and inbox
+* Channel list
+* Chat screen with pagination
+* Token login
+
+### Planned for first release
+* Sending messages
+* Sending replies
+* Message editing/deleting
+* Message timestamps
+* Viewing replies or attachments
+* Password login
+* Token file import
+* HTTP connection over BlueWAP
+
+### Not implemented
+* Emojis, reactions
+* Gateway
+* etc.
+
 ## Officially supported devices
 Any device meeting the [system requirements](#system-requirements) should be able to run the app, but technical support will mainly be provided for officially supported devices, and the app will be developed mainly with these devices in mind.
 * Nokia devices running Series 40 3rd Edition FP1 or later
