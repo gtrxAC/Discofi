@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.tinytls;
 
 import java.io.IOException;
 import java.io.InputStream;

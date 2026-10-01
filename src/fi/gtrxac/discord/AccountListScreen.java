@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import fi.gtrxac.tinytls.*;
 import fi.gtrxac.bluewap.Util;
 import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Command;

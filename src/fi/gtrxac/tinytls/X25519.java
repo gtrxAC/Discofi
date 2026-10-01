@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.tinytls;
 
 /**
  * Small X25519 implementation intended for CLDC 1.0.

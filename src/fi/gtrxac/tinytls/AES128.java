@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.tinytls;
 
 public final class AES128 {
 
