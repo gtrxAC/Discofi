@@ -111,7 +111,8 @@ public class AccountListScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_TEST: {
-                TinyTLS tls = new TinyTLS();
+                StringBuffer log = new StringBuffer();
+                TinyTLS tls = new TinyTLS(log);
 
                 try {
                     tls.connect("discord.com", 8443);
@@ -122,7 +123,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
                     tls.close();
                 }
 
-                App.pushScreen(new Dialog(tls.debugtext));
+                App.pushScreen(new Dialog(log.toString()));
                 break;
             }
             case CMD_TEST_25519: {
@@ -134,17 +135,41 @@ public class AccountListScreen extends ListScreen implements CommandListener {
 
     private static String testSha() {
         StringBuffer log = new StringBuffer();
-        
-        SHA256 sha = new SHA256();
 
-        byte[] abc = TLSUtil.ascii("abc");
-        byte[] hash = new byte[32];
+        byte[] key =
+            TLSUtil.ascii("key");
 
-        sha.update(abc, 0, abc.length);
-        sha.digest(hash, 0);
+        byte[] message =
+            TLSUtil.ascii(
+                "The quick brown fox jumps over the lazy dog"
+            );
 
-        TLSUtil.logHex(log, "SHA256 abc", hash, 0, 32);
+        byte[] result =
+            new byte[32];
 
+        TLSCrypto.hmacSha256(
+            key,
+            0,
+            key.length,
+            message,
+            0,
+            message.length,
+            message,
+            0,
+            0,
+            result,
+            0
+        );
+
+        TLSUtil.logHex(
+            log,
+            "HMAC test",
+            result,
+            0,
+            32
+        );
+
+        System.out.println(log.toString());
         return log.toString();
     }
 
