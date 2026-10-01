@@ -14,6 +14,8 @@ public class AccountListScreen extends ListScreen implements CommandListener {
     public static final int CMD_DELETE = 4;
     public static final int CMD_DELETE_PROMPT_YES = 5;
     public static final int CMD_DELETE_PROMPT_NO = 6;
+    public static final int CMD_TEST = 7;
+    public static final int CMD_TEST_25519 = 8;
 
     private ButtonItem addAccountButton;
 
@@ -53,6 +55,8 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
         addCommand(new Command("Edit", Command.ITEM, CMD_EDIT));
         addCommand(new Command("Delete", Command.ITEM, CMD_DELETE));
+        addCommand(new Command("TEST", Command.ITEM, CMD_TEST));
+        addCommand(new Command("TEST SHA", Command.ITEM, CMD_TEST_25519));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
@@ -106,7 +110,42 @@ public class AccountListScreen extends ListScreen implements CommandListener {
                 App.popScreen();
                 break;
             }
+            case CMD_TEST: {
+                TinyTLS tls = new TinyTLS();
+
+                try {
+                    tls.connect("discord.com", 8443);
+                } catch (Exception e) {
+                    System.out.println("TLS FAILED:");
+                    e.printStackTrace();
+                } finally {
+                    tls.close();
+                }
+
+                App.pushScreen(new Dialog(tls.debugtext));
+                break;
+            }
+            case CMD_TEST_25519: {
+                App.pushScreen(new Dialog(testSha()));
+                break;
+            }
         }
+    }
+
+    private static String testSha() {
+        StringBuffer log = new StringBuffer();
+        
+        SHA256 sha = new SHA256();
+
+        byte[] abc = TLSUtil.ascii("abc");
+        byte[] hash = new byte[32];
+
+        sha.update(abc, 0, abc.length);
+        sha.digest(hash, 0);
+
+        TLSUtil.logHex(log, "SHA256 abc", hash, 0, 32);
+
+        return log.toString();
     }
 
     public void itemSelected(Item i) {
