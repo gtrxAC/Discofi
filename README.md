@@ -27,12 +27,13 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * etc.
 
 ## Officially supported devices
-Any device meeting the [system requirements](#system-requirements) should be able to run the app, but technical support will mainly be provided for officially supported devices, and the app will be developed mainly with these devices in mind.
+Any device meeting the [system requirements](#system-requirements) should be able to run the app, but technical support will mainly be provided for these officially supported devices, and the app will be developed mainly with them in mind.
 * Nokia devices running Series 40 3rd Edition FP1 or later
   * Series 40 Lite devices are not supported
 * Symbian devices that support the [nnproject TLS patch](https://nnproject.cc/tls/)
   * Note that as of writing this, Symbian 8.0 (e.g. Nokia 6630/6680) is not supported.
 * Sony Ericsson devices with DB3350 chipset (Aino, Cedar, Elm, Hazel, Xperia Pureness, Yari, Zylo)
+  * Other SE devices may be supported later
 
 ## System requirements
 | Specification | Minimum | Recommended |
@@ -41,5 +42,5 @@ Any device meeting the [system requirements](#system-requirements) should be abl
 | **Extra APIs** | none | JSR-75 FileConnection<br>JSR-82 Bluetooth API
 | **JAR size limit** | 100 kB (may increase) | 1 MB
 | **Heap size (RAM)** | untested | 2 MB
-| **Display** | any color screen | 128 × 160 or higher
+| **Display** | any color/grayscale screen | 128 × 160 or higher
 | **Others** | none | TLS 1.2 support
