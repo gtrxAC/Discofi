@@ -135,43 +135,70 @@ public class AccountListScreen extends ListScreen implements CommandListener {
 
     private static String testSha() {
         StringBuffer log = new StringBuffer();
+        
+        byte[] key = new byte[16];
+        byte[] nonce = new byte[12];
+        byte[] empty = new byte[0];
+        byte[] tag = new byte[16];
 
-        byte[] key =
-            TLSUtil.ascii("key");
+        GCM gcm = new GCM();
 
-        byte[] message =
-            TLSUtil.ascii(
-                "The quick brown fox jumps over the lazy dog"
-            );
+        gcm.setKey(key, 0);
 
-        byte[] result =
-            new byte[32];
-
-        TLSCrypto.hmacSha256(
-            key,
-            0,
-            key.length,
-            message,
-            0,
-            message.length,
-            message,
-            0,
-            0,
-            result,
-            0
+        gcm.encrypt(
+            nonce, 0,
+            empty, 0, 0,
+            empty, 0, 0,
+            tag, 0
         );
 
         TLSUtil.logHex(
             log,
-            "HMAC test",
-            result,
+            "GCM tag",
+            tag,
             0,
-            32
+            16
         );
 
         System.out.println(log.toString());
         return log.toString();
     }
+
+    private static byte[] hex(String s) {
+
+        int len = s.length() / 2;
+        byte[] out = new byte[len];
+
+        int i;
+
+        for (i = 0; i < len; i++) {
+
+            int a = hexValue(s.charAt(i * 2));
+            int b = hexValue(s.charAt(i * 2 + 1));
+
+            out[i] = (byte) ((a << 4) | b);
+        }
+
+        return out;
+    }
+
+    private static int hexValue(char c) {
+
+        if (c >= '0' && c <= '9') {
+            return c - '0';
+        }
+
+        if (c >= 'a' && c <= 'f') {
+            return c - 'a' + 10;
+        }
+
+        if (c >= 'A' && c <= 'F') {
+            return c - 'A' + 10;
+        }
+
+        return -1;
+    }
+
 
     public void itemSelected(Item i) {
         if (i == addAccountButton) {
