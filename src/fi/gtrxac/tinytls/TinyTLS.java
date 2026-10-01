@@ -87,6 +87,8 @@ public final class TinyTLS {
     private final byte[] receiveBuffer =
         new byte[16408];
 
+    private boolean eof;
+
     /*
      * Small scratch buffer for streaming skips/hashing.
      */
@@ -105,6 +107,10 @@ public final class TinyTLS {
     public void connect(
             String host,
             int port) throws IOException {
+
+        eof = false;
+        pendingOff = 0;
+        pendingLen = 0;
 
         String url =
             "socket://" + host + ":" + port;
@@ -126,11 +132,9 @@ public final class TinyTLS {
         transcript.reset();
 
         sendClientHello(host);
-
         readServerHandshake();
 
         generateClientKey();
-
         sendClientKeyExchange();
 
         deriveSecrets();
@@ -1690,6 +1694,18 @@ public final class TinyTLS {
         int description =
             b[1] & 255;
 
+        /*
+        * close_notify = 0
+        *
+        * This is a clean TLS shutdown, not an error.
+        */
+        if (description == 0) {
+            log("TLS close_notify");
+
+            eof = true;
+            return;
+        }
+
         log(
             "TLS alert "
             + level
@@ -1734,6 +1750,10 @@ public final class TinyTLS {
 
         while (true) {
 
+            /*
+            * Consume already-decrypted application data
+            * first.
+            */
             if (pendingLen > 0) {
                 int value =
                     receiveBuffer[pendingOff] & 255;
@@ -1748,6 +1768,10 @@ public final class TinyTLS {
                 return value;
             }
 
+            if (eof) {
+                return -1;
+            }
+
             int result =
                 readEncryptedRecord();
 
@@ -1758,6 +1782,11 @@ public final class TinyTLS {
                 recordLength(result);
 
             if (type == TYPE_APPLICATION_DATA) {
+
+                if (recordLen == 0) {
+                    continue;
+                }
+
                 pendingOff = 0;
                 pendingLen = recordLen;
                 continue;
@@ -1780,6 +1809,11 @@ public final class TinyTLS {
 
                 continue;
             }
+
+            log(
+                "Ignored TLS record type "
+                + type
+            );
         }
     }
 
@@ -1793,10 +1827,15 @@ public final class TinyTLS {
         }
 
         if (off < 0 || len < 0
-                || off + len > out.length) {
+                || off > out.length - len) {
             throw new IndexOutOfBoundsException();
         }
 
+        /*
+        * InputStream semantics:
+        *
+        * zero-length read returns 0, even at EOF.
+        */
         if (len == 0) {
             return 0;
         }
@@ -1806,6 +1845,11 @@ public final class TinyTLS {
             /*
             * Already have decrypted application data
             * left over from a previous TLS record.
+            * 
+            * Always return pending plaintext before EOF.
+            *
+            * This matters if we ever have buffered
+            * application data followed by close_notify.
             */
             if (pendingLen > 0) {
                 int n = len;
@@ -1833,8 +1877,12 @@ public final class TinyTLS {
             }
 
             /*
-            * Need another TLS record.
+            * No buffered plaintext remains.
             */
+            if (eof) {
+                return -1;
+            }
+
             int result =
                 readEncryptedRecord();
 
@@ -1845,6 +1893,17 @@ public final class TinyTLS {
                 recordLength(result);
 
             if (type == TYPE_APPLICATION_DATA) {
+
+                /*
+                * Empty ApplicationData is legal.
+                * Don't return 0 from a non-zero-length
+                * InputStream read; just read another
+                * TLS record.
+                */
+                if (recordLen == 0) {
+                    continue;
+                }
+
                 pendingOff = 0;
                 pendingLen = recordLen;
 
@@ -1861,6 +1920,13 @@ public final class TinyTLS {
                     recordLen
                 );
 
+                /*
+                * close_notify sets eof=true.
+                * Loop around so the EOF check above
+                * returns -1.
+                *
+                * Fatal/non-close alerts throw.
+                */
                 continue;
             }
 
