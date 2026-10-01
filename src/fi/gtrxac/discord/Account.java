@@ -136,6 +136,7 @@ public class Account {
             responseText = h.getResponseString();
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new DiscordException(e);
         }
 

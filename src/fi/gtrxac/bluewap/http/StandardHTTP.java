@@ -6,6 +6,7 @@ import fi.gtrxac.bluewap.ui.*;
 import java.io.*;
 import java.util.*;
 import javax.microedition.io.*;
+import tech.alicesworld.ModernConnector.*;
 
 public class StandardHTTP extends HTTP {
 	public static final Exception requestMethodException = new Exception();
@@ -29,7 +30,8 @@ public class StandardHTTP extends HTTP {
 
 	private InputStream makeRequestFinal(String finalUrl) throws Exception {
 		queueItem = HTTPQueue.newQueueItem();
-		hc = (HttpConnection) Connector.open(finalUrl);
+		// hc = (HttpConnection) Connector.open(finalUrl);
+		hc = (HttpConnection) ModernConnector.open(finalUrl);
 		queueItem.hc = hc;
 
 		try {

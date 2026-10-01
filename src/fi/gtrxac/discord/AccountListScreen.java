@@ -6,6 +6,8 @@ import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.io.*;
+import java.io.*;
 
 public class AccountListScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
@@ -118,33 +120,21 @@ public class AccountListScreen extends ListScreen implements CommandListener {
                 try {
                     tls.connect("discord.com", 8443);
 
-                    tls.write(
+                    InputStream is = tls.openInputStream();
+                    OutputStream os = tls.openOutputStream();
+
+                    byte[] req = Util.stringToBytes(
                         "GET / HTTP/1.1\r\n"
                         + "Host: discord.com\r\n"
                         + "User-Agent: TinyTLS/1.0\r\n"
                         + "Connection: close\r\n"
-                        + "\r\n"
-                    );
+                        + "\r\n");
 
-                    byte[] b = new byte[10000];
+                    os.write(req);
 
-                    int n = tls.read(
-                        b,
-                        0,
-                        b.length
-                    );
-
-                    TLSUtil.log(
-                        log,
-                        "HTTP bytes: " + n
-                    );
-
-                    TLSUtil.logAscii(
-                        log,
-                        b,
-                        0,
-                        n
-                    );
+                    byte[] b = Util.readBytes(is);
+                    
+                    log.append(Util.bytesToString(b));
 
 
                 } catch (Exception e) {
