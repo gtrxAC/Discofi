@@ -85,7 +85,7 @@ public final class TinyTLS {
     private long serverSequence;
 
     private final byte[] receiveBuffer =
-        new byte[2048];
+        new byte[16408];
 
     /*
      * Small scratch buffer for streaming skips/hashing.
@@ -1713,63 +1713,85 @@ public final class TinyTLS {
         return x & 0x00FFFFFF;
     }
 
+    private int pendingOff;
+    private int pendingLen;
+
     public int read(
-            byte[] outBuffer,
+            byte[] out,
             int off,
-            int maxLen) throws IOException {
+            int len) throws IOException {
+
+        if (len == 0) {
+            return 0;
+        }
 
         while (true) {
 
+            /*
+            * Already have decrypted application data
+            * left over from a previous TLS record.
+            */
+            if (pendingLen > 0) {
+                int n = len;
+
+                if (n > pendingLen) {
+                    n = pendingLen;
+                }
+
+                System.arraycopy(
+                    receiveBuffer,
+                    pendingOff,
+                    out,
+                    off,
+                    n
+                );
+
+                pendingOff += n;
+                pendingLen -= n;
+
+                if (pendingLen == 0) {
+                    pendingOff = 0;
+                }
+
+                return n;
+            }
+
+            /*
+            * Need another TLS record.
+            */
             int result =
                 readEncryptedRecord();
 
             int type =
                 recordType(result);
 
-            int len =
+            int recordLen =
                 recordLength(result);
 
             if (type == TYPE_APPLICATION_DATA) {
+                pendingOff = 0;
+                pendingLen = recordLen;
 
-                if (len > maxLen) {
-                    throw new IOException(
-                        "Application buffer too small"
-                    );
-                }
-
-                System.arraycopy(
-                    receiveBuffer,
-                    0,
-                    outBuffer,
-                    off,
-                    len
-                );
-
-                return len;
+                /*
+                * Loop around and satisfy as much of the
+                * caller's request as possible.
+                */
+                continue;
             }
 
             if (type == TYPE_ALERT) {
                 handleEncryptedAlert(
                     receiveBuffer,
-                    len
+                    recordLen
                 );
 
-                /*
-                * handleEncryptedAlert normally throws.
-                */
                 continue;
             }
 
             if (type == TYPE_HANDSHAKE) {
-                /*
-                * TLS 1.2 could send post-handshake
-                * handshake messages.
-                *
-                * We don't need them currently.
-                */
                 log(
                     "Ignored handshake record len "
-                    + len
+                    + recordLen
                 );
 
                 continue;
