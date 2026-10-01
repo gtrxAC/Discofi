@@ -11,6 +11,7 @@ public final class TinyTLS {
 
     private static final int TYPE_ALERT = 21;
     private static final int TYPE_HANDSHAKE = 22;
+    private static final int TYPE_CHANGE_CIPHER_SPEC = 20;
 
     private static final int HS_CLIENT_HELLO = 1;
     private static final int HS_SERVER_HELLO = 2;
@@ -19,8 +20,7 @@ public final class TinyTLS {
     private static final int HS_SERVER_HELLO_DONE = 14;
     private static final int HS_CLIENT_KEY_EXCHANGE = 16;
 
-    private static final int CIPHER =
-        0xC02B;
+    private static final int CIPHER = 0xC02B;
 
     private static final int GROUP_X25519 = 29;
     private static final int SIG_ECDSA_SHA256 = 0x0403;
@@ -74,6 +74,15 @@ public final class TinyTLS {
     private final byte[] keyBlock =
         new byte[40];
 
+    private final GCM clientGCM = new GCM();
+    private final GCM serverGCM = new GCM();
+
+    private final byte[] clientWriteIV = new byte[4];
+    private final byte[] serverWriteIV = new byte[4];
+
+    private long clientSequence;
+    private long serverSequence;
+
     /*
      * Small scratch buffer for streaming skips/hashing.
      */
@@ -122,7 +131,12 @@ public final class TinyTLS {
 
         deriveSecrets();
 
-        log("Phase 3A complete");
+        sendChangeCipherSpec();
+        sendClientFinished();
+
+        readServerFinished();
+
+        log("TLS CONNECTED");
     }
 
     public void close() {
@@ -1090,21 +1104,529 @@ public final class TinyTLS {
             32
         );
 
+        clientGCM.setKey(
+            keyBlock,
+            0
+        );
+
+        serverGCM.setKey(
+            keyBlock,
+            16
+        );
+
+        System.arraycopy(
+            keyBlock,
+            32,
+            clientWriteIV,
+            0,
+            4
+        );
+
+        System.arraycopy(
+            keyBlock,
+            36,
+            serverWriteIV,
+            0,
+            4
+        );
+
+        clientSequence = 0;
+        serverSequence = 0;
+
+        log("AES-GCM initialized");
+    }
+
+    private void sendChangeCipherSpec()
+            throws IOException {
+
+        byte[] b = {
+            20,
+            3, 3,
+            0, 1,
+            1
+        };
+
+        out.write(b);
+        out.flush();
+
+        log("Client CCS sent");
+    }
+
+    private void makeFinished(
+            String label,
+            byte[] out) {
+
+        SHA256 copy =
+            new SHA256(transcript);
+
+        byte[] hash =
+            new byte[32];
+
+        copy.digest(hash, 0);
+
+        TLSCrypto.prfSha256(
+            masterSecret,
+            0,
+            48,
+            label,
+            hash,
+            0,
+            32,
+            out,
+            0,
+            12
+        );
+    }
+
+    private void sendClientFinished()
+            throws IOException {
+
+        byte[] verify = new byte[12];
+
+        makeFinished(
+            "client finished",
+            verify
+        );
+
+        TLSUtil.logHex(
+            log,
+            "Client verify",
+            verify,
+            0,
+            12
+        );
+
         /*
-         * This is exactly the hash Phase 3B will use
-         * for the client's Finished verify_data.
-         */
+        * Plaintext Finished handshake:
+        *
+        * type       1
+        * length     3
+        * verify    12
+        *
+        * total     16
+        */
+        byte[] finished = new byte[16];
+
+        finished[0] = 20;
+
+        TLSUtil.writeU24(
+            finished,
+            1,
+            12
+        );
+
+        System.arraycopy(
+            verify,
+            0,
+            finished,
+            4,
+            12
+        );
+
+        /*
+        * Encrypt before adding Finished to the
+        * transcript.
+        */
+        sendEncryptedRecord(
+            TYPE_HANDSHAKE,
+            finished,
+            0,
+            16
+        );
+
+        /*
+        * The server Finished calculation DOES include
+        * our Finished handshake message.
+        */
+        transcript.update(
+            finished,
+            0,
+            16
+        );
+
+        log("Client Finished sent");
     }
 
-    /*
-     * Accessors useful while developing Phase 3B.
-     */
+    private void sendEncryptedRecord(
+            int type,
+            byte[] plain,
+            int off,
+            int len) throws IOException {
 
-    public byte[] getMasterSecret() {
-        return masterSecret;
+        byte[] nonce = new byte[12];
+        byte[] aad = new byte[13];
+
+        /*
+        * Fixed IV.
+        */
+        System.arraycopy(
+            clientWriteIV,
+            0,
+            nonce,
+            0,
+            4
+        );
+
+        /*
+        * Explicit nonce = sequence number.
+        */
+        TLSUtil.putLong(
+            nonce,
+            4,
+            clientSequence
+        );
+
+        /*
+        * AAD begins with sequence number.
+        */
+        TLSUtil.putLong(
+            aad,
+            0,
+            clientSequence
+        );
+
+        aad[8] = (byte)type;
+        aad[9] = 3;
+        aad[10] = 3;
+
+        TLSUtil.writeU16(
+            aad,
+            11,
+            len
+        );
+
+        /*
+        * Record:
+        *
+        * header          5
+        * explicit IV     8
+        * ciphertext      len
+        * tag            16
+        */
+        byte[] record =
+            new byte[5 + 8 + len + 16];
+
+        int p = 0;
+
+        record[p++] = (byte)type;
+        record[p++] = 3;
+        record[p++] = 3;
+
+        TLSUtil.writeU16(
+            record,
+            p,
+            8 + len + 16
+        );
+
+        p += 2;
+
+        /*
+        * Explicit nonce on wire.
+        */
+        TLSUtil.putLong(
+            record,
+            p,
+            clientSequence
+        );
+
+        p += 8;
+
+        /*
+        * Plaintext copied into record then encrypted
+        * in place.
+        */
+        System.arraycopy(
+            plain,
+            off,
+            record,
+            p,
+            len
+        );
+
+        int cipherOff = p;
+
+        byte[] tag = new byte[16];
+
+        clientGCM.encrypt(
+            nonce,
+            0,
+            aad,
+            0,
+            13,
+            record,
+            cipherOff,
+            len,
+            tag,
+            0
+        );
+
+        p += len;
+
+        System.arraycopy(
+            tag,
+            0,
+            record,
+            p,
+            16
+        );
+
+        p += 16;
+
+        out.write(
+            record,
+            0,
+            p
+        );
+
+        out.flush();
+
+        clientSequence++;
     }
 
-    public byte[] getKeyBlock() {
-        return keyBlock;
+    private void readServerFinished()
+            throws IOException {
+
+        /*
+        * Read plaintext CCS record.
+        */
+        int type = TLSUtil.readU8(in);
+        int major = TLSUtil.readU8(in);
+        int minor = TLSUtil.readU8(in);
+        int len = TLSUtil.readU16(in);
+
+        if (type != TYPE_CHANGE_CIPHER_SPEC
+                || major != 3
+                || minor != 3
+                || len != 1) {
+
+            throw new IOException(
+                "Expected server CCS"
+            );
+        }
+
+        int value = TLSUtil.readU8(in);
+
+        if (value != 1) {
+            throw new IOException(
+                "Bad server CCS"
+            );
+        }
+
+        log("Server CCS received");
+
+        /*
+        * Next record should be encrypted Finished.
+        */
+        type = TLSUtil.readU8(in);
+        major = TLSUtil.readU8(in);
+        minor = TLSUtil.readU8(in);
+        len = TLSUtil.readU16(in);
+
+        if (type == TYPE_ALERT) {
+            throw new IOException(
+                "Server alert after Finished"
+            );
+        }
+
+        if (type != TYPE_HANDSHAKE
+                || major != 3
+                || minor != 3) {
+
+            throw new IOException(
+                "Expected encrypted Finished"
+            );
+        }
+
+        /*
+        * 8 explicit nonce + ciphertext + 16 tag.
+        */
+        if (len < 24) {
+            throw new IOException(
+                "Short encrypted record"
+            );
+        }
+
+        byte[] record =
+            new byte[len];
+
+        TLSUtil.readFully(
+            in,
+            record,
+            0,
+            len
+        );
+
+        int cipherLen =
+            len - 8 - 16;
+
+        byte[] nonce =
+            new byte[12];
+
+        System.arraycopy(
+            serverWriteIV,
+            0,
+            nonce,
+            0,
+            4
+        );
+
+        /*
+        * IMPORTANT:
+        *
+        * use the explicit nonce actually received,
+        * not an assumed sequence-number encoding.
+        */
+        System.arraycopy(
+            record,
+            0,
+            nonce,
+            4,
+            8
+        );
+
+        byte[] aad =
+            new byte[13];
+
+        TLSUtil.putLong(
+            aad,
+            0,
+            serverSequence
+        );
+
+        aad[8] =
+            (byte)TYPE_HANDSHAKE;
+
+        aad[9] = 3;
+        aad[10] = 3;
+
+        TLSUtil.writeU16(
+            aad,
+            11,
+            cipherLen
+        );
+
+        boolean ok =
+            serverGCM.decrypt(
+                nonce,
+                0,
+                aad,
+                0,
+                13,
+                record,
+                8,
+                cipherLen,
+                record,
+                8 + cipherLen
+            );
+
+        if (!ok) {
+            throw new IOException(
+                "Bad server GCM tag"
+            );
+        }
+
+        serverSequence++;
+
+        log("Server Finished decrypted");
+
+        verifyServerFinished(
+            record,
+            8,
+            cipherLen
+        );
+    }
+
+    private void verifyServerFinished(
+            byte[] b,
+            int off,
+            int len) throws IOException {
+
+        if (len != 16) {
+            throw new IOException(
+                "Bad server Finished length "
+                + len
+            );
+        }
+
+        if ((b[off] & 255) != 20) {
+            throw new IOException(
+                "Not server Finished"
+            );
+        }
+
+        int bodyLen =
+            ((b[off + 1] & 255) << 16)
+            | ((b[off + 2] & 255) << 8)
+            | (b[off + 3] & 255);
+
+        if (bodyLen != 12) {
+            throw new IOException(
+                "Bad Finished body"
+            );
+        }
+
+        /*
+        * At this point transcript contains:
+        *
+        * ClientHello
+        * ServerHello
+        * Certificate
+        * ServerKeyExchange
+        * ServerHelloDone
+        * ClientKeyExchange
+        * Client Finished
+        *
+        * Exactly what server Finished needs.
+        */
+        byte[] expected =
+            new byte[12];
+
+        makeFinished(
+            "server finished",
+            expected
+        );
+
+        int diff = 0;
+        int i;
+
+        for (i = 0; i < 12; i++) {
+            diff |=
+                (expected[i]
+                    ^ b[off + 4 + i])
+                & 255;
+        }
+
+        if (diff != 0) {
+            TLSUtil.logHex(
+                log,
+                "Expected server verify",
+                expected,
+                0,
+                12
+            );
+
+            TLSUtil.logHex(
+                log,
+                "Received server verify",
+                b,
+                off + 4,
+                12
+            );
+
+            throw new IOException(
+                "Bad server Finished"
+            );
+        }
+
+        /*
+        * Add server Finished only AFTER verifying it.
+        */
+        transcript.update(
+            b,
+            off,
+            len
+        );
+
+        log("Server Finished verified");
     }
 }

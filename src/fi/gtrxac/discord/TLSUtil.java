@@ -187,4 +187,17 @@ public final class TLSUtil {
 
         return x == 0;
     }
+
+    public static void putLong(
+            byte[] b,
+            int off,
+            long x) {
+
+        int i;
+
+        for (i = 7; i >= 0; i--) {
+            b[off + i] = (byte)x;
+            x >>>= 8;
+        }
+    }
 }
