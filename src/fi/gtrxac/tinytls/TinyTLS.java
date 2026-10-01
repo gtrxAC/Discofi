@@ -1531,45 +1531,6 @@ public final class TinyTLS {
         log("Server Finished verified");
     }
 
-    public void write(
-            byte[] data,
-            int off,
-            int len) throws IOException {
-
-        /*
-        * Keep records reasonably small.
-        *
-        * TLS permits much larger records, but for these
-        * old phones there is no reason for us to create
-        * huge temporary buffers.
-        */
-        while (len > 0) {
-            int n = len;
-
-            if (n > 1024) {
-                n = 1024;
-            }
-
-            sendEncryptedRecord(
-                TYPE_APPLICATION_DATA,
-                data,
-                off,
-                n
-            );
-
-            off += n;
-            len -= n;
-        }
-    }
-
-    public void write(String s)
-            throws IOException {
-
-        byte[] b = TLSUtil.ascii(s);
-
-        write(b, 0, b.length);
-    }
-
     private int readEncryptedRecord()
             throws IOException {
 
@@ -1713,13 +1674,128 @@ public final class TinyTLS {
         return x & 0x00FFFFFF;
     }
 
+    private void handleEncryptedAlert(
+            byte[] b,
+            int len) throws IOException {
+
+        if (len < 2) {
+            throw new IOException(
+                "Short TLS alert"
+            );
+        }
+
+        int level =
+            b[0] & 255;
+
+        int description =
+            b[1] & 255;
+
+        log(
+            "TLS alert "
+            + level
+            + "/"
+            + description
+        );
+
+        throw new IOException(
+            "TLS alert "
+            + level
+            + "/"
+            + description
+        );
+    }
+    
+    private TLSInputStream tlsInput;
+    private TLSOutputStream tlsOutput;
     private int pendingOff;
     private int pendingLen;
+
+    public InputStream openInputStream() {
+
+        if (tlsInput == null) {
+            tlsInput =
+                new TLSInputStream(this);
+        }
+
+        return tlsInput;
+    }
+
+    public OutputStream openOutputStream() {
+
+        if (tlsOutput == null) {
+            tlsOutput =
+                new TLSOutputStream(this);
+        }
+
+        return tlsOutput;
+    }
+
+    public int read() throws IOException {
+
+        while (true) {
+
+            if (pendingLen > 0) {
+                int value =
+                    receiveBuffer[pendingOff] & 255;
+
+                pendingOff++;
+                pendingLen--;
+
+                if (pendingLen == 0) {
+                    pendingOff = 0;
+                }
+
+                return value;
+            }
+
+            int result =
+                readEncryptedRecord();
+
+            int type =
+                recordType(result);
+
+            int recordLen =
+                recordLength(result);
+
+            if (type == TYPE_APPLICATION_DATA) {
+                pendingOff = 0;
+                pendingLen = recordLen;
+                continue;
+            }
+
+            if (type == TYPE_ALERT) {
+                handleEncryptedAlert(
+                    receiveBuffer,
+                    recordLen
+                );
+
+                continue;
+            }
+
+            if (type == TYPE_HANDSHAKE) {
+                log(
+                    "Ignored handshake record len "
+                    + recordLen
+                );
+
+                continue;
+            }
+        }
+    }
 
     public int read(
             byte[] out,
             int off,
             int len) throws IOException {
+
+        if (out == null) {
+            throw new NullPointerException();
+        }
+
+        if (off < 0 || len < 0
+                || off + len > out.length) {
+            throw new IndexOutOfBoundsException();
+        }
 
         if (len == 0) {
             return 0;
@@ -1804,34 +1880,54 @@ public final class TinyTLS {
         }
     }
 
-    private void handleEncryptedAlert(
-            byte[] b,
+    public void write(
+            byte[] data,
+            int off,
             int len) throws IOException {
 
-        if (len < 2) {
-            throw new IOException(
-                "Short TLS alert"
+        /*
+        * Keep records reasonably small.
+        *
+        * TLS permits much larger records, but for these
+        * old phones there is no reason for us to create
+        * huge temporary buffers.
+        */
+        while (len > 0) {
+            int n = len;
+
+            if (n > 1024) {
+                n = 1024;
+            }
+
+            sendEncryptedRecord(
+                TYPE_APPLICATION_DATA,
+                data,
+                off,
+                n
             );
+
+            off += n;
+            len -= n;
         }
+    }
 
-        int level =
-            b[0] & 255;
+    public void write(String s)
+            throws IOException {
 
-        int description =
-            b[1] & 255;
+        byte[] b = TLSUtil.ascii(s);
 
-        log(
-            "TLS alert "
-            + level
-            + "/"
-            + description
-        );
+        write(b, 0, b.length);
+    }
 
-        throw new IOException(
-            "TLS alert "
-            + level
-            + "/"
-            + description
-        );
+    public int available() {
+        return pendingLen;
+    }
+
+    public void flush()
+            throws IOException {
+
+        if (out != null) {
+            out.flush();
+        }
     }
 }
