@@ -116,6 +116,36 @@ public class AccountListScreen extends ListScreen implements CommandListener {
 
                 try {
                     tls.connect("discord.com", 8443);
+
+                    tls.write(
+                        "GET / HTTP/1.1\r\n"
+                        + "Host: discord.com\r\n"
+                        + "User-Agent: TinyTLS/1.0\r\n"
+                        + "Connection: close\r\n"
+                        + "\r\n"
+                    );
+
+                    byte[] b = new byte[10000];
+
+                    int n = tls.read(
+                        b,
+                        0,
+                        b.length
+                    );
+
+                    TLSUtil.log(
+                        log,
+                        "HTTP bytes: " + n
+                    );
+
+                    TLSUtil.logAscii(
+                        log,
+                        b,
+                        0,
+                        n
+                    );
+
+
                 } catch (Exception e) {
                     System.out.println("TLS FAILED:");
                     e.printStackTrace();

@@ -9,9 +9,10 @@ import javax.microedition.io.SocketConnection;
 
 public final class TinyTLS {
 
+    private static final int TYPE_CHANGE_CIPHER_SPEC = 20;
     private static final int TYPE_ALERT = 21;
     private static final int TYPE_HANDSHAKE = 22;
-    private static final int TYPE_CHANGE_CIPHER_SPEC = 20;
+    private static final int TYPE_APPLICATION_DATA = 23;
 
     private static final int HS_CLIENT_HELLO = 1;
     private static final int HS_SERVER_HELLO = 2;
@@ -82,6 +83,9 @@ public final class TinyTLS {
 
     private long clientSequence;
     private long serverSequence;
+
+    private final byte[] receiveBuffer =
+        new byte[2048];
 
     /*
      * Small scratch buffer for streaming skips/hashing.
@@ -1386,9 +1390,6 @@ public final class TinyTLS {
     private void readServerFinished()
             throws IOException {
 
-        /*
-        * Read plaintext CCS record.
-        */
         int type = TLSUtil.readU8(in);
         int major = TLSUtil.readU8(in);
         int minor = TLSUtil.readU8(in);
@@ -1404,9 +1405,7 @@ public final class TinyTLS {
             );
         }
 
-        int value = TLSUtil.readU8(in);
-
-        if (value != 1) {
+        if (TLSUtil.readU8(in) != 1) {
             throw new IOException(
                 "Bad server CCS"
             );
@@ -1415,124 +1414,26 @@ public final class TinyTLS {
         log("Server CCS received");
 
         /*
-        * Next record should be encrypted Finished.
+        * serverSequence is still zero here.
         */
-        type = TLSUtil.readU8(in);
-        major = TLSUtil.readU8(in);
-        minor = TLSUtil.readU8(in);
-        len = TLSUtil.readU16(in);
+        int result =
+            readEncryptedRecord();
 
-        if (type == TYPE_ALERT) {
+        type = recordType(result);
+        len = recordLength(result);
+
+        if (type != TYPE_HANDSHAKE) {
             throw new IOException(
-                "Server alert after Finished"
+                "Expected server Finished"
             );
         }
-
-        if (type != TYPE_HANDSHAKE
-                || major != 3
-                || minor != 3) {
-
-            throw new IOException(
-                "Expected encrypted Finished"
-            );
-        }
-
-        /*
-        * 8 explicit nonce + ciphertext + 16 tag.
-        */
-        if (len < 24) {
-            throw new IOException(
-                "Short encrypted record"
-            );
-        }
-
-        byte[] record =
-            new byte[len];
-
-        TLSUtil.readFully(
-            in,
-            record,
-            0,
-            len
-        );
-
-        int cipherLen =
-            len - 8 - 16;
-
-        byte[] nonce =
-            new byte[12];
-
-        System.arraycopy(
-            serverWriteIV,
-            0,
-            nonce,
-            0,
-            4
-        );
-
-        /*
-        * IMPORTANT:
-        *
-        * use the explicit nonce actually received,
-        * not an assumed sequence-number encoding.
-        */
-        System.arraycopy(
-            record,
-            0,
-            nonce,
-            4,
-            8
-        );
-
-        byte[] aad =
-            new byte[13];
-
-        TLSUtil.putLong(
-            aad,
-            0,
-            serverSequence
-        );
-
-        aad[8] =
-            (byte)TYPE_HANDSHAKE;
-
-        aad[9] = 3;
-        aad[10] = 3;
-
-        TLSUtil.writeU16(
-            aad,
-            11,
-            cipherLen
-        );
-
-        boolean ok =
-            serverGCM.decrypt(
-                nonce,
-                0,
-                aad,
-                0,
-                13,
-                record,
-                8,
-                cipherLen,
-                record,
-                8 + cipherLen
-            );
-
-        if (!ok) {
-            throw new IOException(
-                "Bad server GCM tag"
-            );
-        }
-
-        serverSequence++;
 
         log("Server Finished decrypted");
 
         verifyServerFinished(
-            record,
-            8,
-            cipherLen
+            receiveBuffer,
+            0,
+            len
         );
     }
 
@@ -1628,5 +1529,287 @@ public final class TinyTLS {
         );
 
         log("Server Finished verified");
+    }
+
+    public void write(
+            byte[] data,
+            int off,
+            int len) throws IOException {
+
+        /*
+        * Keep records reasonably small.
+        *
+        * TLS permits much larger records, but for these
+        * old phones there is no reason for us to create
+        * huge temporary buffers.
+        */
+        while (len > 0) {
+            int n = len;
+
+            if (n > 1024) {
+                n = 1024;
+            }
+
+            sendEncryptedRecord(
+                TYPE_APPLICATION_DATA,
+                data,
+                off,
+                n
+            );
+
+            off += n;
+            len -= n;
+        }
+    }
+
+    public void write(String s)
+            throws IOException {
+
+        byte[] b = TLSUtil.ascii(s);
+
+        write(b, 0, b.length);
+    }
+
+    private int readEncryptedRecord()
+            throws IOException {
+
+        int type = TLSUtil.readU8(in);
+        int major = TLSUtil.readU8(in);
+        int minor = TLSUtil.readU8(in);
+        int len = TLSUtil.readU16(in);
+
+        if (major != 3 || minor != 3) {
+            throw new IOException(
+                "Bad protected record version"
+            );
+        }
+
+        /*
+        * explicit nonce  8
+        * tag            16
+        */
+        if (len < 24) {
+            throw new IOException(
+                "Protected record too short"
+            );
+        }
+
+        if (len > receiveBuffer.length) {
+            throw new IOException(
+                "Protected record too large: "
+                + len
+            );
+        }
+
+        TLSUtil.readFully(
+            in,
+            receiveBuffer,
+            0,
+            len
+        );
+
+        int cipherLen =
+            len - 8 - 16;
+
+        byte[] nonce = new byte[12];
+
+        /*
+        * 4-byte fixed server IV.
+        */
+        System.arraycopy(
+            serverWriteIV,
+            0,
+            nonce,
+            0,
+            4
+        );
+
+        /*
+        * 8-byte explicit nonce from wire.
+        */
+        System.arraycopy(
+            receiveBuffer,
+            0,
+            nonce,
+            4,
+            8
+        );
+
+        byte[] aad = new byte[13];
+
+        TLSUtil.putLong(
+            aad,
+            0,
+            serverSequence
+        );
+
+        aad[8] = (byte)type;
+        aad[9] = 3;
+        aad[10] = 3;
+
+        TLSUtil.writeU16(
+            aad,
+            11,
+            cipherLen
+        );
+
+        boolean ok =
+            serverGCM.decrypt(
+                nonce,
+                0,
+                aad,
+                0,
+                13,
+
+                /*
+                * Ciphertext begins after explicit nonce.
+                */
+                receiveBuffer,
+                8,
+                cipherLen,
+
+                /*
+                * Tag follows ciphertext.
+                */
+                receiveBuffer,
+                8 + cipherLen
+            );
+
+        if (!ok) {
+            throw new IOException(
+                "Bad GCM tag seq "
+                + serverSequence
+            );
+        }
+
+        serverSequence++;
+
+        /*
+        * Move plaintext to beginning of buffer.
+        */
+        System.arraycopy(
+            receiveBuffer,
+            8,
+            receiveBuffer,
+            0,
+            cipherLen
+        );
+
+        /*
+        * Encode record type in the return value's
+        * high 8 bits and plaintext length below it.
+        *
+        * Avoids allocating a Record object.
+        */
+        return (type << 24)
+            | cipherLen;
+    }
+
+    private static int recordType(int x) {
+        return (x >>> 24) & 255;
+    }
+
+    private static int recordLength(int x) {
+        return x & 0x00FFFFFF;
+    }
+
+    public int read(
+            byte[] outBuffer,
+            int off,
+            int maxLen) throws IOException {
+
+        while (true) {
+
+            int result =
+                readEncryptedRecord();
+
+            int type =
+                recordType(result);
+
+            int len =
+                recordLength(result);
+
+            if (type == TYPE_APPLICATION_DATA) {
+
+                if (len > maxLen) {
+                    throw new IOException(
+                        "Application buffer too small"
+                    );
+                }
+
+                System.arraycopy(
+                    receiveBuffer,
+                    0,
+                    outBuffer,
+                    off,
+                    len
+                );
+
+                return len;
+            }
+
+            if (type == TYPE_ALERT) {
+                handleEncryptedAlert(
+                    receiveBuffer,
+                    len
+                );
+
+                /*
+                * handleEncryptedAlert normally throws.
+                */
+                continue;
+            }
+
+            if (type == TYPE_HANDSHAKE) {
+                /*
+                * TLS 1.2 could send post-handshake
+                * handshake messages.
+                *
+                * We don't need them currently.
+                */
+                log(
+                    "Ignored handshake record len "
+                    + len
+                );
+
+                continue;
+            }
+
+            log(
+                "Ignored TLS record type "
+                + type
+            );
+        }
+    }
+
+    private void handleEncryptedAlert(
+            byte[] b,
+            int len) throws IOException {
+
+        if (len < 2) {
+            throw new IOException(
+                "Short TLS alert"
+            );
+        }
+
+        int level =
+            b[0] & 255;
+
+        int description =
+            b[1] & 255;
+
+        log(
+            "TLS alert "
+            + level
+            + "/"
+            + description
+        );
+
+        throw new IOException(
+            "TLS alert "
+            + level
+            + "/"
+            + description
+        );
     }
 }

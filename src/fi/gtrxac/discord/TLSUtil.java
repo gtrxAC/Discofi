@@ -50,6 +50,41 @@ public final class TLSUtil {
         log.append('\n');
     }
 
+    public static void logAscii(
+            StringBuffer log,
+            byte[] b,
+            int off,
+            int len) {
+
+        if (log == null) {
+            return;
+        }
+
+        int i;
+
+        for (i = 0; i < len; i++) {
+
+            if (log.length() > 4096) {
+                return;
+            }
+
+            int c = b[off + i] & 255;
+
+            /*
+            * Preserve CR/LF/TAB and printable ASCII.
+            */
+            if (c == 10 || c == 13 || c == 9) {
+                log.append((char)c);
+            } else if (c >= 32 && c <= 126) {
+                log.append((char)c);
+            } else {
+                log.append('.');
+            }
+        }
+
+        log.append('\n');
+    }
+
     public static char hexDigit(int x) {
         if (x < 10) {
             return (char) ('0' + x);
