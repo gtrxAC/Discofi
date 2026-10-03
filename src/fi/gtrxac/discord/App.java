@@ -10,7 +10,12 @@ import javax.microedition.lcdui.Graphics;
 import java.util.*;
 
 public class App extends AppBase {
+    // Account that is currently being created (or edited)
     public static Account pendingAccount;
+
+    // State for the password login flow (fingerprint -> ticket -> TOTP)
+    public static String pendingTicket;
+    public static String pendingFingerprint;
 
     public static final SmallButtonItem refreshButton = new SmallButtonItem("Refresh");
 

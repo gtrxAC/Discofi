@@ -99,8 +99,12 @@ public class Account {
 
     public HTTP createApiRequest(String method, String route) throws Exception {
         HTTP result = HTTP.createRequest(method, getApiUrl() + "/api/v9" + route);
-        result.setHeader("Authorization", token);
+        
+        if (token != null && token.length() > 0) {
+            result.setHeader("Authorization", token);
+        }
         result.setHeader("X-Super-Properties", SuperProperties.get());
+        result.setHeader("X-Discord-Locale", "en-US");
         return result;
     }
 
