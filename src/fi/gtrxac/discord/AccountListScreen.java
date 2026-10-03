@@ -17,8 +17,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
     public static final int CMD_DELETE = 4;
     public static final int CMD_DELETE_PROMPT_YES = 5;
     public static final int CMD_DELETE_PROMPT_NO = 6;
-    public static final int CMD_TEST = 7;
-    public static final int CMD_TEST_25519 = 8;
+    public static final int CMD_TEST_TLS = 99;
 
     private ButtonItem addAccountButton;
 
@@ -58,8 +57,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
         addCommand(new Command("Edit", Command.ITEM, CMD_EDIT));
         addCommand(new Command("Delete", Command.ITEM, CMD_DELETE));
-        addCommand(new Command("TEST", Command.ITEM, CMD_TEST));
-        addCommand(new Command("TEST SHA", Command.ITEM, CMD_TEST_25519));
+        addCommand(new Command("Test TLS", Command.ITEM, CMD_TEST_TLS));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
@@ -113,113 +111,46 @@ public class AccountListScreen extends ListScreen implements CommandListener {
                 App.popScreen();
                 break;
             }
-            case CMD_TEST: {
-                StringBuffer log = new StringBuffer();
-                TinyTLS tls = new TinyTLS(log);
-
-                try {
-                    tls.connect("discord.com", 8443);
-
-                    InputStream is = tls.openInputStream();
-                    OutputStream os = tls.openOutputStream();
-
-                    byte[] req = Util.stringToBytes(
-                        "GET / HTTP/1.1\r\n"
-                        + "Host: discord.com\r\n"
-                        + "User-Agent: TinyTLS/1.0\r\n"
-                        + "Connection: close\r\n"
-                        + "\r\n");
-
-                    os.write(req);
-
-                    byte[] b = Util.readBytes(is);
-                    
-                    log.append(Util.bytesToString(b));
-
-
-                } catch (Exception e) {
-                    System.out.println("TLS FAILED:");
-                    e.printStackTrace();
-                } finally {
-                    tls.close();
-                }
-
-                App.pushScreen(new Dialog(log.toString()));
-                break;
-            }
-            case CMD_TEST_25519: {
-                App.pushScreen(new Dialog(testSha()));
+            case CMD_TEST_TLS: {
+                testTLS();
                 break;
             }
         }
     }
 
-    private static String testSha() {
+    private void testTLS() {
         StringBuffer log = new StringBuffer();
-        
-        byte[] key = new byte[16];
-        byte[] nonce = new byte[12];
-        byte[] empty = new byte[0];
-        byte[] tag = new byte[16];
+        TinyTLS tls = new TinyTLS(log);
 
-        GCM gcm = new GCM();
+        try {
+            tls.connect("discord.com", 8443);
 
-        gcm.setKey(key, 0);
+            InputStream is = tls.openInputStream();
+            OutputStream os = tls.openOutputStream();
 
-        gcm.encrypt(
-            nonce, 0,
-            empty, 0, 0,
-            empty, 0, 0,
-            tag, 0
-        );
+            byte[] req = Util.stringToBytes(
+                "GET / HTTP/1.1\r\n"
+                + "Host: discord.com\r\n"
+                + "User-Agent: TinyTLS/1.0\r\n"
+                + "Connection: close\r\n"
+                + "\r\n");
 
-        TLSUtil.logHex(
-            log,
-            "GCM tag",
-            tag,
-            0,
-            16
-        );
+            os.write(req);
 
-        System.out.println(log.toString());
-        return log.toString();
+            byte[] b = Util.readBytes(is);
+            
+            log.append(Util.bytesToString(b));
+
+
+        } catch (Exception e) {
+            System.out.println("TLS FAILED:");
+            e.printStackTrace();
+        } finally {
+            tls.close();
+        }
+
+        App.pushScreen(new Dialog(log.toString()));
     }
-
-    private static byte[] hex(String s) {
-
-        int len = s.length() / 2;
-        byte[] out = new byte[len];
-
-        int i;
-
-        for (i = 0; i < len; i++) {
-
-            int a = hexValue(s.charAt(i * 2));
-            int b = hexValue(s.charAt(i * 2 + 1));
-
-            out[i] = (byte) ((a << 4) | b);
-        }
-
-        return out;
-    }
-
-    private static int hexValue(char c) {
-
-        if (c >= '0' && c <= '9') {
-            return c - '0';
-        }
-
-        if (c >= 'a' && c <= 'f') {
-            return c - 'a' + 10;
-        }
-
-        if (c >= 'A' && c <= 'F') {
-            return c - 'A' + 10;
-        }
-
-        return -1;
-    }
-
 
     public void itemSelected(Item i) {
         if (i == addAccountButton) {

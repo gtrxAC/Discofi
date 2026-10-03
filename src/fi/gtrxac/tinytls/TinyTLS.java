@@ -112,6 +112,10 @@ public final class TinyTLS {
         pendingOff = 0;
         pendingLen = 0;
 
+        // Generate private key before connecting, because it can take some time
+        // and the connection might close if we spend too long not responding
+        generateClientPrivateKey();
+
         String url =
             "socket://" + host + ":" + port;
 
@@ -134,7 +138,7 @@ public final class TinyTLS {
         sendClientHello(host);
         readServerHandshake();
 
-        generateClientKey();
+        generateSharedSecret();
         sendClientKeyExchange();
 
         deriveSecrets();
@@ -863,8 +867,7 @@ public final class TinyTLS {
      * ------------------------------------------------------------
      */
 
-    private void generateClientKey()
-            throws IOException {
+    private void generateClientPrivateKey() {
 
         TLSUtil.temporaryRandom(
             clientPrivateKey,
@@ -893,6 +896,10 @@ public final class TinyTLS {
             clientPrivateKey,
             0
         );
+    }
+
+    private void generateSharedSecret()
+            throws IOException {
 
         x25519.scalarMult(
             sharedSecret,
