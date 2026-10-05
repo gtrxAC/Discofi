@@ -8,13 +8,19 @@ import java.util.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.TextBox;
 
 public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
+    public static final int CMD_SEND = 2;
+    public static final int CMD_MESSAGE_BOX_SEND = 3;
+    public static final int CMD_MESSAGE_BOX_BACK = 4;
 
     private Channel channel;
     private Vector messages;
+    public String messageDraft = "";
+
     private int page;
     public String fetchBefore;
     public String fetchAfter;
@@ -39,6 +45,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
+        addCommand(new Command("Send", Command.SCREEN, CMD_SEND));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
@@ -59,7 +66,38 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 App.popScreen();
                 break;
             }
+            case CMD_SEND: {
+                showMessageBox();
+                break;
+            }
+            case CMD_MESSAGE_BOX_SEND: {
+                TextBox t = (TextBox) App.disp.getCurrent();
+                HTTPThread h = new HTTPThread(HTTPThread.ACTION_SEND_MESSAGE, this);
+                h.channel = channel;
+                h.message = t.getString();
+                h.start();
+
+                setBannerText("Sending message");
+                App.disp.setCurrent(AppCanvas.instance);
+                break;
+            }
+            case CMD_MESSAGE_BOX_BACK: {
+                TextBox t = (TextBox) App.disp.getCurrent();
+                messageDraft = t.getString();
+                App.disp.setCurrent(AppCanvas.instance);
+                break;
+            }
         }
+    }
+
+    private void showMessageBox() {
+        TextBox t = new TextBox("Message " + channel.name, messageDraft, 2000, 0);
+
+        t.addCommand(new Command("Send", Command.OK, CMD_MESSAGE_BOX_SEND));
+        t.addCommand(new Command("Back", Command.BACK, CMD_MESSAGE_BOX_BACK));
+        t.setCommandListener(this);
+
+        App.disp.setCurrent(t);
     }
 
     public void itemSelected(Item i) {

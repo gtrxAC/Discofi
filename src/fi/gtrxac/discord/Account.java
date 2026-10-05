@@ -143,7 +143,32 @@ public class Account {
             e.printStackTrace();
             throw new DiscordException(e);
         }
+        
+        return handleJSONResponse(responseCode, responseText);
+    }
 
+    /**
+     * Perform an authenticated POST request with a JSON body and parse the response as JSON.
+     */
+    public AbstractJSON postJSON(String route, JSONObject body) throws DiscordException {
+        int responseCode;
+        String responseText;
+
+        try {
+            HTTP h = createApiRequest("POST", route);
+            h.setData(body.build());
+            responseCode = h.getResponseCode();
+            responseText = h.getResponseString();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new DiscordException(e);
+        }
+
+        return handleJSONResponse(responseCode, responseText);
+    }
+
+    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
         if (responseCode < 200 || responseCode >= 300) {
             throw new DiscordException(getApiErrorMessage(responseCode, responseText));
         }
@@ -263,5 +288,19 @@ public class Account {
         }
 
         return inbox;
+    }
+
+    /**
+     * Send a message to a channel. Returns the created message.
+     */
+    public Message sendMessage(String channelId, String content) throws DiscordException {
+        JSONObject body = new JSONObject();
+        body.put("content", content);
+        body.put("flags", 0);
+        body.put("mobile_network_type", "unknown");
+        body.put("tts", false);
+
+        JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
+        return new Message(created);
     }
 }

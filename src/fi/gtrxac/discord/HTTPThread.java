@@ -14,6 +14,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_INBOX = 4;
     public static final int ACTION_FETCH_GUILD_CHANNELS = 5;
     public static final int ACTION_FETCH_MESSAGES = 6;
+    public static final int ACTION_SEND_MESSAGE = 7;
 
     private int action;
     private Screen callerScreen;
@@ -24,6 +25,7 @@ public class HTTPThread extends Thread {
     public String totp;
     public Guild guild;
     public Channel channel;
+    public String message;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -45,6 +47,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_INBOX: runFetchInbox(); break;
                 case ACTION_FETCH_GUILD_CHANNELS: runFetchGuildChannels(); break;
                 case ACTION_FETCH_MESSAGES: runFetchMessages(); break;
+                case ACTION_SEND_MESSAGE: runSendMessage(); break;
             }
         }
         catch (DiscordException e) {
@@ -258,5 +261,18 @@ public class HTTPThread extends Thread {
             .append("limit=20");
 
         return url.toString();
+    }
+
+    private void runSendMessage() throws DiscordException {
+        ChatScreen chatScreen = (ChatScreen) callerScreen;
+
+        try {
+            acc.sendMessage(channel.id, message);
+            chatScreen.setBannerText("Message sent!");
+            Util.sleep(3000);
+        }
+        finally {
+            chatScreen.setBannerText(null);
+        }
     }
 }
