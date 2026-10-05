@@ -38,7 +38,7 @@ public class AppCanvas extends Canvas {
     protected void paint(Graphics g) {
         Screen curr = AppBase.getCurrentScreen();
         
-        if (Util.useCustomTitleBar) {
+        if (useCustomTitleBar()) {
             drawTitleBar(g);
             g.translate(0, getTitleBarHeight());
         }
@@ -50,12 +50,18 @@ public class AppCanvas extends Canvas {
 
         if (Util.useCustomSoftkeys) {
             int softkeyBarY = getHeight();
-            if (Util.useCustomTitleBar) softkeyBarY += getTitleBarHeight();
+            if (useCustomTitleBar()) softkeyBarY += getTitleBarHeight();
 
             g.translate(-g.getTranslateX(), -g.getTranslateY() + softkeyBarY);
             g.setClip(0, 0, getWidth(), getSoftkeyBarHeight());
             drawSoftkeys(g);
         }
+    }
+
+    private static boolean useCustomTitleBar() {
+        Screen curr = AppBase.getCurrentScreen();
+
+        return Util.useCustomTitleBar && curr != null && curr.getTitle() != null;
     }
 
     private void drawTitleBar(Graphics g) {
@@ -67,20 +73,25 @@ public class AppCanvas extends Canvas {
         g.setColor(0x9B9B9B);
         g.drawLine(0, barHeight - 1, getWidth(), barHeight - 1);
 
+        boolean showClock = Util.useCustomTitleBarClock;
+
+        // draw title (left-aligned with clock, or centered without clock)
         g.setColor(0x111111);
         g.setFont(Fonts.bold);
         g.drawString(
             currentTitle,
-            Fonts.boldHeight/4, 
+            showClock ? Fonts.boldHeight/4 : getWidth()/2,
             (barHeight - Fonts.boldHeight)/2,
-            0);
+            showClock ? 0 : (Graphics.TOP | Graphics.HCENTER));
 
-        g.setFont(Fonts.plain);
-        g.drawString(
-            currentClock,
-            getWidth() - Fonts.boldHeight/4,
-            (barHeight - Fonts.height)/2,
-            Graphics.TOP | Graphics.RIGHT);
+        if (showClock) {
+            g.setFont(Fonts.plain);
+            g.drawString(
+                currentClock,
+                getWidth() - Fonts.boldHeight/4,
+                (barHeight - Fonts.height)/2,
+                Graphics.TOP | Graphics.RIGHT);
+        }
     }
 
     private void drawSoftkeys(Graphics g) {
@@ -124,12 +135,12 @@ public class AppCanvas extends Canvas {
     }
 
     public static int getBaseY() {
-        return Util.useCustomTitleBar ? getTitleBarHeight() : 0;
+        return useCustomTitleBar() ? getTitleBarHeight() : 0;
     }
 
     public int getHeight() {
         int result = super.getHeight();
-        if (Util.useCustomTitleBar) result -= getTitleBarHeight();
+        if (useCustomTitleBar()) result -= getTitleBarHeight();
         if (Util.useCustomSoftkeys) result -= getSoftkeyBarHeight();
         return result;
     }
