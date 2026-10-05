@@ -26,8 +26,10 @@ public class AppCanvas extends Canvas {
     private AppCanvas() {
         super();
 
-        if (Util.useCustomSoftkeys) {
+        if (Util.useCustomSoftkeys && Util.useCustomTitleBar) {
             setFullScreenMode(true);
+        }
+        if (Util.useCustomTitleBarClock) {
             new ClockThread().start();
             updateClock();
         }
@@ -36,9 +38,9 @@ public class AppCanvas extends Canvas {
     protected void paint(Graphics g) {
         Screen curr = AppBase.getCurrentScreen();
         
-        if (Util.useCustomSoftkeys) {
-            drawStatusBar(g);
-            g.translate(0, getStatusBarHeight());
+        if (Util.useCustomTitleBar) {
+            drawTitleBar(g);
+            g.translate(0, getTitleBarHeight());
         }
 
         if (curr != null) {
@@ -47,15 +49,17 @@ public class AppCanvas extends Canvas {
         }
 
         if (Util.useCustomSoftkeys) {
-            int softkeyBarY = getStatusBarHeight() + getHeight();
+            int softkeyBarY = getHeight();
+            if (Util.useCustomTitleBar) softkeyBarY += getTitleBarHeight();
+
             g.translate(-g.getTranslateX(), -g.getTranslateY() + softkeyBarY);
             g.setClip(0, 0, getWidth(), getSoftkeyBarHeight());
             drawSoftkeys(g);
         }
     }
 
-    private void drawStatusBar(Graphics g) {
-        int barHeight = getStatusBarHeight();
+    private void drawTitleBar(Graphics g) {
+        int barHeight = getTitleBarHeight();
 
         g.setColor(0xDDDDDD);
         g.fillRect(0, 0, getWidth(), barHeight);
@@ -111,7 +115,7 @@ public class AppCanvas extends Canvas {
         g.drawString(label, x + width/2, textY, Graphics.TOP | Graphics.HCENTER);
     }
 
-    private static int getStatusBarHeight() {
+    private static int getTitleBarHeight() {
         return Fonts.boldHeight + Fonts.boldHeight/4*2;
     }
 
@@ -120,14 +124,14 @@ public class AppCanvas extends Canvas {
     }
 
     public static int getBaseY() {
-        return Util.useCustomSoftkeys ? getStatusBarHeight() : 0;
+        return Util.useCustomTitleBar ? getTitleBarHeight() : 0;
     }
 
     public int getHeight() {
-        if (!Util.useCustomSoftkeys) {
-            return super.getHeight();
-        }
-        return super.getHeight() - getSoftkeyBarHeight() - getStatusBarHeight();
+        int result = super.getHeight();
+        if (Util.useCustomTitleBar) result -= getTitleBarHeight();
+        if (Util.useCustomSoftkeys) result -= getSoftkeyBarHeight();
+        return result;
     }
 
     protected void sizeChanged(int w, int h) {
@@ -315,17 +319,23 @@ public class AppCanvas extends Canvas {
 
         String title = curr.getTitle();
 
-        // Set title shown in LCDUI canvas (usually hidden when using custom softkeys/title bar)
-        setTitle(title);
-        
-        // Set title shown in custom title bar
-        if (Util.useCustomSoftkeys) {
+        if (Util.useCustomTitleBar) {
+            // Set title shown in custom title bar
             if (title == null) {
                 title = midletName;
             }
-            int availableWidth = getWidth() - Fonts.boldHeight/4*2 - Fonts.plain.stringWidth("88:88");
+
+            int availableWidth = getWidth() - Fonts.boldHeight/4*2;
+
+            if (Util.useCustomTitleBarClock) {
+                availableWidth -= Fonts.plain.stringWidth("88:88");
+            }
 
             currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
+        }
+        else {
+            // Set title shown in LCDUI canvas
+            setTitle(title);
         }
     }
 
