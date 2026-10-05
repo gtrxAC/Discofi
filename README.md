@@ -10,13 +10,13 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Channel list
 * Chat screen with pagination
 * Token login
+* Sending messages
 
 ### Planned for first release
-* Sending messages
 * Sending replies
 * Message editing/deleting
 * Message timestamps
-* Viewing replies or attachments
+* Viewing replies/attachments
 * Password login
 * Token file import
 * HTTP connection over BlueWAP
@@ -24,6 +24,7 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 ### Not implemented
 * Emojis, reactions
 * Gateway
+* Sending attachments
 * etc.
 
 ## Officially supported devices
@@ -32,15 +33,15 @@ Any device meeting the [system requirements](#system-requirements) should be abl
   * Series 40 Lite devices are not supported
 * Symbian devices that support the [nnproject TLS patch](https://nnproject.cc/tls/)
   * Note that as of writing this, Symbian 8.0 (e.g. Nokia 6630/6680) is not supported.
-* Sony Ericsson devices with DB3350 chipset (Aino, Cedar, Elm, Hazel, Xperia Pureness, Yari, Zylo)
-  * Other SE devices may be supported later
+* Sony Ericsson devices with DB2020 chipset or newer
+  * This includes most devices from 2006 onwards; check your device [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones)
 
 ## System requirements
 | Specification | Minimum | Recommended |
 |-|-|-|
 | **Java ME support** | MIDP 2.0, CLDC 1.0 | MIDP 2.0, CLDC 1.0
 | **Extra APIs** | none | JSR-75 FileConnection<br>JSR-82 Bluetooth API
-| **JAR size limit** | 100 kB (may increase) | 1 MB
+| **JAR size limit** | 128 kB (may increase) | 1 MB
 | **Heap size (RAM)** | untested | 2 MB
 | **Display** | any color/grayscale screen | 128 × 160 or higher
 | **Others** | none | TLS 1.2 support
