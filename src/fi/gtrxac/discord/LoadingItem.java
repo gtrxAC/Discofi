@@ -107,7 +107,7 @@ public class LoadingItem extends Item {
         // but our current architecture doesn't really allow for that,
         // as the thread would have to be stopped when the loading icon is no longer visible
         advanceAnimation();
-        AppCanvas.instance.repaint();
+        App.repaint();
     }
 
     public void recalc(int width) {

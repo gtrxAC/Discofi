@@ -82,9 +82,11 @@ public class TabbedListScreen extends Screen {
 
     public void recalc() {
         tabMargin = Fonts.height/7;
-        tabWidth = (getWidth() - tabMargin)/tabs.size();
         tabBarHeight = Fonts.height*3/2;
 
+        if (tabs.size() == 0) return;
+
+        tabWidth = (getWidth() - tabMargin)/tabs.size();
         int tabBeginY = tabBarHeight + tabMargin;
 
         truncatedTabNames.setSize(0);
@@ -138,13 +140,11 @@ public class TabbedListScreen extends Screen {
             currentTabIndex--;
             if (currentTabIndex < 0) currentTabIndex = tabs.size() - 1;
             currentTabChanged(currentTabIndex);
-            AppBase.repaint();
         }
         else if (gameAction == Canvas.RIGHT) {
             currentTabIndex++;
             if (currentTabIndex >= tabs.size()) currentTabIndex = 0;
             currentTabChanged(currentTabIndex);
-            AppBase.repaint();
         }
         else {
             // pass the event through to the tab's listview

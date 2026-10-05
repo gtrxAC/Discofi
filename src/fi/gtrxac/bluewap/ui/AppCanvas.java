@@ -307,11 +307,11 @@ public class AppCanvas extends Canvas {
         leftSoftkeyLabel = "Options";
     }
 
+    private static final String midletName = AppBase.instance.getAppProperty("MIDlet-Name");
+
     public void updateTitle() {
         Screen curr = AppBase.getCurrentScreen();
         if (curr == null) return;
-        
-        int availableWidth = getWidth() - Fonts.boldHeight/4*2 - Fonts.plain.stringWidth("88:88");
 
         String title = curr.getTitle();
 
@@ -321,8 +321,10 @@ public class AppCanvas extends Canvas {
         // Set title shown in custom title bar
         if (Util.useCustomSoftkeys) {
             if (title == null) {
-                title = AppBase.instance.getAppProperty("MIDlet-Name");
+                title = midletName;
             }
+            int availableWidth = getWidth() - Fonts.boldHeight/4*2 - Fonts.plain.stringWidth("88:88");
+
             currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
         }
     }
