@@ -45,3 +45,12 @@ Any device meeting the [system requirements](#system-requirements) should be abl
 | **Heap size (RAM)** | untested | 2 MB
 | **Display** | any color/grayscale screen | 128 × 160 or higher
 | **Others** | none | TLS 1.2 support
+
+## Build variants
+Official builds are not yet available, this is preliminary information.
+
+| Build | Description |
+|-|-|
+| **microcord** | Generic build for most devices
+| **microcord_samsung** | For **Samsung and LG** touchscreen phones; hides virtual keypad
+| **microcord_lite** | For devices that cannot run the generic build; lacks BT and file system functionality
