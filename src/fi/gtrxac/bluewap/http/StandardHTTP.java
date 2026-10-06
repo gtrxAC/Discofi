@@ -30,7 +30,6 @@ public class StandardHTTP extends HTTP {
 
 	private InputStream makeRequestFinal(String finalUrl) throws Exception {
 		queueItem = HTTPQueue.newQueueItem();
-		// hc = (HttpConnection) Connector.open(finalUrl);
 		hc = (HttpConnection) ModernConnector.open(finalUrl);
 		queueItem.hc = hc;
 

@@ -31,6 +31,20 @@ public class DiscordException extends Exception {
             this.tips.addElement("check that other online apps can connect");
             this.tips.addElement("if you're using mobile data, check that your APN settings are correct");
         }
+        // Permission error for Connector
+        else if (message.startsWith("java.lang.SecurityException: cannot open connection")) {
+            this.friendlyMessage = "Permission denied";
+            
+            Account acc = Accounts.getActive();
+
+            if (acc != null && acc.connectionMode == Account.CONNECTION_MODE_DIRECT) {
+                this.tips.addElement("make sure you've installed the app using a signed JAD, if possible on your device (see gtrxac.fi/j2me/proxyless)");
+            }
+
+            this.tips.addElement("check your device's app permission settings");
+            this.tips.addElement("use a different connection method");
+            this.tips.addElement("try on another device");
+        }
     }
 
     public DiscordException(String friendlyMessage, String message, Vector tips) {
