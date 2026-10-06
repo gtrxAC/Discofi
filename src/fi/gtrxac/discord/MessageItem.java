@@ -10,7 +10,10 @@ public class MessageItem extends Item {
     public Message message;
     private String[] textLines;
     private String displayedAuthor;
+    private int timestampX;
 
+    private static Font timestampFont;
+    private static int timestampY;
     private static int leftMargin;
     private static int avatarSize;
     private static int contentX;
@@ -43,6 +46,10 @@ public class MessageItem extends Item {
             g.setColor(0x000000);
             g.drawString(displayedAuthor, contentX, 0, 0);
 
+            g.setFont(timestampFont);
+            g.setColor(0x666666);
+            g.drawString(message.timestamp, timestampX, timestampY, 0);
+
             textY = headerHeight;
         }
 
@@ -56,6 +63,9 @@ public class MessageItem extends Item {
     }
 
     public void recalc(int width) {
+        timestampFont = Fonts.get(-1, false, false, false);
+        timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
+
         leftMargin = Fonts.height/3;
         avatarSize = Fonts.height*5/4;
         int avatarRightMargin = Fonts.height/3;
@@ -70,6 +80,12 @@ public class MessageItem extends Item {
             height += headerHeight;
         }
 
-        displayedAuthor = Util.stringToWidth(message.author.name, Fonts.bold, contentWidth);
+        int timestampPadding = Fonts.height/3;
+        int timestampWidth = timestampFont.stringWidth(message.timestamp) + timestampPadding;
+        int authorAvailableWidth = contentWidth - timestampWidth;
+        displayedAuthor = Util.stringToWidth(message.author.name, Fonts.bold, authorAvailableWidth);
+
+        int authorWidth = Fonts.bold.stringWidth(displayedAuthor);
+        timestampX = contentX + authorWidth + timestampPadding;
     }
 }

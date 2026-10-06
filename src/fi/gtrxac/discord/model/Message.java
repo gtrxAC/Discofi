@@ -1,5 +1,6 @@
 package fi.gtrxac.discord.model;
 
+import fi.gtrxac.discord.DiscordUtil;
 import cc.nnproject.json.*;
 
 public class Message {
@@ -7,11 +8,13 @@ public class Message {
     public User author;
     public String content;
     public boolean showAuthor;
+    public String timestamp;
 
     public Message(JSONObject data) {
         id = data.getString("id");
         author = new User(data.getObject("author"));
         content = data.getString("content", "");
+        timestamp = DiscordUtil.formatTimestamp(id, false);
     }
 
     public boolean shouldShowAuthor(Message above, String clusterStart) {
