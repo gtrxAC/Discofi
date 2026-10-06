@@ -26,6 +26,9 @@ public class HTTPThread extends Thread {
     public Guild guild;
     public Channel channel;
     public String message;
+    public String paginationType;
+    public String paginationMessage;
+    public int newPage;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -227,20 +230,20 @@ public class HTTPThread extends Thread {
     private void runFetchMessages() throws DiscordException {
         ChatScreen chatScreen = (ChatScreen) callerScreen;
 
-        String url = createFetchMessagesUrl(
-            channel.id, chatScreen.fetchBefore, chatScreen.fetchAfter);
-
         try {
+            String url = createFetchMessagesUrl(channel.id, paginationType, paginationMessage);
             JSONArray messagesJson = (JSONArray) acc.fetchJSON(url);
-            chatScreen.populate(messagesJson);
+            boolean scrollToTop = ("after".equals(paginationType));
+
+            chatScreen.page = newPage;
+            chatScreen.populate(messagesJson, scrollToTop);
         }
-        catch (DiscordException e) {
-            App.popScreen();
-            throw e;
+        finally {
+            chatScreen.setBannerText(null);
         }
     }
 
-    private String createFetchMessagesUrl(String channelID, String before, String after) {
+    private String createFetchMessagesUrl(String channelID, String paginationType, String paginationMessage) {
         StringBuffer url = new StringBuffer()
             .append("/channels/")
             .append(channel.id)
@@ -248,12 +251,10 @@ public class HTTPThread extends Thread {
 
         boolean hasParameter = false;
 
-        if (before != null) {
-            url.append("?before=").append(before);
-            hasParameter = true;
-        }
-        else if (after != null) {
-            url.append("?after=").append(after);
+        if (paginationType != null) {
+            url.append('?').append(paginationType)
+                .append('=').append(paginationMessage);
+
             hasParameter = true;
         }
 
@@ -266,13 +267,8 @@ public class HTTPThread extends Thread {
     private void runSendMessage() throws DiscordException {
         ChatScreen chatScreen = (ChatScreen) callerScreen;
 
-        try {
-            acc.sendMessage(channel.id, message);
-            chatScreen.setBannerText("Message sent!");
-            Util.sleep(3000);
-        }
-        finally {
-            chatScreen.setBannerText(null);
-        }
+        acc.sendMessage(channel.id, message);
+        chatScreen.setBannerText(null);
+        chatScreen.fetchMessages(null, null, 0, false);
     }
 }

@@ -20,28 +20,21 @@ public class ChatScreen extends ListScreen implements CommandListener {
     private Channel channel;
     private Vector messages;
     public String messageDraft = "";
-
-    private int page;
-    public String fetchBefore;
-    public String fetchAfter;
+    public int page;
 
     private static SmallButtonItem olderMessagesButton = new SmallButtonItem("Older messages");
     private static SmallButtonItem newerMessagesButton = new SmallButtonItem("Newer messages");
 
     public ChatScreen(Channel channel) {
-        this(channel, 0, null, null);
+        // By default, fetch latest messages
+        this(channel, null, null, 0);
     }
 
-    public ChatScreen(Channel channel, int page, String fetchBefore, String fetchAfter) {
+    public ChatScreen(Channel channel, String paginationType, String paginationMessage, int newPage) {
         super(0, Fonts.height/4);
         setTitle(channel.name);
 
         this.channel = channel;
-        this.page = page;
-        this.fetchBefore = fetchBefore;
-        this.fetchAfter = fetchAfter;
-
-        addItem(new LoadingItem());
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
@@ -51,8 +44,23 @@ public class ChatScreen extends ListScreen implements CommandListener {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
 
+        fetchMessages(paginationType, paginationMessage, newPage, true);
+    }
+
+    public void fetchMessages(String paginationType, String paginationMessage, int newPage, boolean showLoadingAnimation) {
+        if (showLoadingAnimation) {
+            removeAllItems();
+            addItem(new LoadingItem());
+        }
+        else {
+            setBannerText("Loading messages");
+        }
+
         HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_MESSAGES, this);
         h.channel = channel;
+        h.paginationType = paginationType;
+        h.paginationMessage = paginationMessage;
+        h.newPage = newPage;
         h.start();
     }
 
@@ -103,15 +111,15 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public void itemSelected(Item i) {
         if (i == olderMessagesButton) {
             Message first = (Message) messages.elementAt(0);
-            App.replaceScreen(new ChatScreen(channel, page + 1, first.id, null));
+            fetchMessages("before", first.id, page + 1, false);
         }
         else if (i == newerMessagesButton) {
             Message last = (Message) messages.lastElement();
-            App.replaceScreen(new ChatScreen(channel, page - 1, null, last.id));
+            fetchMessages("after", last.id, page - 1, false);
         }
     }
 
-    public void populate(JSONArray messagesJson) {
+    public void populate(JSONArray messagesJson, boolean scrollToTop) {
         Vector newItems = new Vector();
 
         if (messagesJson.size() >= 20) {
@@ -131,7 +139,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
         removeAllItems();
         addItems(newItems);
 
-        if (fetchAfter != null) {
+        if (scrollToTop) {
             setHighlightedItem(olderMessagesButton);
         }
         else {
