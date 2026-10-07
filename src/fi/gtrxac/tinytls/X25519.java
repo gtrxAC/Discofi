@@ -46,7 +46,7 @@ public final class X25519 {
 
     private final byte[] scalar = new byte[32];
 
-    private static final long[] mulTemp = new long[31];
+    private final long[] mulTemp = new long[31];
 
     public X25519() {
     }
@@ -297,7 +297,7 @@ public final class X25519 {
                 x[15] + 0x0FFFE - y[15];
     }
 
-    private static void square(
+    private void square(
             long[] out,
             long[] x) {
 
@@ -307,7 +307,7 @@ public final class X25519 {
     /**
      * Field multiplication modulo 2^255 - 19.
      */
-    private static void mul(
+    private void mul(
             long[] out,
             long[] a,
             long[] b) {
