@@ -15,8 +15,11 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 
 ### Planned for first release
 * Sending replies
-* Message editing/deleting
-* Viewing replies/attachments
+* Profile pictures
+* Message editing
+* Message deleting
+* Viewing replies
+* Viewing attachments
 * Password login
 * Token file import
 * HTTP connection over BlueWAP
@@ -25,11 +28,13 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Emojis, reactions
 * Gateway
 * Sending attachments
+* Embeds
 * etc.
 
 ## Officially supported devices
 Any device meeting the [system requirements](#system-requirements) should be able to run the app, but technical support will mainly be provided for these officially supported devices, and the app will be developed mainly with them in mind.
 * Nokia devices running Series 40 3rd Edition FP1 or later
+  * TLS on these phones is slow, so it's recommended to find one with a faster CPU or use a Symbian/Sony Ericsson device instead
   * Series 40 Lite devices are not supported
 * Symbian devices that support the [nnproject TLS patch](https://nnproject.cc/tls/)
   * Note that as of writing this, Symbian 8.0 (e.g. Nokia 6630/6680) is not supported.
