@@ -7,6 +7,28 @@ import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.SocketConnection;
 
+/**
+ * Minimal TLS implementation for J2ME.
+ * 
+ * This implementation is not secure or robust. It is only designed to be the
+ * bare minimum to connect to services that require TLS 1.2.
+ * 
+ * It has been designed around the following requirements:
+ * - Support for CLDC 1.0
+ * - TLS 1.2 only
+ * - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 cipher suite only
+ * - No certificate checking
+ * - No secure random numbers
+ * 
+ * Intended usage is via the modified version of ModernConnector included in this repo.
+ * 
+ * You may also use:
+ * 
+ *  TinyTLS tls = new TinyTLS();
+ *  tls.connect("example.com", 443);
+ *  InputStream is = tls.openInputStream();
+ *  OutputStream os = tls.openOutputStream();
+ */
 public final class TinyTLS {
 
     private static final int TYPE_CHANGE_CIPHER_SPEC = 20;
