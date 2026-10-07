@@ -10,11 +10,26 @@ public class Message {
     public boolean showAuthor;
     public String timestamp;
 
+    public User replyAuthor;
+    public String replyContent;
+
     public Message(JSONObject data) {
         id = data.getString("id");
         author = new User(data.getObject("author"));
         content = data.getString("content", "");
         timestamp = DiscordUtil.formatTimestamp(id, false);
+
+        try {
+            JSONObject replyMessage = data.getObject("referenced_message");
+
+            replyAuthor = new User(replyMessage.getObject("author"));
+            replyContent = replyMessage.getString("content", null);
+
+            if (replyContent == null || replyContent.length() == 0) {
+                replyContent = "(no content)";
+            }
+        }
+        catch (Exception e) {}
     }
 
     public boolean shouldShowAuthor(Message above, String clusterStart) {
@@ -22,7 +37,7 @@ public class Message {
         if (!above.author.id.equals(author.id)) return true;
 
         // This message is a reply -> true
-        // if (recipient != null) return true;
+        if (replyAuthor != null) return true;
 
         // This message only consists of an attachment -> true
         // if ((imageAttachments != null || fileAttachments != null) && content.length() == 0) return true;

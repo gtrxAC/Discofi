@@ -11,9 +11,9 @@ public class MessageItem extends Item {
     private String[] textLines;
     private String displayedAuthor;
     private int timestampX;
+    private int timestampY;
 
     private static Font timestampFont;
-    private static int timestampY;
     private static int leftMargin;
     private static int avatarSize;
     private static int contentX;
@@ -27,6 +27,7 @@ public class MessageItem extends Item {
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         int pad = screen.itemPadding;
 
+        // Highlight background
         if (highlighted) {
             g.setColor(0xAADDFF);
             g.fillRect(
@@ -38,21 +39,39 @@ public class MessageItem extends Item {
 
         int textY = 0;
 
+        // Author line
         if (message.showAuthor) {
-            g.setColor(0x666666);
-            g.fillArc(leftMargin, pad/2, avatarSize, avatarSize, 0, 360);
+            // Reply
+            if (message.replyAuthor != null) {
+                // Reply avatar placeholder
+                g.setColor(0x666666);
+                g.fillArc(leftMargin, 0, Fonts.height, Fonts.height, 0, 360);
+                
+                // Reply username
+                g.setColor(0x333333);
+                g.drawString(message.replyAuthor.name, Fonts.height + Fonts.height/2, 0, 0);
 
+                textY += Fonts.height;
+            }
+
+            // Avatar placeholder
+            g.setColor(0x666666);
+            g.fillArc(leftMargin, textY + pad/2, avatarSize, avatarSize, 0, 360);
+
+            // Username
             g.setFont(Fonts.bold);
             g.setColor(0x000000);
-            g.drawString(displayedAuthor, contentX, 0, 0);
+            g.drawString(displayedAuthor, contentX, textY, 0);
 
+            // Timestamp
             g.setFont(timestampFont);
             g.setColor(0x666666);
             g.drawString(message.timestamp, timestampX, timestampY, 0);
 
-            textY = headerHeight;
+            textY += headerHeight;
         }
 
+        // Message content
         g.setFont(Fonts.plain);
         g.setColor(highlighted ? 0x000000 : 0x111111);
 
@@ -78,9 +97,14 @@ public class MessageItem extends Item {
         if (message.showAuthor) {
             headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
             height += headerHeight;
+
+            if (message.replyAuthor != null) {
+                height += Fonts.height;
+                timestampY += Fonts.height;
+            }
         }
 
-        int timestampPadding = Fonts.height/3;
+        int timestampPadding = Fonts.height/2;
         int timestampWidth = timestampFont.stringWidth(message.timestamp) + timestampPadding;
         int authorAvailableWidth = contentWidth - timestampWidth;
         displayedAuthor = Util.stringToWidth(message.author.name, Fonts.bold, authorAvailableWidth);
