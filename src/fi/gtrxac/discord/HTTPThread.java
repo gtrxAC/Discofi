@@ -29,6 +29,8 @@ public class HTTPThread extends Thread {
     public String paginationType;
     public String paginationMessage;
     public int newPage;
+	String recipientMessage;
+	boolean sendPing;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -266,8 +268,9 @@ public class HTTPThread extends Thread {
 
     private void runSendMessage() throws DiscordException {
         ChatScreen chatScreen = (ChatScreen) callerScreen;
+        chatScreen.setBannerText("Sending message");
 
-        acc.sendMessage(channel.id, message);
+        acc.sendMessage(channel, message, recipientMessage, sendPing);
         chatScreen.setBannerText(null);
         chatScreen.fetchMessages(null, null, 0, false);
     }

@@ -11,10 +11,10 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Chat screen with pagination
 * Token login
 * Sending messages
+* Sending replies
 * Message timestamps
 
 ### Planned for first release
-* Sending replies
 * Profile pictures
 * Message editing
 * Message deleting

@@ -14,8 +14,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
     public static final int CMD_SEND = 2;
-    public static final int CMD_MESSAGE_BOX_SEND = 3;
-    public static final int CMD_MESSAGE_BOX_BACK = 4;
+    public static final int CMD_REPLY = 3;
+    public static final int CMD_MESSAGE_BOX_SEND = 100;
+    public static final int CMD_MESSAGE_BOX_BACK = 101;
 
     private Channel channel;
     private Vector messages;
@@ -39,6 +40,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         addCommand(new Command("Send", Command.SCREEN, CMD_SEND));
+        addCommand(new Command("Reply", Command.ITEM, CMD_REPLY));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
@@ -78,6 +80,14 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 showMessageBox();
                 break;
             }
+            case CMD_REPLY: {
+                Object i = items.elementAt(getHighlightedIndex());
+                if (!(i instanceof MessageItem)) break;
+
+                Message replyTarget = ((MessageItem) i).message;
+                App.pushScreen(new ReplyScreen(channel, replyTarget, messageDraft));
+                break;
+            }
             case CMD_MESSAGE_BOX_SEND: {
                 TextBox t = (TextBox) App.disp.getCurrent();
                 HTTPThread h = new HTTPThread(HTTPThread.ACTION_SEND_MESSAGE, this);
@@ -85,13 +95,13 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 h.message = t.getString();
                 h.start();
 
-                setBannerText("Sending message");
                 App.disp.setCurrent(AppCanvas.instance);
                 break;
             }
             case CMD_MESSAGE_BOX_BACK: {
                 TextBox t = (TextBox) App.disp.getCurrent();
                 messageDraft = t.getString();
+
                 App.disp.setCurrent(AppCanvas.instance);
                 break;
             }

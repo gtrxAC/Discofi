@@ -293,14 +293,29 @@ public class Account {
     /**
      * Send a message to a channel. Returns the created message.
      */
-    public Message sendMessage(String channelId, String content) throws DiscordException {
+    public Message sendMessage(Channel channel, String content, String recipientMessageId, boolean mention) throws DiscordException {
+        boolean isDM = (channel instanceof DMChannel);
+
         JSONObject body = new JSONObject();
         body.put("content", content);
         body.put("flags", 0);
         body.put("mobile_network_type", "unknown");
         body.put("tts", false);
 
-        JSONObject created = (JSONObject) postJSON("/channels/" + channelId + "/messages", body);
+        // Reply
+        if (recipientMessageId != null) {
+            JSONObject ref = new JSONObject();
+            ref.put("message_id", recipientMessageId);
+            body.put("message_reference", ref);
+
+            if (!mention && !isDM) {
+                JSONObject ping = new JSONObject();
+                ping.put("replied_user", false);
+                body.put("allowed_mentions", ping);
+            }
+        }
+
+        JSONObject created = (JSONObject) postJSON("/channels/" + channel.id + "/messages", body);
         return new Message(created);
     }
 }
