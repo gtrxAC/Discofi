@@ -13,9 +13,10 @@ public class App extends AppBase {
     // Account that is currently being created (or edited)
     public static Account pendingAccount;
 
-    // State for the password login flow (fingerprint -> ticket -> TOTP)
+    // State for the password login flow (fingerprint -> ticket/login instance ID -> TOTP)
     public static String pendingTicket;
     public static String pendingFingerprint;
+    public static String pendingLoginInstanceID;
 
     public static final SmallButtonItem refreshButton = new SmallButtonItem("Refresh");
 

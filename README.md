@@ -15,14 +15,16 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Sending messages
 * Sending replies
 * Message timestamps
+* Password login
+
+### Work in progress
+* Viewing replies
 
 ### Planned for first release
 * Profile pictures
 * Message editing
 * Message deleting
-* Viewing replies
 * Viewing attachments
-* Password login
 * Token file import
 * HTTP connection over BlueWAP
 * Theme settings (light/dark)

@@ -5,6 +5,7 @@ import java.util.Vector;
 import cc.nnproject.json.*;
 import fi.gtrxac.bluewap.http.HTTP;
 import java.io.*;
+import java.util.*;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -150,12 +151,22 @@ public class Account {
     /**
      * Perform an authenticated POST request with a JSON body and parse the response as JSON.
      */
-    public AbstractJSON postJSON(String route, JSONObject body) throws DiscordException {
+    public AbstractJSON postJSON(String route, JSONObject body, Hashtable headers) throws DiscordException {
         int responseCode;
         String responseText;
 
         try {
             HTTP h = createApiRequest("POST", route);
+            
+            if (headers != null) {
+                for (Enumeration keys = headers.keys(); keys.hasMoreElements(); ) {
+                    String key = (String) keys.nextElement();
+                    String value = (String) headers.get(key);
+
+                    h.setHeader(key, value);
+                }
+            }
+
             h.setData(body.build());
             responseCode = h.getResponseCode();
             responseText = h.getResponseString();
@@ -168,7 +179,16 @@ public class Account {
         return handleJSONResponse(responseCode, responseText);
     }
 
+    public AbstractJSON postJSON(String route, JSONObject body) throws DiscordException {
+        return postJSON(route, body, null);
+    }
+
     private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
+        if (responseText == null) responseText = "";
+
+        if (responseCode == 400 && responseText.indexOf("captcha") != -1) {
+            throw new DiscordException("A CAPTCHA was received");
+        }
         if (responseCode < 200 || responseCode >= 300) {
             throw new DiscordException(getApiErrorMessage(responseCode, responseText));
         }

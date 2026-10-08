@@ -25,6 +25,7 @@ public class AuthCodeScreen extends ListScreen implements CommandListener {
 
         addItem(new LabelItem("Authentication code"));
         addItem(authCodeField = new TextFieldItem("Authentication code", "", 6, TextField.NUMERIC));
+        setHighlightedItem(authCodeField);
 
         if (!Util.hideSelectCommand) {
             addItem(continueButton = new ButtonItem("Continue"));
