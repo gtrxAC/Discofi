@@ -18,6 +18,7 @@ public class MessageItem extends Item {
     private static int avatarSize;
     private static int contentX;
     private static int headerHeight;
+    private static int replyAuthorWidth;
 
     public MessageItem(Message m) {
         super(true);
@@ -43,14 +44,7 @@ public class MessageItem extends Item {
         if (message.showAuthor) {
             // Reply
             if (message.replyAuthor != null) {
-                // Reply avatar placeholder
-                g.setColor(0x666666);
-                g.fillArc(leftMargin, 0, Fonts.height, Fonts.height, 0, 360);
-                
-                // Reply username
-                g.setColor(0x333333);
-                g.drawString(message.replyAuthor.name, Fonts.height + Fonts.height/2, 0, 0);
-
+                drawReply(g);
                 textY += Fonts.height;
             }
 
@@ -79,6 +73,25 @@ public class MessageItem extends Item {
             g.drawString(textLines[i], contentX, textY, 0);
             textY += Fonts.height;
         }
+    }
+
+    private void drawReply(Graphics g) {
+        // Avatar placeholder
+        g.setColor(0x666666);
+        g.fillArc(leftMargin, 0, Fonts.height, Fonts.height, 0, 360);
+
+        int x = Fonts.height + Fonts.height/2;
+        
+        // Username
+        g.setColor(0x333333);
+        g.setFont(Fonts.bold);
+        g.drawString(message.replyAuthor.name, x, 0, 0);
+
+        x += replyAuthorWidth;
+
+        // Message content
+        g.setFont(Fonts.plain);
+        g.drawString(message.content, x, 0, 0);
     }
 
     public void recalc(int width) {
@@ -111,5 +124,7 @@ public class MessageItem extends Item {
 
         int authorWidth = Fonts.bold.stringWidth(displayedAuthor);
         timestampX = contentX + authorWidth + timestampPadding;
+
+        replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name) + Fonts.height/2;
     }
 }
