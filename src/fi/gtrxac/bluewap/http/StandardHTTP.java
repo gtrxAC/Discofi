@@ -28,9 +28,21 @@ public class StandardHTTP extends HTTP {
 		super(method, url);
 	}
 
+	private static Object dispatchConnectorOpen(String url) throws Exception {
+		if (Util.preferModernConnector) {
+			try {
+				return ModernConnector.open(url);
+			}
+			catch (SecurityException e) {
+				if (!Util.allowSecondaryConnector) throw e;
+			}
+		}
+		return Connector.open(url);
+	} 
+
 	private InputStream makeRequestFinal(String finalUrl) throws Exception {
 		queueItem = HTTPQueue.newQueueItem();
-		hc = (HttpConnection) ModernConnector.open(finalUrl);
+		hc = (HttpConnection) dispatchConnectorOpen(finalUrl);
 		queueItem.hc = hc;
 
 		try {

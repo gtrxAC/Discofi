@@ -567,6 +567,8 @@ public class Util extends Canvas {
 	public static final boolean useCustomTitleBar;
 	public static final boolean useCustomTitleBarClock;
 	public static final boolean hideSelectCommand;
+	public static final boolean preferModernConnector;
+	public static final boolean allowSecondaryConnector;
 
 	static {
 		String plat = System.getProperty("microedition.platform");
@@ -580,6 +582,7 @@ public class Util extends Canvas {
 		// Other devices (even e.g. Nokia 3230, 6230) have been fine with 5
 		vectorRenderScale = plat.startsWith("Nokia6600/") ? 1 : 5;
 
+		boolean isNokia = plat.startsWith("Nokia");
 		boolean isSonyEricsson = plat.startsWith("SonyEr");
 
 		// Underlined fonts do not render correctly on Samsung touchscreen phones
@@ -587,7 +590,7 @@ public class Util extends Canvas {
 		// and they do not look different from the standard font on Motorola
 		// They seem to be safe to use on all Nokia, Sony Ericsson, BlackBerry phones
 		// Other devices need more testing
-		useUnderlinedFont = plat.startsWith("Nokia") || isSonyEricsson || plat.startsWith("BlackB");
+		useUnderlinedFont = isNokia || isSonyEricsson || plat.startsWith("BlackB");
 
 		// On some Motorola phones (seemingly those with only one font size, like the V3 and L6)
 		// drawRoundRect() will draw with a width and height one pixel larger than specified
@@ -623,6 +626,34 @@ public class Util extends Canvas {
 		// but for now we only check for Symbian S60v5 and up, and platforms that use custom softkeys,
 		// as the custom softkey impl is made for touchscreens
 		hideSelectCommand = plat.indexOf("sw_platform_version=5.") != -1 || useCustomSoftkeys;
+
+		boolean isSymbian =
+			plat.indexOf("platform=S60") != -1 ||
+			System.getProperty("com.symbian.midp.serversocket.support") != null ||
+			System.getProperty("com.symbian.default.to.suite.icon") != null ||
+			checkClass("com.symbian.midp.io.protocol.http.Protocol") ||
+			checkClass("com.symbian.lcdjava.io.File");
+
+		// Which type of Connector(s) to prefer/use for TLS on different platforms:
+
+		// Symbian: always use standard Connector, as you're meant to use TLS 1.2 patch
+		if (isSymbian) {
+			preferModernConnector = false;
+			allowSecondaryConnector = false;
+		}
+
+		// Nokia S40 and SE: always use ModernConnector, as standard Connector will never have TLS 1.2.
+		// We'll also do this for Android even though it's not always optimal
+		else if (isNokia || isSonyEricsson || isJ2MELoader) {
+			preferModernConnector = true;
+			allowSecondaryConnector = false;
+		}
+
+		// Other: prefer ModernConnector but also try standard Connector
+		else {
+			preferModernConnector = true;
+			allowSecondaryConnector = true;
+		}
 	}
 
 	// Samsung platform strings are inconsistent but one fairly effective way to
