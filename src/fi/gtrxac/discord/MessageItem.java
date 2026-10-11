@@ -50,6 +50,16 @@ public class MessageItem extends Item {
 
         // Author line
         if (message.showAuthor) {
+            // Lines connecting reply to message
+            int linesBeginX = contentX/2;
+            int linesBeginY = replyHeight/2;
+            int horizontalLineEndX = contentX*4/5;
+            int verticalLineEndY = replyHeight*4/5;
+
+            g.setColor(0x888888);
+            g.drawLine(linesBeginX, linesBeginY, horizontalLineEndX, linesBeginY);
+            g.drawLine(linesBeginX, linesBeginY, linesBeginX, verticalLineEndY);
+
             // Reply
             if (message.replyAuthor != null) {
                 updateReplyImage(highlighted);
