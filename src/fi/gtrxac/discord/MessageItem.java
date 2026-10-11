@@ -5,6 +5,8 @@ import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
+import tube42.lib.imagelib.ImageUtils;
 
 public class MessageItem extends Item {
     public Message message;
@@ -15,11 +17,14 @@ public class MessageItem extends Item {
 
     private int replyAuthorWidth;
     private String displayedReplyContent;
+    private boolean replyImageHighlighted;
+    private Image replyImage;
 
     private static Font timestampFont;
     private static int leftMargin;
     private static int avatarSize;
     private static int contentX;
+    private static int contentWidth;
     private static int headerHeight;
     private static int replyHeight;
 
@@ -47,7 +52,8 @@ public class MessageItem extends Item {
         if (message.showAuthor) {
             // Reply
             if (message.replyAuthor != null) {
-                drawReply(g, contentX, 0);
+                updateReplyImage(highlighted);
+                g.drawImage(replyImage, contentX, Fonts.height/5, 0);
                 textY += replyHeight;
             }
 
@@ -98,13 +104,32 @@ public class MessageItem extends Item {
         g.drawString(displayedReplyContent, x, y, 0);
     }
 
+    private void updateReplyImage(boolean highlighted) {
+        if (replyImage != null && replyImageHighlighted == highlighted) return;
+
+        replyImage = null;
+        replyImage = Image.createImage(contentWidth*4/3, Fonts.height);
+
+        Graphics g = replyImage.getGraphics();
+
+        if (highlighted) {
+            g.setColor(0xAADDFF);
+            g.fillRect(0, 0, contentWidth*4/3, Fonts.height);
+        }
+
+        drawReply(g, 0, 0);
+
+        replyImage = ImageUtils.resize(replyImage, contentWidth, Fonts.height*3/4, true, true);
+        replyImageHighlighted = highlighted;
+    }
+
     public void recalc(int width) {
         leftMargin = Fonts.height/3;
         avatarSize = Fonts.height*5/4;
         int avatarRightMargin = Fonts.height/3;
 
         contentX = leftMargin + avatarSize + avatarRightMargin;
-        int contentWidth = width - contentX;
+        contentWidth = width - contentX;
 
         textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);
         height = Fonts.height*textLines.length;
@@ -142,7 +167,10 @@ public class MessageItem extends Item {
     }
 
     private void calcReplyHeight() {
-        replyHeight = Fonts.height + Fonts.height/5;
+        int replyPadding = Fonts.height/5;
+        int replyImageHeight = Fonts.height*3/4;
+
+        replyHeight = replyImageHeight + replyPadding*2;
         height += replyHeight;
         timestampY += replyHeight;
     }
@@ -152,11 +180,15 @@ public class MessageItem extends Item {
 
         replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name)
             + replyAuthorRightMargin;
+    
+        // for when we add reply direct drawing:
 
-        int replyContentAvailableWidth =
-            contentWidth - Fonts.height - Fonts.height/3 - replyAuthorWidth;
+        // int replyContentAvailableWidth =
+        //     contentWidth - Fonts.height - Fonts.height/3 - replyAuthorWidth;
 
-        displayedReplyContent = Util.stringToWidth(
-            message.replyContent, Fonts.plain, replyContentAvailableWidth);
+        // displayedReplyContent = Util.stringToWidth(
+        //     message.replyContent, Fonts.plain, replyContentAvailableWidth);
+
+        displayedReplyContent = message.replyContent;
     }
 }
