@@ -13,12 +13,15 @@ public class MessageItem extends Item {
     private int timestampX;
     private int timestampY;
 
+    private int replyAuthorWidth;
+    private String displayedReplyContent;
+
     private static Font timestampFont;
     private static int leftMargin;
     private static int avatarSize;
     private static int contentX;
     private static int headerHeight;
-    private static int replyAuthorWidth;
+    private static int replyHeight;
 
     public MessageItem(Message m) {
         super(true);
@@ -44,8 +47,8 @@ public class MessageItem extends Item {
         if (message.showAuthor) {
             // Reply
             if (message.replyAuthor != null) {
-                drawReply(g);
-                textY += Fonts.height;
+                drawReply(g, contentX, 0);
+                textY += replyHeight;
             }
 
             // Avatar placeholder
@@ -75,56 +78,85 @@ public class MessageItem extends Item {
         }
     }
 
-    private void drawReply(Graphics g) {
+    private void drawReply(Graphics g, int x, int y) {
         // Avatar placeholder
         g.setColor(0x666666);
-        g.fillArc(leftMargin, 0, Fonts.height, Fonts.height, 0, 360);
+        g.fillArc(x, y, Fonts.height, Fonts.height, 0, 360);
 
-        int x = Fonts.height + Fonts.height/2;
+        x += Fonts.height + Fonts.height/3;
         
         // Username
-        g.setColor(0x333333);
+        g.setColor(0x000000);
         g.setFont(Fonts.bold);
-        g.drawString(message.replyAuthor.name, x, 0, 0);
+        g.drawString(message.replyAuthor.name, x, y, 0);
 
         x += replyAuthorWidth;
 
         // Message content
+        g.setColor(0x666666);
         g.setFont(Fonts.plain);
-        g.drawString(message.content, x, 0, 0);
+        g.drawString(displayedReplyContent, x, y, 0);
     }
 
     public void recalc(int width) {
-        timestampFont = Fonts.get(-1, false, false, false);
-        timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
-
         leftMargin = Fonts.height/3;
         avatarSize = Fonts.height*5/4;
         int avatarRightMargin = Fonts.height/3;
-        contentX = avatarSize + leftMargin + avatarRightMargin;
+
+        contentX = leftMargin + avatarSize + avatarRightMargin;
         int contentWidth = width - contentX;
 
         textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);
         height = Fonts.height*textLines.length;
 
-        if (message.showAuthor) {
-            headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
-            height += headerHeight;
+        if (!message.showAuthor) return;
 
-            if (message.replyAuthor != null) {
-                height += Fonts.height;
-                timestampY += Fonts.height;
-            }
-        }
+        calcAuthorHeight();
+        calcTimestampAndAuthor();
+
+        if (message.replyAuthor == null) return;
+
+        calcReplyHeight();
+        calcReplyContent();
+    }
+
+    private void calcAuthorHeight() {
+        headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
+        height += headerHeight;
+    }
+
+    private void calcTimestampAndAuthor() {
+        timestampFont = Fonts.get(-1, false, false, false);
+        timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
 
         int timestampPadding = Fonts.height/2;
-        int timestampWidth = timestampFont.stringWidth(message.timestamp) + timestampPadding;
+        int timestampWidth = timestampPadding + timestampFont.stringWidth(message.timestamp);
         int authorAvailableWidth = contentWidth - timestampWidth;
-        displayedAuthor = Util.stringToWidth(message.author.name, Fonts.bold, authorAvailableWidth);
+        
+        displayedAuthor = Util.stringToWidth(
+            message.author.name, Fonts.bold, authorAvailableWidth);
 
         int authorWidth = Fonts.bold.stringWidth(displayedAuthor);
+        
         timestampX = contentX + authorWidth + timestampPadding;
+    }
 
-        replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name) + Fonts.height/2;
+    private void calcReplyHeight() {
+        replyHeight = Fonts.height + Fonts.height/5;
+        height += replyHeight;
+        timestampY += replyHeight;
+    }
+
+    private void calcReplyContent() {
+        int replyAuthorRightMargin = Fonts.height/3;
+
+        replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name)
+            + replyAuthorRightMargin;
+
+        int replyContentAvailableWidth =
+            contentWidth - Fonts.height - Fonts.height/3 - replyAuthorWidth;
+
+        displayedReplyContent = Util.stringToWidth(
+            message.replyContent, Fonts.plain, replyContentAvailableWidth);
     }
 }
