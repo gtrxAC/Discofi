@@ -12,19 +12,30 @@ import javax.microedition.lcdui.Displayable;
 public class ChannelListScreen extends ListScreen implements CommandListener {
     public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
+    public static final int CMD_REFRESH = 2;
+
+    private Guild guild;
 
     public ChannelListScreen(Guild guild) {
         super();
         setTitle(guild.getName());
 
-        addItem(new LoadingItem());
+        this.guild = guild;
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
+        addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
+        
+        fetchData();
+    }
+
+    private void fetchData() {
+        removeAllItems();
+        addItem(new LoadingItem());
 
         HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_GUILD_CHANNELS, this);
         h.guild = guild;
@@ -41,6 +52,10 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
                 App.popScreen();
                 break;
             }
+            case CMD_REFRESH: {
+                fetchData();
+                break;
+            }
         }
     }
 
@@ -50,9 +65,9 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
             Channel channel = (Channel) li.object;
             App.pushScreen(new ChatScreen(channel));
         }
-        // else if (i == App.refreshButton) {
-
-        // }
+        else if (i == App.refreshButton) {
+            fetchData();
+        }
     }
 
     public void populate(Vector categories) {
