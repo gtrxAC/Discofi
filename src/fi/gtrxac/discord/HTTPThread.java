@@ -61,81 +61,95 @@ public class HTTPThread extends Thread {
     }
 
     private void runPasswordLogin() throws DiscordException {
-        ListScreen l = new ListScreen();
-        l.addItem(new LoadingItem());
-        App.pushScreen(l);
+        ListScreen loadScreen = new ListScreen();
+        loadScreen.addItem(new LoadingItem());
+        App.pushScreen(loadScreen);
 
-        // 1. fetch experiments which contains the fingerprint we need to use during the login flow
-        // could also use /auth/fingerprint but it seems to be deprecated
-        JSONObject experiments = (JSONObject)
-            App.pendingAccount.fetchJSON("/experiments?with_guild_experiments=true");
+        try {
+            // 1. fetch experiments which contains the fingerprint we need to use during the login flow
+            // could also use /auth/fingerprint but it seems to be deprecated
+            JSONObject experiments = (JSONObject)
+                App.pendingAccount.fetchJSON("/experiments?with_guild_experiments=true");
 
-        App.pendingFingerprint = experiments.getString("fingerprint", "");
+            App.pendingFingerprint = experiments.getString("fingerprint", "");
 
-        // 2. create a login request
-        // assuming correct credientials and no connection error, there are generally 4 possible outcomes:
-        // - login succeeds straight away and we have our token
-        // - a TOTP code is required and we continue by asking for it
-        // - 2FA is not enabled and we either get a captcha or an email to authorize the IP address
-        //   - captcha is handled in Account
-        //   - email is untested but should show a descriptive error
-        JSONObject loginObject = new JSONObject();
-        loginObject.put("login", email);
-        loginObject.put("password", password);
-        loginObject.put("undelete", false);
-        loginObject.put("login_source", (Object) null);
-        loginObject.put("gift_code_sku_id", (Object) null);
+            // 2. create a login request
+            // assuming correct credientials and no connection error, there are generally 4 possible outcomes:
+            // - login succeeds straight away and we have our token
+            // - a TOTP code is required and we continue by asking for it
+            // - 2FA is not enabled and we either get a captcha or an email to authorize the IP address
+            //   - captcha is handled in Account
+            //   - email is untested but should show a descriptive error
+            JSONObject loginObject = new JSONObject();
+            loginObject.put("login", email);
+            loginObject.put("password", password);
+            loginObject.put("undelete", false);
+            loginObject.put("login_source", (Object) null);
+            loginObject.put("gift_code_sku_id", (Object) null);
 
-        Hashtable loginHeaders = new Hashtable();
-        loginHeaders.put("X-Fingerprint", App.pendingFingerprint);
+            Hashtable loginHeaders = new Hashtable();
+            loginHeaders.put("X-Fingerprint", App.pendingFingerprint);
 
-        JSONObject loginResponse = (JSONObject)
-            App.pendingAccount.postJSON("/auth/login", loginObject, loginHeaders);
+            JSONObject loginResponse = (JSONObject)
+                App.pendingAccount.postJSON("/auth/login", loginObject, loginHeaders);
 
-        String token = loginResponse.getString("token", null);
+            String token = loginResponse.getString("token", null);
 
-        // 3a: login might have already succeeded
-        if (token != null) {
-            App.loginCompleted(token);
-            return;
+            // 3a: login might have already succeeded
+            if (token != null) {
+                App.loginCompleted(token);
+                return;
+            }
+
+            // 3b: continue with asking for TOTP code
+            if (!loginResponse.getBoolean("mfa", false)) {
+                throw new DiscordException(
+                    "Account does not have multi-factor authentication enabled");
+            }
+            if (!loginResponse.getBoolean("totp", false)) {
+                throw new DiscordException(
+                    "Account does not have multi-factor authentication via authenticator app enabled");
+            }
+
+            App.pendingTicket = loginResponse.getString("ticket");
+            App.pendingLoginInstanceID = loginResponse.getString("login_instance_id");
+        }
+        finally {
+            App.popScreen();
         }
 
-        // 3b: continue with asking for TOTP code
-        if (!loginResponse.getBoolean("mfa", false)) {
-            throw new DiscordException(
-                "Account does not have multi-factor authentication enabled");
-        }
-        if (!loginResponse.getBoolean("totp", false)) {
-            throw new DiscordException(
-                "Account does not have multi-factor authentication via authenticator app enabled");
-        }
-
-        App.pendingTicket = loginResponse.getString("ticket");
-        App.pendingLoginInstanceID = loginResponse.getString("login_instance_id");
         App.replaceScreen(new AuthCodeScreen());
 
         // Login is continued with another HTTPThread that runs runSubmitTotp
     }
 
     private void runSubmitTotp() throws DiscordException {
-        ListScreen l = new ListScreen();
-        l.addItem(new LoadingItem());
-        App.pushScreen(l);
+        ListScreen loadScreen = new ListScreen();
+        loadScreen.addItem(new LoadingItem());
+        App.pushScreen(loadScreen);
 
-        JSONObject totpObject = new JSONObject();
-        totpObject.put("code", totp);
-        totpObject.put("ticket", App.pendingTicket);
-        totpObject.put("login_source", (Object) null);
-        totpObject.put("gift_code_sku_id", (Object) null);
-        totpObject.put("login_instance_id", App.pendingLoginInstanceID);
+        String token = null;
 
-        Hashtable totpHeaders = new Hashtable();
-        totpHeaders.put("X-Fingerprint", App.pendingFingerprint);
+        try {
+            JSONObject totpObject = new JSONObject();
+            totpObject.put("code", totp);
+            totpObject.put("ticket", App.pendingTicket);
+            totpObject.put("login_source", (Object) null);
+            totpObject.put("gift_code_sku_id", (Object) null);
+            totpObject.put("login_instance_id", App.pendingLoginInstanceID);
 
-        JSONObject totpResponse = (JSONObject)
-            App.pendingAccount.postJSON("/auth/mfa/totp", totpObject, totpHeaders);
+            Hashtable totpHeaders = new Hashtable();
+            totpHeaders.put("X-Fingerprint", App.pendingFingerprint);
 
-        String token = totpResponse.getString("token");
+            JSONObject totpResponse = (JSONObject)
+                App.pendingAccount.postJSON("/auth/mfa/totp", totpObject, totpHeaders);
+
+            token = totpResponse.getString("token");
+        }
+        finally {
+            App.popScreen();
+        }
+        
         App.loginCompleted(token);
     }
 

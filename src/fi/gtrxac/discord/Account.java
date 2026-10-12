@@ -118,10 +118,32 @@ public class Account {
         return result;
     }
 
+    public String parseAPIError(JSONObject response) {
+        StringBuffer result = new StringBuffer();
+        result.append(response.getString("message"));
+
+        try {
+            JSONObject errors = response.getObject("errors");
+            String firstErrorKey = (String) errors.keys().nextElement();
+
+            String firstError = errors.getObject(firstErrorKey)
+                .getArray("_errors")
+                .getObject(0)
+                .getString("message");
+
+            result.append(" (")
+                .append(firstError)
+                .append(')');
+        }
+        catch (JSONException e) {}
+
+        return result.toString();
+    }
+
     public String getApiErrorMessage(int responseCode, String responseText) {
         try {
             JSONObject json = JSON.getObject(responseText);
-            return json.getString("message");
+            return parseAPIError(json);
         }
         catch (JSONException e) {}
 
