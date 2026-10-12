@@ -63,7 +63,9 @@ public class DiscordException extends Exception {
 
         d.listView.addItem(new StringItem(title, largerBold));
 
-        if (tips != null && tips.size() > 0) {
+        boolean haveTips = (tips != null && tips.size() > 0);
+
+        if (haveTips) {
             d.listView.addItem("Please try the following:");
 
             String[] tipsArray = new String[tips.size()];
@@ -72,7 +74,8 @@ public class DiscordException extends Exception {
         }
 
         if (friendlyMessage != null) {
-            d.listView.addItem("Details:\n" + message);
+            String details = haveTips ? ("Details:\n" + message) : message;
+            d.listView.addItem(details);
         }
 
         App.pushScreen(d);
