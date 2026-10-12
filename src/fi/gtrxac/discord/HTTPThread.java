@@ -183,15 +183,26 @@ public class HTTPThread extends Thread {
     private void runFetchGuildChannels() throws DiscordException {
         ChannelListScreen list = (ChannelListScreen) callerScreen;
 
-        try {
-            JSONArray channelsJson = (JSONArray) acc.fetchJSON("/guilds/" + guild.id + "/channels");
-            Vector channels = parseGuildChannels(channelsJson);
-            list.populate(channels);
+        Vector channels = acc.channelCache.get(guild.id);
+
+        // Not cached -> fetch and save to cache
+        if (channels == null) {
+            try {
+                JSONArray channelsJson = (JSONArray) acc.fetchJSON("/guilds/" + guild.id + "/channels");
+                channels = parseGuildChannels(channelsJson);
+            }
+            catch (DiscordException e) {
+                list.showError();
+                throw e;
+            }
+            
+            acc.channelCache.set(guild.id, channels);
         }
-        catch (DiscordException e) {
-            list.showError();
-            throw e;
-        }
+
+        // Save cache
+        Settings.save();
+
+        list.populate(channels);
     }
 
     /**

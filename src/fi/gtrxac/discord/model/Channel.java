@@ -1,6 +1,7 @@
 package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.*;
+import java.io.*;
 
 public class Channel {
     // https://docs.discord.food/resources/channel#channel-type
@@ -25,6 +26,18 @@ public class Channel {
         name = data.getString("name", null);
 
         if (nameHasHashtag()) name = "#" + name;
+    }
+
+    public Channel(DataInputStream saveDataStream) throws IOException {
+        id = Long.toString(saveDataStream.readLong());
+        type = saveDataStream.readUnsignedByte();
+        name = saveDataStream.readUTF();
+    }
+
+    public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
+        saveDataStream.writeLong(Long.parseLong(id));
+        saveDataStream.writeByte(type);
+        saveDataStream.writeUTF(name);
     }
 
     protected boolean nameHasHashtag() {

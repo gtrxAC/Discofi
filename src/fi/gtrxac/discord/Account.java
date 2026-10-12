@@ -19,7 +19,8 @@ public class Account {
 
     // Version numbers for account save data.
     public static final int VERSION_BASE = 1;
-    public static final int VERSION_CURRENT = 1;
+    public static final int VERSION_ADDED_CHANNEL_CACHE = 2;
+    public static final int VERSION_CURRENT = 2;
 
     public String token = "";
     public String username;
@@ -32,6 +33,8 @@ public class Account {
     private final Vector guilds = new Vector();
     private final Vector dmChannels = new Vector();
     private final Vector inbox = new Vector();
+
+    public final ChannelCache channelCache = new ChannelCache();
 
     public Account() {
     }
@@ -59,6 +62,10 @@ public class Account {
         for (int i = 0; i < numDMChannels; i++) {
             dmChannels.addElement(new DMChannel(saveDataStream));
         }
+
+        if (version >= VERSION_ADDED_CHANNEL_CACHE) {
+            channelCache.readSaveData(saveDataStream);
+        }
     }
 
     public void writeSaveData(DataOutputStream saveDataStream) throws Exception {
@@ -83,6 +90,8 @@ public class Account {
             DMChannel c = (DMChannel) dmChannels.elementAt(i);
             c.writeSaveData(saveDataStream);
         }
+
+        channelCache.writeSaveData(saveDataStream);
     }
 
     public String getDisplayTitle() throws DiscordException {
