@@ -21,6 +21,10 @@ public class CacheEntry {
         return object;
     }
 
+    public Object getObjectWithoutUpdate() {
+        return object;
+    }
+
     public long getLastUsed() {
         return lastUsed;
     }

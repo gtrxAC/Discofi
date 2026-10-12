@@ -46,7 +46,7 @@ public class ChannelCache {
         for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
             String guildID = (String) e.nextElement();
             CacheEntry entry = (CacheEntry) cache.get(guildID);
-            Vector categories = (Vector) entry.getObject();
+            Vector categories = (Vector) entry.getObjectWithoutUpdate();
 
             // subtract current usage counter so the saved last-used values are
             // relative to the 0 usage counter of the next session
@@ -91,12 +91,16 @@ public class ChannelCache {
 
             long lastUsed = entry.getLastUsed();
 
+            // System.out.println(((String) key) + " -> " + lastUsed);
+
             if (lastUsed < oldestLastUsed) {
                 oldestLastUsed = lastUsed;
                 oldestKey = key;
             }
         }
 
+        // System.out.println(oldestKey);
+        
         if (oldestKey != null) cache.remove(oldestKey);
     }
 }
