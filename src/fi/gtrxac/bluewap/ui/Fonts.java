@@ -17,6 +17,10 @@ public class Fonts {
     public static int italicHeight;
     public static int underlinedHeight;
 
+    public static void reloadFonts() {
+        loadFonts(currentSize);
+    }
+
     public static void loadFonts(int size) {
         currentSize = size;
         largerSize = (size == Font.SIZE_SMALL) ? Font.SIZE_MEDIUM : Font.SIZE_LARGE;

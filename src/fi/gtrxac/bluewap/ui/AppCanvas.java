@@ -146,6 +146,7 @@ public class AppCanvas extends Canvas {
     }
 
     protected void sizeChanged(int w, int h) {
+        Fonts.reloadFonts();
         AppBase.recalcAllScreens();
         updateTitle();
     }
