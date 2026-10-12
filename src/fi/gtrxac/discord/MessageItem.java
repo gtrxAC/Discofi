@@ -63,7 +63,7 @@ public class MessageItem extends Item {
             // Reply
             if (message.replyAuthor != null) {
                 updateReplyImage(highlighted);
-                g.drawImage(replyImage, contentX, Fonts.height/5, 0);
+                g.drawImage(replyImage, contentX, Fonts.height/6, 0);
                 textY += replyHeight;
             }
 
@@ -164,7 +164,7 @@ public class MessageItem extends Item {
         timestampFont = Fonts.get(-1, false, false, false);
         timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
 
-        int timestampPadding = Fonts.height/2;
+        int timestampPadding = Fonts.plain.stringWidth("  ");
         int timestampWidth = timestampPadding + timestampFont.stringWidth(message.timestamp);
         int authorAvailableWidth = contentWidth - timestampWidth;
         
@@ -177,10 +177,11 @@ public class MessageItem extends Item {
     }
 
     private void calcReplyHeight() {
-        int replyPadding = Fonts.height/5;
+        int replyTopMargin = Fonts.height/6;
+        int replyBottomMargin = Fonts.height/5;
         int replyImageHeight = Fonts.height*3/4;
 
-        replyHeight = replyImageHeight + replyPadding*2;
+        replyHeight = replyTopMargin + replyImageHeight + replyBottomMargin;
         height += replyHeight;
         timestampY += replyHeight;
     }
