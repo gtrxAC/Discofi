@@ -5,7 +5,7 @@ import cc.nnproject.json.*;
 public class User {
     public String id;
     public String name;
-    // public String iconHash;
+    public String iconHash;
 
     // For placeholder icon
     // public int iconColor;
@@ -19,7 +19,7 @@ public class User {
             name = data.getString("username", "(no name)");
         }
 
-        // iconHash = data.getString("avatar", null);
+        iconHash = data.getString("avatar", null);
 
         // StringBuffer initialsBuf = new StringBuffer();
         // initialsBuf.append(name.charAt(0));
