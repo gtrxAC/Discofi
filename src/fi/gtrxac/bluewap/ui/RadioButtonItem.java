@@ -26,9 +26,6 @@ public class RadioButtonItem extends Item {
             g.setColor(Colors.radioButtonItemBackgroundSel);
             g.fillRect(0, 0, width, height);
             drawHighlight(g, width);
-            g.setColor(Colors.radioButtonItemTextSel);
-        } else {
-            g.setColor(Colors.radioButtonItemText);
         }
 
         int pad = Fonts.height/10;
@@ -71,7 +68,7 @@ public class RadioButtonItem extends Item {
             // Make every unpainted (white) pixel transparent (0 alpha).
             // Using the same color as the button's outline to avoid ugly outlines
             if (rgb[i] == topLeft) {
-                rgb[i] = 0x009A9A9A;
+                rgb[i] = Colors.radioButtonOutline;  // color entries have 0 alpha
             }
         }
 

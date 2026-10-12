@@ -48,69 +48,74 @@ public class Theme extends Colors {
         avatarPlaceholder = 0x666666;
     }
 
-    public static void loadDarkTheme() {
-        listScreenBackground = 0xFF0000;
-        listScreenScrollbar = 0xCCCCCC;
-        listScreenScrollbarSel = 0x888888;
-        bannerBackground = 0xEEEEEE;
-        bannerOutline = 0xAAAAAA;
-        bannerText = 0x000000;
-        tabBarBackground = 0xBBBBBB;
-        tabBackground = 0xDDDDDD;
-        tabOutlineColor = 0x9A9A9A;
-        tabText = 0x111111;
-        tabTextSel = 0x000000;
-        stringItemText = 0x111111;
-        titleBarBackground = 0xDDDDDD;
-        titleBarOutline = 0x9B9B9B;
-        titleBarText = 0x111111;
-        softkeyBarBackground = 0xEEEEEE;
-        softkeyBackground = 0xDDDDDD;
-        softkeyBackgroundSel = 0xBBBBBB;
-        softkeyOutline = 0x9B9B9B;
-        softkeyOutlineSel = 0x838383;
-        softkeyText = 0x111111;
-        softkeyTextSel = 0x000000;
-        highlightOutline = 0x5599FF;
-        spacerItem = 0x888888;
-        buttonBackground = 0xDDDDDD;
-        buttonBackgroundSel = 0xAADDFF;
-        buttonOutline = 0x9A9A9A;
-        buttonText = 0x111111;
-        buttonTextSel = 0x000000;
-        linkBackgroundSel = 0xEEF8FF;
-        linkText = 0x3355CC;
-        linkTextSel = 0x2244AA;
-        listItemBackgroundSel = 0xAADDFF;
-        listItemText = 0x111111;
-        listItemTextSel = 0x000000;
-        listItemArrow = 0x444444;
-        optionItemBackgroundSel = 0xAADDFF;
-        optionItemText = 0x111111;
-        optionItemTextSel = 0x000000;
-        radioButtonItemBackgroundSel = 0xEEF8FF;
-        radioButtonItemText = 0x111111;
-        radioButtonItemTextSel = 0x000000;
-        radioButtonOutline = 0x9A9A9A;
-        radioButtonFill = 0xDDDDDD;
-        radioButtonDot = 0x111111;
-        textFieldBackground = 0x999999;
-        textFieldBackgroundSel = 0xEEF8FF;
-        textFieldText = 0x222222;
-        textFieldTextSel = 0x000000;
+    private static final int[] darkGradient = {
+        0x000000, 0x111115, 0x22222A, 0x333340,
+        0x444455, 0x525264, 0x616174, 0x707083,
+        0x808093, 0x9191A2, 0xA2A2B2, 0xB3B3C1,
+        0xC5C5D1, 0xD8D8E0, 0xEBEBF0, 0xFFFFFF
+    };
 
-        channelCategoryText = 0xFF00000;
-        channelCategoryBackground = 0xE8E8E8;
-        loadingItemText = 0x333333;
-        messageBackgroundSel = 0xAADDFF;
-        username = 0x000000;
-        timestamp = 0x666666;
-        messageText = 0x111111;
-        messageTextSel = 0x000000;
-        replyConnectorLines = 0x888888;
-        replyUsername = 0x000000;
-        replyContent = 0x666666;
-        avatarPlaceholder = 0x666666;
+    public static void loadDarkTheme() {
+        listScreenBackground = darkGradient[0x4];
+        listScreenScrollbar = darkGradient[0x9];
+        listScreenScrollbarSel = darkGradient[0xB];
+        bannerBackground = darkGradient[0x5];
+        bannerOutline = darkGradient[0x2];
+        bannerText = darkGradient[0xF];
+        tabBarBackground = darkGradient[0x2];
+        tabBackground = darkGradient[0x3];
+        tabOutlineColor = darkGradient[0x0];
+        tabText = darkGradient[0xF];
+        tabTextSel = darkGradient[0xF];
+        stringItemText = darkGradient[0xF];
+        titleBarBackground = darkGradient[0x3];
+        titleBarOutline = darkGradient[0x0];
+        titleBarText = darkGradient[0xE];
+        softkeyBarBackground = darkGradient[0x3];
+        softkeyBackground = darkGradient[0x5];
+        softkeyBackgroundSel = darkGradient[0x6];
+        softkeyOutline = darkGradient[0x0];
+        softkeyOutlineSel = darkGradient[0x0];
+        softkeyText = darkGradient[0xF];
+        softkeyTextSel = darkGradient[0xF];
+        highlightOutline = darkGradient[0x8];
+        spacerItem = darkGradient[0x2];
+        buttonBackground = darkGradient[0x5];
+        buttonBackgroundSel = darkGradient[0x6];
+        buttonOutline = darkGradient[0x2];
+        buttonText = darkGradient[0xF];
+        buttonTextSel = darkGradient[0xF];
+        linkBackgroundSel = darkGradient[0x5];
+        linkText = 0x3355CC;     // not used yet
+        linkTextSel = 0x2244AA;  // not used yet
+        listItemBackgroundSel = darkGradient[0x6];
+        listItemText = darkGradient[0xF];
+        listItemTextSel = darkGradient[0xF];
+        listItemArrow = darkGradient[0x9];
+        optionItemBackgroundSel = darkGradient[0x6];
+        optionItemText = darkGradient[0xF];
+        optionItemTextSel = darkGradient[0xF];
+        radioButtonItemBackgroundSel = darkGradient[0x5];
+        radioButtonOutline = darkGradient[0x2];
+        radioButtonFill = darkGradient[0xA];
+        radioButtonDot = darkGradient[0x0];
+        textFieldOutline = darkGradient[0x8];
+        textFieldBackgroundSel = darkGradient[0x5];
+        textFieldText = darkGradient[0xF];
+        textFieldTextSel = darkGradient[0xF];
+
+        channelCategoryText = darkGradient[0xE];
+        channelCategoryBackground = darkGradient[0x3];
+        loadingItemText = darkGradient[0xC];
+        messageBackgroundSel = darkGradient[0x6];
+        username = darkGradient[0xF];
+        timestamp = darkGradient[0xA];
+        messageText = darkGradient[0xF];
+        messageTextSel = darkGradient[0xF];
+        replyConnectorLines = darkGradient[0x8];
+        replyUsername = darkGradient[0xF];
+        replyContent = darkGradient[0xC];
+        avatarPlaceholder = darkGradient[0x8];
     }
 
     public static void load() {

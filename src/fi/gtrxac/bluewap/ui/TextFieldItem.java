@@ -33,7 +33,7 @@ public class TextFieldItem extends Item implements CommandListener {
             drawHighlight(g, width);
             g.setColor(Colors.textFieldTextSel);
         } else {
-            g.setColor(Colors.textFieldBackground);
+            g.setColor(Colors.textFieldOutline);
             g.drawRect(0, 0, width - 1, height - 1);
             g.setColor(Colors.textFieldText);
         }

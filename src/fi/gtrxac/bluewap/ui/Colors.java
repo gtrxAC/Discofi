@@ -89,8 +89,6 @@ public class Colors {
      * RadioButtonItem
      */
     public static int radioButtonItemBackgroundSel;
-    public static int radioButtonItemText;
-    public static int radioButtonItemTextSel;
     public static int radioButtonOutline;
     public static int radioButtonFill;
     public static int radioButtonDot;
@@ -98,7 +96,7 @@ public class Colors {
     /**
      * TextFieldItem
      */
-    public static int textFieldBackground;
+    public static int textFieldOutline;
     public static int textFieldBackgroundSel;
     public static int textFieldText;
     public static int textFieldTextSel;
@@ -147,12 +145,10 @@ public class Colors {
         optionItemText = 0x111111;
         optionItemTextSel = 0x000000;
         radioButtonItemBackgroundSel = 0xEEF8FF;
-        radioButtonItemText = 0x111111;
-        radioButtonItemTextSel = 0x000000;
         radioButtonOutline = 0x9A9A9A;
         radioButtonFill = 0xDDDDDD;
         radioButtonDot = 0x111111;
-        textFieldBackground = 0x999999;
+        textFieldOutline = 0x999999;
         textFieldBackgroundSel = 0xEEF8FF;
         textFieldText = 0x222222;
         textFieldTextSel = 0x000000;

@@ -146,10 +146,8 @@ public class MessageItem extends Item {
 
         Graphics g = replyImage.getGraphics();
 
-        if (highlighted) {
-            g.setColor(Theme.messageBackgroundSel);
-            g.fillRect(0, 0, contentWidth*4/3, Fonts.height);
-        }
+        g.setColor(highlighted ? Theme.messageBackgroundSel : Theme.listScreenBackground);
+        g.fillRect(0, 0, contentWidth*4/3, Fonts.height);
 
         drawReply(g, 0, 0);
 
