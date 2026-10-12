@@ -15,9 +15,9 @@ public class AccountListScreen extends ListScreen implements CommandListener {
     public static final int CMD_ADD_ACCOUNT = 2;
     public static final int CMD_EDIT = 3;
     public static final int CMD_DELETE = 4;
-    public static final int CMD_DELETE_PROMPT_YES = 5;
-    public static final int CMD_DELETE_PROMPT_NO = 6;
-    public static final int CMD_TEST_TLS = 99;
+    public static final int CMD_SETTINGS = 5;
+    public static final int CMD_DELETE_PROMPT_YES = 100;
+    public static final int CMD_DELETE_PROMPT_NO = 101;
 
     private ButtonItem addAccountButton;
 
@@ -57,7 +57,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
         addCommand(new Command("Edit", Command.ITEM, CMD_EDIT));
         addCommand(new Command("Delete", Command.ITEM, CMD_DELETE));
-        addCommand(new Command("Test TLS", Command.ITEM, CMD_TEST_TLS));
+        addCommand(new Command("Settings", Command.SCREEN, CMD_SETTINGS));
 
         if (!Util.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
@@ -93,6 +93,10 @@ public class AccountListScreen extends ListScreen implements CommandListener {
                 promptDelete();
                 break;
             }
+            case CMD_SETTINGS: {
+                App.pushScreen(new SettingsScreen());
+                break;
+            }
             case CMD_DELETE_PROMPT_YES: {
                 Account acc = getHighlightedAccount();
                 if (acc == null) break;
@@ -109,10 +113,6 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             }
             case CMD_DELETE_PROMPT_NO: {
                 App.popScreen();
-                break;
-            }
-            case CMD_TEST_TLS: {
-                testTLS();
                 break;
             }
         }

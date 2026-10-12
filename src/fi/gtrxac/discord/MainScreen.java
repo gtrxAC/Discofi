@@ -13,7 +13,8 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
     public static final int CMD_REFRESH = 2;
-    public static final int CMD_LOG_OUT = 3;
+    public static final int CMD_SETTINGS = 3;
+    public static final int CMD_LOG_OUT = 4;
     public static final int CMD_QUIT_PROMPT_YES = 100;
     public static final int CMD_QUIT_PROMPT_NO = 101;
 
@@ -45,6 +46,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         setCommandListener(this);
         addCommand(new Command("Quit", Command.EXIT, CMD_QUIT));
         addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
+        addCommand(new Command("Settings", Command.SCREEN, CMD_SETTINGS));
         addCommand(new Command("Log out", Command.SCREEN, CMD_LOG_OUT));
 
         if (!Util.hideSelectCommand) {
@@ -161,6 +163,10 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             }
             case CMD_REFRESH: {
                 refreshCurrentTab();
+                break;
+            }
+            case CMD_SETTINGS: {
+                App.pushScreen(new SettingsScreen());
                 break;
             }
             case CMD_LOG_OUT: {
