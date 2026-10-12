@@ -118,40 +118,6 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         }
     }
 
-    private void testTLS() {
-        StringBuffer log = new StringBuffer();
-        TinyTLS tls = new TinyTLS(log);
-
-        try {
-            tls.connect("discord.com", 8443);
-
-            InputStream is = tls.openInputStream();
-            OutputStream os = tls.openOutputStream();
-
-            byte[] req = Util.stringToBytes(
-                "GET / HTTP/1.1\r\n"
-                + "Host: discord.com\r\n"
-                + "User-Agent: TinyTLS/1.0\r\n"
-                + "Connection: close\r\n"
-                + "\r\n");
-
-            os.write(req);
-
-            byte[] b = Util.readBytes(is);
-            
-            log.append(Util.bytesToString(b));
-
-
-        } catch (Exception e) {
-            System.out.println("TLS FAILED:");
-            e.printStackTrace();
-        } finally {
-            tls.close();
-        }
-
-        App.pushScreen(new Dialog(log.toString()));
-    }
-
     public void itemSelected(Item i) {
         if (i == addAccountButton) {
             addAccount();
