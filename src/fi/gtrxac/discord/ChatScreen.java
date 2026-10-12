@@ -22,6 +22,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     private Vector messages;
     public String messageDraft = "";
     public int page;
+    public boolean hasLoaded;
 
     private static SmallButtonItem olderMessagesButton = new SmallButtonItem("Older messages");
     private static SmallButtonItem newerMessagesButton = new SmallButtonItem("Newer messages");
@@ -155,6 +156,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
         else {
             setHighlightedItem((Item) items.lastElement());
         }
+
+        hasLoaded = true;
     }
 
     private void addMessageItems(JSONArray messagesJson, Vector newItemsOutput) {

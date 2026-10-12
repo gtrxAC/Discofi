@@ -323,6 +323,12 @@ public class HTTPThread extends Thread {
             chatScreen.page = newPage;
             chatScreen.populate(messagesJson, scrollToTop);
         }
+        catch (DiscordException e) {
+            if (!chatScreen.hasLoaded) {
+                App.popScreen();
+            }
+            throw e;
+        }
         finally {
             chatScreen.setBannerText(null);
         }
