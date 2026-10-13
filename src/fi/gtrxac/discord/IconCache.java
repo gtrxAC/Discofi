@@ -6,12 +6,14 @@ import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import javax.microedition.lcdui.Image;
 
-public class IconCache {
+public class IconCache extends LRUCache {
     private static final int CACHE_SIZE = 32;
 
-    private static final Hashtable cache = new Hashtable(CACHE_SIZE);
+    public IconCache() {
+        super(CACHE_SIZE);
+    }
 
-    public static void readSaveData(DataInputStream saveDataStream) throws IOException {
+    public void readSaveData(DataInputStream saveDataStream) throws IOException {
         cache.clear();
 
         int numEntries = saveDataStream.readInt();
@@ -26,22 +28,22 @@ public class IconCache {
             byte[] iconData = new byte[160];
             saveDataStream.read(iconData, 0, iconData.length);
             
-            CacheEntry entry = new CacheEntry(iconData, lastUsed);
+            LRUCacheEntry entry = new LRUCacheEntry(iconData, lastUsed);
             set(iconHash, entry);
         }
     }
 
-    public static void writeSaveData(DataOutputStream saveDataStream) throws IOException {
+    public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
         saveDataStream.writeInt(cache.size());
 
         for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
             String iconHash = (String) e.nextElement();
-            CacheEntry entry = (CacheEntry) cache.get(iconHash);
+            LRUCacheEntry entry = (LRUCacheEntry) cache.get(iconHash);
             byte[] iconData = (byte[]) entry.getObjectWithoutUpdate();
 
             // subtract current usage counter so the saved last-used values are
             // relative to the 0 usage counter of the next session
-            long lastUsed = entry.getLastUsed() - CacheEntry.getUsageCounter();
+            long lastUsed = entry.getLastUsed() - LRUCacheEntry.getUsageCounter();
 
             saveDataStream.writeLong(Long.parseLong(iconHash.substring(0, 32)));
             saveDataStream.writeLong(Long.parseLong(iconHash.substring(32)));
@@ -51,43 +53,15 @@ public class IconCache {
         }
     }
 
-    public static Image get(String iconHash) {
-        CacheEntry entry = (CacheEntry) cache.get(iconHash);
-        if (entry == null) return null;
-
-        byte[] iconData = (byte[]) entry.getObject();
+    public Image get(String iconHash) {
+        byte[] iconData = (byte[]) super.get(iconHash);
+        if (iconData == null) return null;
+        
         return AvatarCodec.decode(iconData);
     }
 
-    private static void set(String iconHash, CacheEntry entry) {
-        deleteOldestItem();
-        cache.put(iconHash, entry);
-    }
-
-    public static void set(String iconHash, Image icon) {
+    public void set(String iconHash, Image icon) {
         byte[] iconData = AvatarCodec.encode(icon);
-        CacheEntry entry = new CacheEntry(iconData);
-        set(iconHash, entry);
-    }
-
-    private static void deleteOldestItem() {
-        if (cache.size() < CACHE_SIZE) return;
-
-        long oldestLastUsed = Integer.MAX_VALUE;
-        Object oldestKey = null;
-
-        for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
-            Object key = e.nextElement();
-            CacheEntry entry = (CacheEntry) cache.get(key);
-
-            long lastUsed = entry.getLastUsed();
-
-            if (lastUsed < oldestLastUsed) {
-                oldestLastUsed = lastUsed;
-                oldestKey = key;
-            }
-        }
-        
-        if (oldestKey != null) cache.remove(oldestKey);
+        super.set(iconHash, iconData);
     }
 }

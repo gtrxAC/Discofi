@@ -1,16 +1,16 @@
 package fi.gtrxac.discord;
 
-public class CacheEntry {
+public class LRUCacheEntry {
     private static long usageCounter;
 
     private Object object;
     private long lastUsed;
 
-    public CacheEntry(Object o) {
+    public LRUCacheEntry(Object o) {
         object = o;
     }
 
-    public CacheEntry(Object o, long lastUsed) {
+    public LRUCacheEntry(Object o, long lastUsed) {
         object = o;
         this.lastUsed = lastUsed;
     }
