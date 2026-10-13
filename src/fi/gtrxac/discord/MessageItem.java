@@ -111,7 +111,7 @@ public class MessageItem extends Item {
     }
 
     private void drawAvatar(Graphics g, User user, int x, int y, int size) {
-        Image avatar = IconManager.get(user.iconHash, size);
+        Image avatar = IconManager.get(user.iconHash, size, this);
 
         if (avatar != null) {
             g.drawImage(avatar, x, y, Graphics.TOP | Graphics.LEFT);
@@ -121,6 +121,12 @@ public class MessageItem extends Item {
             g.setColor(0x666666);
             g.fillArc(x, y, size, size, 0, 360);
         }
+    }
+
+    // Callback
+    public void avatarLoaded() {
+        replyImage = null;
+        App.repaint();
     }
 
     private void updateReplyImage(boolean highlighted) {
