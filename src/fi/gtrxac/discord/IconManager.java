@@ -3,6 +3,7 @@ package fi.gtrxac.discord;
 import java.util.*;
 import java.io.*;
 import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.discord.model.*;
 import javax.microedition.lcdui.Image;
 import tube42.lib.imagelib.ImageUtils;
 
@@ -12,31 +13,34 @@ public class IconManager implements Runnable {
 
     private static final Vector requests = new Vector();
 
-    public static Image get(String hash, int size, MessageItem callback) {
+    public static Image get(User user, int size, MessageItem callback) {
+        // User doesn't have an icon -> always null
+        if (user.iconHash == null) return null;
+
         // Icon of the exact size directly available -> return it
-        Image resizedIcon = resizedIconCache.get(hash, size);
+        Image resizedIcon = resizedIconCache.get(user.iconHash, size);
         if (resizedIcon != null) return resizedIcon;
 
         // Icon available in cache -> queue a resize for it
-        Image icon = iconCache.get(hash);
+        Image icon = iconCache.get(user.iconHash);
         if (icon != null) {
-            addRequest(hash, size, callback);
+            addRequest(user, size, callback);
             return null;
         }
 
         // Icon not available -> queue a fetch for it
-        addRequest(hash, 0, callback);
+        addRequest(user, 0, callback);
 
         return null;
     }
 
-    private static void addRequest(String hash, int size, MessageItem callback) {
+    private static void addRequest(User user, int size, MessageItem callback) {
         synchronized (requests) {
             // Find if there is an existing matching request
             for (int i = 0; i < requests.size(); i++) {
                 IconRequest req = (IconRequest) requests.elementAt(i);
                 
-                if (req.hash.equals(hash) && req.targetSize == size) {
+                if (req.user.id.equals(user.id) && req.targetSize == size) {
                     // matching request -> join it
                     req.callbacks.addElement(callback);
                     return;
@@ -45,7 +49,7 @@ public class IconManager implements Runnable {
 
             // no matching request -> make a new one
             IconRequest req = new IconRequest();
-            req.hash = hash;
+            req.user = user;
             req.targetSize = size;
             req.callbacks.addElement(callback);
 
@@ -58,7 +62,7 @@ public class IconManager implements Runnable {
      * For fetch requests, target size is 0.
      */
     private static class IconRequest {
-        public String hash;
+        public User user;
         public int targetSize;
         public Vector callbacks = new Vector();
     }
@@ -87,14 +91,14 @@ public class IconManager implements Runnable {
                     // Handle fetch request
                     InputStream test = getClass().getResourceAsStream("/test.jpg");
                     Image img = Image.createImage(test);
-                    iconCache.set(req.hash, img);
+                    iconCache.set(req.user.iconHash, img);
                 }
                 else {
                     // Handle resize request
-                    Image icon = iconCache.get(req.hash);
+                    Image icon = iconCache.get(req.user.iconHash);
                     icon = ImageUtils.resize(icon, req.targetSize, req.targetSize, true, true);
 
-                    resizedIconCache.set(req.hash, req.targetSize, icon);
+                    resizedIconCache.set(req.user.iconHash, req.targetSize, icon);
                 }
 
                 // Call callbacks

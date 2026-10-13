@@ -111,7 +111,7 @@ public class MessageItem extends Item {
     }
 
     private void drawAvatar(Graphics g, User user, int x, int y, int size) {
-        Image avatar = IconManager.get(user.iconHash, size, this);
+        Image avatar = IconManager.get(user, size, this);
 
         if (avatar != null) {
             g.drawImage(avatar, x, y, Graphics.TOP | Graphics.LEFT);
