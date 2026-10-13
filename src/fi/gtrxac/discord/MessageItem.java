@@ -67,9 +67,7 @@ public class MessageItem extends Item {
                 textY += replyHeight;
             }
 
-            // Avatar placeholder
-            g.setColor(0x666666);
-            g.fillArc(leftMargin, textY + pad/2, avatarSize, avatarSize, 0, 360);
+            drawAvatar(g, message.author, leftMargin, textY + pad/2, avatarSize);
 
             // Username
             g.setFont(Fonts.bold);
@@ -95,9 +93,7 @@ public class MessageItem extends Item {
     }
 
     private void drawReply(Graphics g, int x, int y) {
-        // Avatar placeholder
-        g.setColor(0x666666);
-        g.fillArc(x, y, Fonts.height, Fonts.height, 0, 360);
+        drawAvatar(g, message.replyAuthor, x, y, Fonts.height);
 
         x += Fonts.height + Fonts.height/3;
         
@@ -112,6 +108,19 @@ public class MessageItem extends Item {
         g.setColor(0x666666);
         g.setFont(Fonts.plain);
         g.drawString(displayedReplyContent, x, y, 0);
+    }
+
+    private void drawAvatar(Graphics g, User user, int x, int y, int size) {
+        Image avatar = null; //IconCache.get(user, size);
+
+        if (avatar != null) {
+            g.drawImage(avatar, x, y, Graphics.TOP | Graphics.LEFT);
+        }
+        else {
+            // Placeholder
+            g.setColor(0x666666);
+            g.fillArc(x, y, size, size, 0, 360);
+        }
     }
 
     private void updateReplyImage(boolean highlighted) {

@@ -9,14 +9,10 @@ import javax.microedition.lcdui.Image;
 public class IconCache {
     private static final int CACHE_SIZE = 32;
 
-    private Hashtable cache;
+    private static final Hashtable cache = new Hashtable(CACHE_SIZE);
 
-    public IconCache() {
-        cache = new Hashtable(CACHE_SIZE);
-    }
-
-    public void readSaveData(DataInputStream saveDataStream) throws IOException {
-        cache = new Hashtable(CACHE_SIZE);
+    public static void readSaveData(DataInputStream saveDataStream) throws IOException {
+        cache.clear();
 
         int numEntries = saveDataStream.readInt();
 
@@ -35,7 +31,7 @@ public class IconCache {
         }
     }
 
-    public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
+    public static void writeSaveData(DataOutputStream saveDataStream) throws IOException {
         saveDataStream.writeInt(cache.size());
 
         for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
@@ -55,7 +51,7 @@ public class IconCache {
         }
     }
 
-    public Image get(String iconHash) {
+    public static Image get(String iconHash) {
         CacheEntry entry = (CacheEntry) cache.get(iconHash);
         if (entry == null) return null;
 
@@ -63,18 +59,18 @@ public class IconCache {
         return AvatarCodec.decode(iconData);
     }
 
-    private void set(String iconHash, CacheEntry entry) {
+    private static void set(String iconHash, CacheEntry entry) {
         deleteOldestItem();
         cache.put(iconHash, entry);
     }
 
-    public void set(String iconHash, Image icon) {
+    public static void set(String iconHash, Image icon) {
         byte[] iconData = AvatarCodec.encode(icon);
         CacheEntry entry = new CacheEntry(iconData);
         set(iconHash, entry);
     }
 
-    private void deleteOldestItem() {
+    private static void deleteOldestItem() {
         if (cache.size() < CACHE_SIZE) return;
 
         long oldestLastUsed = Integer.MAX_VALUE;
