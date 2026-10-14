@@ -59,7 +59,7 @@ public class TLSTest {
             allBytes[i] = (byte) i;
         }
 
-        sha256Test(sha256, bytesToHex(allBytes),
+        sha256Test(sha256, Util.bytesToHex(allBytes),
             "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880");
 
         byte[] a55 = new byte[55];
@@ -68,7 +68,7 @@ public class TLSTest {
             a55[i] = (byte) 'a';
         }
 
-        sha256Test(sha256, bytesToHex(a55),
+        sha256Test(sha256, Util.bytesToHex(a55),
             "9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318");
 
         // https://github.com/OskarKarpinski/libcrypto-java/blob/main/src/test/java/dev/medzik/libcrypto/Curve25519Tests.java
@@ -82,33 +82,44 @@ public class TLSTest {
     }
 
     private static void aes128Test(AES128 aes128, String key, String text, String expectedCipher) {
-        byte[] gotCipher = new byte[16];
+        byte[] keyBytes = Util.hexToBytes(key);
+        byte[] textBytes = Util.hexToBytes(text);
+        byte[] expectedCipherBytes = Util.hexToBytes(expectedCipher);
+        byte[] gotCipherBytes = new byte[16];
         
-        aes128.setKey(hexToBytes(key), 0);
-        aes128.encryptBlock(hexToBytes(text), 0, gotCipher, 0);
+        aes128.setKey(keyBytes, 0);
+        aes128.encryptBlock(textBytes, 0, gotCipherBytes, 0);
 
         printResult(
             "AES128 test (" + key.substring(0, 4) + ", " + text.substring(0, 4) + ")",
-            hexToBytes(expectedCipher), gotCipher);
+            expectedCipherBytes, gotCipherBytes);
     }
 
     private static void sha256Test(SHA256 sha256, String input, String expectedOutput) {
-        byte[] inputBytes = hexToBytes(input);
-        byte[] gotOutput = new byte[32];
+        byte[] inputBytes = Util.hexToBytes(input);
+        byte[] expectedOutputBytes = Util.hexToBytes(expectedOutput);
+        byte[] gotOutputBytes = new byte[32];
 
         sha256.reset();
         sha256.update(inputBytes, 0, inputBytes.length);
-        sha256.digest(gotOutput, 0);
+        sha256.digest(gotOutputBytes, 0);
 
         printResult(
             "SHA256 test (" + Util.stringToLength(input, 8) + ")",
-            hexToBytes(expectedOutput), gotOutput);
+            expectedOutputBytes, gotOutputBytes);
+    }
+
+    private static void sha256TestBytes(SHA256 sha256, byte[] inputBytes, String expectedOutput) {
+        String inputHex = Util.bytesToHex(inputBytes);
+
+        sha256Test(sha256, inputHex, expectedOutput);
     }
 
     private static void sha256TestString(SHA256 sha256, String inputString, String expectedOutput) {
         try {
-            String inputHex = bytesToHex(inputString.getBytes("us-ascii"));
-            sha256Test(sha256, inputHex, expectedOutput);
+            byte[] inputBytes = inputString.getBytes("us-ascii");
+
+            sha256TestBytes(sha256, inputBytes, expectedOutput);
         }
         catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -116,13 +127,16 @@ public class TLSTest {
     }
 
     private static void x25519Test(X25519 x25519, String priv, String pub, String expectedSharedSecret) {
-        byte[] gotSharedSecret = new byte[32];
+        byte[] privBytes = Util.hexToBytes(priv);
+        byte[] pubBytes = Util.hexToBytes(pub);
+        byte[] expectedSharedSecretBytes = Util.hexToBytes(expectedSharedSecret);
+        byte[] gotSharedSecretBytes = new byte[32];
 
-        x25519.scalarMult(gotSharedSecret, 0, hexToBytes(priv), 0, hexToBytes(pub), 0);
+        x25519.scalarMult(gotSharedSecretBytes, 0, privBytes, 0, pubBytes, 0);
 
         printResult(
             "X25519 test (" + priv.substring(0, 4) + ", " + pub.substring(0, 4) + ")",
-            hexToBytes(expectedSharedSecret), gotSharedSecret);
+            expectedSharedSecretBytes, gotSharedSecretBytes);
     }
 
     private static void printResult(String what, byte[] expected, byte[] got) {
@@ -136,56 +150,13 @@ public class TLSTest {
         }
         else {
             print.append("FAIL (expected '")
-                .append(bytesToHex(expected))
+                .append(Util.bytesToHex(expected))
                 .append("', got '")
-                .append(bytesToHex(got))
+                .append(Util.bytesToHex(got))
                 .append("')");
         }
 
         System.out.println(print.toString());
-    }
-    
-    private static byte[] hexToBytes(String hex) {
-        int count = hex.length() / 2;
-        byte[] result = new byte[count];
-
-        for (int i = 0; i < hex.length(); i += 2) {
-            int hi = hexDigit(hex.charAt(i));
-            int lo = hexDigit(hex.charAt(i + 1));
-
-            result[i/2] = (byte) ((hi << 4) | lo);
-        }
-
-        return result;
-    }
-
-    private static int hexDigit(char c) {
-        if (c >= '0' && c <= '9') {
-            return c - '0';
-        }
-        if (c >= 'A' && c <= 'F') {
-            return c - 'A' + 10;
-        }
-        if (c >= 'a' && c <= 'f') {
-            return c - 'a' + 10;
-        }
-        return -1;
-    }
-
-    private static final char[] HEX_CHARS = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
-    private static String bytesToHex(byte[] bytes) {
-        StringBuffer result = new StringBuffer();
-
-        for (int i = 0; i < bytes.length; i++) {
-            int hi = (bytes[i] & 0xF0) >> 4;
-            int lo = bytes[i] & 0x0F;
-
-            result.append(HEX_CHARS[hi]).append(HEX_CHARS[lo]);
-        }
-
-        return result.toString();
     }
 
     private static boolean equal(byte[] a, byte[] b) {

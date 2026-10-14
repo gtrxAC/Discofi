@@ -536,7 +536,40 @@ public class Util extends Canvas {
 		return bytesToString(bytes.toByteArray());
     }
 
-    private static int hexDigit(char c) {
+    // _________________________________________________________________________
+    //
+    //  Hex - bytearray conversions
+    // _________________________________________________________________________
+    //
+
+    private static final char[] HEX_CHARS = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    
+	/**
+	 * Convert hex string to byte array.
+	 * Input string can only have hex characters, no whitespace or other characters.
+	 * Case insensitive.
+	 */
+    public static byte[] hexToBytes(String hex) {
+        int count = hex.length() / 2;
+        byte[] result = new byte[count];
+
+        for (int i = 0; i < hex.length(); i += 2) {
+            int hi = hexDigit(hex.charAt(i));
+            int lo = hexDigit(hex.charAt(i + 1));
+
+            result[i/2] = (byte) ((hi << 4) | lo);
+        }
+
+        return result;
+    }
+
+	/**
+	 * Get integer corresponding to hex digit (e.g. 'f' -> 15)
+	 * Returns -1 if input is not a hex digit.
+	 * Case insensitive.
+	 */
+    public static int hexDigit(char c) {
         if (c >= '0' && c <= '9') {
             return c - '0';
         }
@@ -547,6 +580,22 @@ public class Util extends Canvas {
             return c - 'a' + 10;
         }
         return -1;
+    }
+
+	/**
+	 * Convert byte array to hex string (lowercase, no separators or other characters)
+	 */
+    public static String bytesToHex(byte[] bytes) {
+        StringBuffer result = new StringBuffer();
+
+        for (int i = 0; i < bytes.length; i++) {
+            int hi = (bytes[i] & 0xF0) >> 4;
+            int lo = bytes[i] & 0x0F;
+
+            result.append(HEX_CHARS[hi]).append(HEX_CHARS[lo]);
+        }
+
+        return result.toString();
     }
 
     // _________________________________________________________________________
