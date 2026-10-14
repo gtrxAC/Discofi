@@ -20,6 +20,8 @@ public class MessageItem extends Item {
     private boolean replyImageHighlighted;
     private Image replyImage;
 
+    private final Object replyImageLock = new Object();
+
     private static Font timestampFont;
     private static int leftMargin;
     private static int avatarSize;
@@ -62,8 +64,10 @@ public class MessageItem extends Item {
 
             // Reply
             if (message.replyAuthor != null) {
-                updateReplyImage(highlighted);
-                g.drawImage(replyImage, contentX, Fonts.height/6, 0);
+                synchronized (replyImageLock) {
+                    updateReplyImage(highlighted);
+                    g.drawImage(replyImage, contentX, Fonts.height/6, 0);
+                }
                 textY += replyHeight;
             }
 
@@ -125,7 +129,9 @@ public class MessageItem extends Item {
 
     // Callback
     public void avatarLoaded() {
-        replyImage = null;
+        synchronized (replyImageLock) {
+            replyImage = null;
+        }
         App.repaint();
     }
 

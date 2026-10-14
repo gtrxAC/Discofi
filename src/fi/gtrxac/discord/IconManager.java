@@ -8,7 +8,7 @@ import javax.microedition.lcdui.Image;
 import tube42.lib.imagelib.ImageUtils;
 
 public class IconManager implements Runnable {
-    private static final IconCache iconCache = new IconCache();
+    public static final IconCache iconCache = new IconCache();
     private static final ResizedIconCache resizedIconCache = new ResizedIconCache();
 
     private static final Vector requests = new Vector();

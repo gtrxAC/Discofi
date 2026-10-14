@@ -65,6 +65,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
         h.paginationMessage = paginationMessage;
         h.newPage = newPage;
         h.start();
+
+        IconManager.iconCache.save();
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -74,6 +76,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_BACK: {
+                IconManager.iconCache.save();
                 App.popScreen();
                 break;
             }
