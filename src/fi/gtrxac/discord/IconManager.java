@@ -42,8 +42,10 @@ public class IconManager implements Runnable {
                 IconRequest req = (IconRequest) requests.elementAt(i);
                 
                 if (req.user.iconHash.equals(user.iconHash) && req.targetSize == size) {
-                    // matching request -> join it
-                    req.callbacks.addElement(callback);
+                    // matching request -> join it if we haven't already
+                    if (req.callbacks.indexOf(callback) == -1) {
+                        req.callbacks.addElement(callback);
+                    }
                     return;
                 }
             }
