@@ -4,6 +4,7 @@ import java.util.*;
 import java.io.*;
 import fi.gtrxac.bluewap.Util;
 import fi.gtrxac.discord.model.*;
+import fi.gtrxac.discord.util.*;
 import javax.microedition.lcdui.Image;
 import tube42.lib.imagelib.ImageUtils;
 
@@ -103,6 +104,9 @@ public class IconManager implements Runnable {
                     // Handle resize request
                     Image icon = iconCache.get(req.user.iconHash);
                     icon = ImageUtils.resize(icon, req.targetSize, req.targetSize, true, true);
+
+                    boolean smooth = (App.disp.numAlphaLevels() > 2);
+                    icon = CircleCutout.make(icon, smooth);
 
                     resizedIconCache.set(req.user.iconHash, req.targetSize, icon);
                     requestFulfilled(req);
