@@ -13,6 +13,7 @@ public class IconRequest {
     public User user;
     public int targetSize;
     public Vector callbacks;
+    public boolean isStarted;
 
     public IconRequest(User user, int targetSize, MessageItem item) {
         this.user = user;

@@ -2,9 +2,11 @@ package fi.gtrxac.discord;
 
 import java.util.*;
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.bluewap.http.*;
 import fi.gtrxac.bluewap.Util;
 import fi.gtrxac.discord.model.*;
 import cc.nnproject.json.*;
+import javax.microedition.lcdui.Image;
 
 public class HTTPThread extends Thread {
     public static final int ACTION_PASSWORD_LOGIN = 0;
@@ -15,6 +17,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_GUILD_CHANNELS = 5;
     public static final int ACTION_FETCH_MESSAGES = 6;
     public static final int ACTION_SEND_MESSAGE = 7;
+    public static final int ACTION_FETCH_ICON = 8;
 
     private int action;
     private Screen callerScreen;
@@ -31,6 +34,7 @@ public class HTTPThread extends Thread {
     public int newPage;
 	public String recipientMessage;
 	public boolean sendPing;
+    public IconRequest iconRequest;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -53,6 +57,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_GUILD_CHANNELS: runFetchGuildChannels(); break;
                 case ACTION_FETCH_MESSAGES: runFetchMessages(); break;
                 case ACTION_SEND_MESSAGE: runSendMessage(); break;
+                case ACTION_FETCH_ICON: runFetchIcon(); break;
             }
         }
         catch (DiscordException e) {
@@ -362,5 +367,21 @@ public class HTTPThread extends Thread {
         acc.sendMessage(channel, message, recipientMessage, sendPing);
         chatScreen.setBannerText(null);
         chatScreen.fetchMessages(null, null, 0, false);
+    }
+
+    private void runFetchIcon() {
+        try {
+            String iconURL =
+                acc.getCdnUrl() + "/avatars/" + iconRequest.user.id + "/" +
+                iconRequest.user.iconHash + ".jpg?size=16&quality=low";
+
+            HTTP h = HTTP.createRequest(iconURL);
+            Image icon = h.getResponseImage();
+
+            IconManager.fetchRequestFulfilled(iconRequest, icon);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

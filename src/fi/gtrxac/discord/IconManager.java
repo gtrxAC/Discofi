@@ -40,7 +40,7 @@ public class IconManager implements Runnable {
             for (int i = 0; i < requests.size(); i++) {
                 IconRequest req = (IconRequest) requests.elementAt(i);
                 
-                if (req.user.id.equals(user.id) && req.targetSize == size) {
+                if (req.user.iconHash.equals(user.iconHash) && req.targetSize == size) {
                     // matching request -> join it
                     req.callbacks.addElement(callback);
                     return;
@@ -54,6 +54,19 @@ public class IconManager implements Runnable {
     }
 
     /**
+     * Callback
+     */
+    public static void fetchRequestFulfilled(IconRequest req, Image icon) {
+        iconCache.set(req.user.iconHash, icon);
+        requestFulfilled(req);
+    }
+
+    private static void requestFulfilled(IconRequest req) {
+        requests.removeElement(req);
+        req.runCallbacks();
+    }
+
+    /**
      * Worker thread that handles icon requests.
      */
     public void run() {
@@ -61,13 +74,18 @@ public class IconManager implements Runnable {
             try {
                 IconRequest req = null;
 
-                // Get the next pending request or wait for one
+                // Get the next pending request (fetch request that hasnt been started, or any resize request)
                 synchronized (requests) {
-                    if (requests.size() > 0) {
-                        req = (IconRequest) requests.elementAt(0);
-                        requests.removeElementAt(0);
+                    for (int i = 0; i < requests.size(); i++) {
+                        IconRequest checkReq = (IconRequest) requests.elementAt(i);
+
+                        if (!checkReq.isStarted || checkReq.targetSize != 0) {
+                            req = checkReq;
+                            break;
+                        }
                     }
                 }
+                // No pending request -> wait a bit and check again
                 if (req == null) {
                     Util.sleep(250);
                     continue;
@@ -75,9 +93,11 @@ public class IconManager implements Runnable {
 
                 if (req.targetSize == 0) {
                     // Handle fetch request
-                    InputStream test = getClass().getResourceAsStream("/test.jpg");
-                    Image img = Image.createImage(test);
-                    iconCache.set(req.user.iconHash, img);
+                    req.isStarted = true;
+
+                    HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_ICON);
+                    h.iconRequest = req;
+                    h.start();
                 }
                 else {
                     // Handle resize request
@@ -85,9 +105,8 @@ public class IconManager implements Runnable {
                     icon = ImageUtils.resize(icon, req.targetSize, req.targetSize, true, true);
 
                     resizedIconCache.set(req.user.iconHash, req.targetSize, icon);
+                    requestFulfilled(req);
                 }
-
-                req.runCallbacks();
             }
             catch (Exception e) {
                 e.printStackTrace();
