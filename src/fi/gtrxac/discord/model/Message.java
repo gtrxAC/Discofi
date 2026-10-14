@@ -4,6 +4,18 @@ import fi.gtrxac.discord.DiscordUtil;
 import cc.nnproject.json.*;
 
 public class Message {
+    public static final int TYPE_ADDED = 1;  // user added another user to group DM
+    public static final int TYPE_REMOVED = 2;  // user left (or removed someone) from group DM
+    public static final int TYPE_CALL = 3;
+    public static final int TYPE_CHANNEL_NAME_CHANGE = 4;  // changed name of group DM
+    public static final int TYPE_CHANNEL_ICON_CHANGE = 5;
+    public static final int TYPE_PINNED = 6;
+    public static final int TYPE_JOINED = 7;  // user joined server
+    public static final int TYPE_BOOSTED = 8;  // user boosted server
+    public static final int TYPE_BOOSTED_LEVEL_1 = 9; 
+    public static final int TYPE_BOOSTED_LEVEL_2 = 10;
+    public static final int TYPE_BOOSTED_LEVEL_3 = 11;
+
     public String id;
     public User author;
     public String content;
@@ -16,20 +28,90 @@ public class Message {
     public Message(JSONObject data) {
         id = data.getString("id");
         author = new User(data.getObject("author"));
-        content = data.getString("content", "");
         timestamp = DiscordUtil.formatTimestamp(id, false);
 
-        try {
-            JSONObject replyMessage = data.getObject("referenced_message");
+        int t = data.getInt("type", 0);
+        boolean isStatus = (t >= TYPE_ADDED && t <= TYPE_BOOSTED_LEVEL_3);
 
-            replyAuthor = new User(replyMessage.getObject("author"));
-            replyContent = replyMessage.getString("content", null);
+        if (isStatus) {
+            content = parseStatusMessage(data, t);
+        }
+        else {
+            content = data.getString("content", "");
 
-            if (replyContent == null || replyContent.length() == 0) {
-                replyContent = "(no content)";
+            try {
+                JSONObject replyMessage = data.getObject("referenced_message");
+
+                replyAuthor = new User(replyMessage.getObject("author"));
+                replyContent = replyMessage.getString("content", null);
+
+                if (replyContent == null || replyContent.length() == 0) {
+                    replyContent = "(no content)";
+                }
             }
+            catch (Exception e) {}
+
+            // Temporary - list attachment count
+            try {
+                JSONArray attachments = data.getArray("attachments");
+
+                if (attachments.size() > 0) {
+                    if (content.length() > 0) {
+                        content += "\n";
+                    }
+                    content += "(" + attachments.size() + " attachment" +
+                        (attachments.size() != 1 ? "s" : "") + ")";
+                }
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    private String parseStatusMessage(JSONObject data, int type) {
+        // Status message -> determine content by message type
+        String target = "(unknown)";
+        String targetID = null;
+
+        try {
+            JSONObject targetData = data.getArray("mentions").getObject(0);
+            User targetUser = new User(targetData);
+            target = targetUser.name;
+            targetID = targetUser.id;
         }
         catch (Exception e) {}
+
+        switch (type) {
+            case TYPE_ADDED: {
+                return "added " + target + " to the group";
+            }
+            case TYPE_REMOVED: {
+                if (author.id.equals(targetID)) {
+                    return "left the group";
+                }
+                return "removed " + target + " from the group";
+            }
+            case TYPE_CALL: {
+                return "started a call";
+            }
+            case TYPE_CHANNEL_NAME_CHANGE: {
+                return "changed the group name";
+            }
+            case TYPE_CHANNEL_ICON_CHANGE: {
+                return "changed the group icon";
+            }
+            case TYPE_PINNED: {
+                return "pinned a message";
+            }
+            case TYPE_JOINED: {
+                return "joined the server";
+            }
+            case TYPE_BOOSTED: {
+                return "boosted the server";
+            }
+            default: {
+                return "boosted the server to level " + (type - TYPE_BOOSTED);
+            }
+        }
     }
 
     public boolean shouldShowAuthor(Message above, String clusterStart) {
