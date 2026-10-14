@@ -52,18 +52,11 @@ public class MessageItem extends Item {
 
         // Author line
         if (message.showAuthor) {
-            // Lines connecting reply to message
-            int linesBeginX = contentX/2;
-            int linesBeginY = replyHeight/2;
-            int horizontalLineEndX = contentX*4/5;
-            int verticalLineEndY = replyHeight*4/5;
-
-            g.setColor(0x888888);
-            g.drawLine(linesBeginX, linesBeginY, horizontalLineEndX, linesBeginY);
-            g.drawLine(linesBeginX, linesBeginY, linesBeginX, verticalLineEndY);
-
             // Reply
             if (message.replyAuthor != null) {
+                // Lines connecting reply to message
+                drawReplyConnectorLines(g);
+
                 synchronized (replyImageLock) {
                     updateReplyImage(highlighted);
                     g.drawImage(replyImage, contentX, Fonts.height/6, 0);
@@ -94,6 +87,17 @@ public class MessageItem extends Item {
             g.drawString(textLines[i], contentX, textY, 0);
             textY += Fonts.height;
         }
+    }
+
+    private void drawReplyConnectorLines(Graphics g) {
+        int linesBeginX = contentX/2;
+        int linesBeginY = replyHeight/2;
+        int horizontalLineEndX = contentX*4/5;
+        int verticalLineEndY = replyHeight*4/5;
+
+        g.setColor(0x888888);
+        g.drawLine(linesBeginX, linesBeginY, horizontalLineEndX, linesBeginY);
+        g.drawLine(linesBeginX, linesBeginY, linesBeginX, verticalLineEndY);
     }
 
     private void drawReply(Graphics g, int x, int y) {
