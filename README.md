@@ -17,9 +17,9 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Message timestamps
 * Viewing replies
 * Password login
+* Profile pictures
 
 ### Planned for first release
-* Profile pictures
 * Message editing
 * Message deleting
 * Viewing attachments
