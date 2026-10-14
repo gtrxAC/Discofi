@@ -48,23 +48,9 @@ public class IconManager implements Runnable {
             }
 
             // no matching request -> make a new one
-            IconRequest req = new IconRequest();
-            req.user = user;
-            req.targetSize = size;
-            req.callbacks.addElement(callback);
-
+            IconRequest req = new IconRequest(user, size, callback);
             requests.addElement(req);
         }
-    }
-
-    /**
-     * Used for both fetch requests and resize requests.
-     * For fetch requests, target size is 0.
-     */
-    private static class IconRequest {
-        public User user;
-        public int targetSize;
-        public Vector callbacks = new Vector();
     }
 
     /**
@@ -101,11 +87,7 @@ public class IconManager implements Runnable {
                     resizedIconCache.set(req.user.iconHash, req.targetSize, icon);
                 }
 
-                // Call callbacks
-                for (int i = 0; i < req.callbacks.size(); i++) {
-                    MessageItem item = (MessageItem) req.callbacks.elementAt(i);
-                    item.avatarLoaded();
-                }
+                req.runCallbacks();
             }
             catch (Exception e) {
                 e.printStackTrace();
