@@ -41,7 +41,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(DataInputStream saveDataStream) throws Exception {
+    public Account(DataInputStream saveDataStream) throws IOException {
         this();
         int version = saveDataStream.readUnsignedByte();
         token = saveDataStream.readUTF();
@@ -78,7 +78,7 @@ public class Account {
         }
     }
 
-    public void writeSaveData(DataOutputStream saveDataStream) throws Exception {
+    public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
         saveDataStream.writeByte(VERSION_CURRENT);
         saveDataStream.writeUTF(token);
         saveDataStream.writeUTF((username != null) ? username : "");

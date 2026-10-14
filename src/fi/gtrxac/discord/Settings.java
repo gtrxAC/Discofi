@@ -7,7 +7,7 @@ import javax.microedition.rms.*;
 import javax.microedition.lcdui.Font;
 import fi.gtrxac.bluewap.Util;
 
-public class Settings {
+public class Settings implements RecordIOImpl {
     /**
      * Global font size preset used by the UI framework.
      */
@@ -30,7 +30,7 @@ public class Settings {
      */
     public static String deviceVendorID = DiscordUtil.generateRandomUUID();
     
-    private static void readData(DataInputStream dis) throws Exception {
+    public void readData(DataInputStream dis) throws IOException {
         int numAccounts = dis.readInt();
 
         if (numAccounts > 0) {
@@ -57,7 +57,7 @@ public class Settings {
         deviceVendorID = dis.readUTF();
     }
 
-    private static void writeData(DataOutputStream dos) throws Exception {
+    public void writeData(DataOutputStream dos) throws IOException {
         dos.writeInt(Accounts.list.size());
 
         for (int i = 0; i < Accounts.list.size(); i++) {
@@ -82,59 +82,14 @@ public class Settings {
         dos.writeUTF(deviceVendorID);
     }
 
-    static {
-        load();
-    }
-
-    private static void load() {
-        RecordStore rms = null;
-        ByteArrayInputStream is = null;
-        DataInputStream dis = null;
-
-        try {
-            rms = RecordStore.openRecordStore("a", false);
-            byte[] record = rms.getRecord(1);
-            is = new ByteArrayInputStream(record);
-            dis = new DataInputStream(is);
-
-            readData(dis);
-        }
-        catch (RecordStoreNotFoundException e) {
-            // ignore
-        }
-        catch (EOFException e) {
-            // ignore
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            Util.closeRecordStore(rms);
-            try { is.close(); } catch (Exception e) {}
-            try { dis.close(); } catch (Exception e) {}
-        }
-    }
+    private Settings() {}
+    private static Settings instance = new Settings();
 
     public static void save() {
-        RecordStore rms = null;
-        ByteArrayOutputStream os = null;
-        DataOutputStream dos = null;
+        RecordIO.save("a", instance);
+    }
 
-        try {
-            rms = RecordStore.openRecordStore("a", true);
-            os = new ByteArrayOutputStream();
-            dos = new DataOutputStream(os);
-
-            writeData(dos);
-            Util.setOrAddRecord(rms, 1, os.toByteArray());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            Util.closeRecordStore(rms);
-            try { os.close(); } catch (Exception e) {}
-            try { dos.close(); } catch (Exception e) {}
-        }
+    static {
+        RecordIO.load("a", instance);
     }
 }

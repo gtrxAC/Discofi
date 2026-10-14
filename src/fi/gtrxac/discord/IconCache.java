@@ -8,36 +8,36 @@ import javax.microedition.lcdui.Image;
 import fi.gtrxac.bluewap.Util;
 import javax.microedition.rms.*;
 
-public class IconCache extends LRUCache {
+public class IconCache extends LRUCache implements RecordIOImpl {
     private static final int CACHE_SIZE = 32;
 
     public IconCache() {
         super(CACHE_SIZE);
-        load();
+        RecordIO.load("b", this);
     }
 
-    public void readSaveData(DataInputStream saveDataStream) throws IOException {
+    public void readData(DataInputStream dis) throws IOException {
         cache.clear();
 
         byte[] hashBuf = new byte[16];
-        int numEntries = saveDataStream.readInt();
+        int numEntries = dis.readInt();
 
         for (int i = 0; i < numEntries; i++) {
-            saveDataStream.read(hashBuf);
+            dis.read(hashBuf);
             String iconHash = Util.bytesToHex(hashBuf);
 
-            long lastUsed = (long) saveDataStream.readInt();
+            long lastUsed = (long) dis.readInt();
             
             byte[] iconData = new byte[160];
-            saveDataStream.read(iconData, 0, iconData.length);
+            dis.read(iconData, 0, iconData.length);
             
             LRUCacheEntry entry = new LRUCacheEntry(iconData, lastUsed);
             set(iconHash, entry);
         }
     }
 
-    public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
-        saveDataStream.writeInt(cache.size());
+    public void writeData(DataOutputStream dos) throws IOException {
+        dos.writeInt(cache.size());
 
         for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
             String iconHash = (String) e.nextElement();
@@ -48,9 +48,9 @@ public class IconCache extends LRUCache {
             // relative to the 0 usage counter of the next session
             long lastUsed = entry.getLastUsed() - LRUCacheEntry.getUsageCounter();
 
-            saveDataStream.write(Util.hexToBytes(iconHash));
-            saveDataStream.writeInt((int) lastUsed);
-            saveDataStream.write(iconData, 0, iconData.length);
+            dos.write(Util.hexToBytes(iconHash));
+            dos.writeInt((int) lastUsed);
+            dos.write(iconData, 0, iconData.length);
         }
     }
 
@@ -66,55 +66,7 @@ public class IconCache extends LRUCache {
         super.set(iconHash, iconData);
     }
 
-    private void load() {
-        RecordStore rms = null;
-        ByteArrayInputStream is = null;
-        DataInputStream dis = null;
-
-        try {
-            rms = RecordStore.openRecordStore("b", false);
-            byte[] record = rms.getRecord(1);
-            is = new ByteArrayInputStream(record);
-            dis = new DataInputStream(is);
-
-            readSaveData(dis);
-        }
-        catch (RecordStoreNotFoundException e) {
-            // ignore
-        }
-        catch (EOFException e) {
-            // ignore
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            Util.closeRecordStore(rms);
-            try { is.close(); } catch (Exception e) {}
-            try { dis.close(); } catch (Exception e) {}
-        }
-    }
-
     public void save() {
-        RecordStore rms = null;
-        ByteArrayOutputStream os = null;
-        DataOutputStream dos = null;
-
-        try {
-            rms = RecordStore.openRecordStore("b", true);
-            os = new ByteArrayOutputStream();
-            dos = new DataOutputStream(os);
-
-            writeSaveData(dos);
-            Util.setOrAddRecord(rms, 1, os.toByteArray());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            Util.closeRecordStore(rms);
-            try { os.close(); } catch (Exception e) {}
-            try { dos.close(); } catch (Exception e) {}
-        }
+        RecordIO.save("b", this);
     }
 }
