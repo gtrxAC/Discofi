@@ -20,12 +20,14 @@ public class Account {
     // Version numbers for account save data.
     public static final int VERSION_BASE = 1;
     public static final int VERSION_ADDED_CHANNEL_CACHE = 2;
-    public static final int VERSION_CURRENT = 2;
+    public static final int VERSION_ADDED_CDN_URL = 3;
+    public static final int VERSION_CURRENT = 3;
 
     public String token = "";
     public String username;
     public int connectionMode;
     public String apiUrl = "";
+    public String cdnUrl = "";
     public String email = "";
     public String password = "";
 
@@ -66,6 +68,14 @@ public class Account {
         if (version >= VERSION_ADDED_CHANNEL_CACHE) {
             channelCache.readSaveData(saveDataStream);
         }
+
+        if (version >= VERSION_ADDED_CDN_URL) {
+            cdnUrl = saveDataStream.readUTF();
+        }
+        else {
+            // Default proxy CDN URL when upgrading from older version
+            cdnUrl = "http://cdn.gtrxac.fi";
+        }
     }
 
     public void writeSaveData(DataOutputStream saveDataStream) throws Exception {
@@ -92,6 +102,8 @@ public class Account {
         }
 
         channelCache.writeSaveData(saveDataStream);
+
+        saveDataStream.writeUTF(cdnUrl);
     }
 
     public String getDisplayTitle() throws DiscordException {
@@ -105,6 +117,10 @@ public class Account {
 
     public String getApiUrl() {
         return (connectionMode == CONNECTION_MODE_PROXY) ? apiUrl : "https://discord.com";
+    }
+
+    public String getCdnUrl() {
+        return (connectionMode == CONNECTION_MODE_PROXY) ? cdnUrl : "https://cdn.discordapp.com";
     }
 
     public HTTP createApiRequest(String method, String route) throws Exception {
