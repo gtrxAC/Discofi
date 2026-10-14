@@ -27,7 +27,6 @@ public class MessageItem extends Item {
     private static int avatarSize;
     private static int contentX;
     private static int contentWidth;
-    private static int headerHeight;
     private static int replyHeight;
 
     public MessageItem(Message m) {
@@ -64,7 +63,7 @@ public class MessageItem extends Item {
                 textY += replyHeight;
             }
 
-            drawAvatar(g, message.author, leftMargin, textY + pad/2, avatarSize);
+            drawAvatar(g, message.author, leftMargin, textY + pad, avatarSize);
 
             // Username
             g.setFont(Fonts.bold);
@@ -76,7 +75,7 @@ public class MessageItem extends Item {
             g.setColor(0x666666);
             g.drawString(message.timestamp, timestampX, timestampY, 0);
 
-            textY += headerHeight;
+            textY += Fonts.boldHeight;
         }
 
         // Message content
@@ -92,8 +91,8 @@ public class MessageItem extends Item {
     private void drawReplyConnectorLines(Graphics g) {
         int linesBeginX = contentX/2;
         int linesBeginY = replyHeight/2;
-        int horizontalLineEndX = contentX*4/5;
-        int verticalLineEndY = replyHeight*4/5;
+        int horizontalLineEndX = contentX*5/6;
+        int verticalLineEndY = replyHeight*5/6;
 
         g.setColor(0x888888);
         g.drawLine(linesBeginX, linesBeginY, horizontalLineEndX, linesBeginY);
@@ -181,15 +180,14 @@ public class MessageItem extends Item {
     }
 
     private void calcAuthorHeight() {
-        headerHeight = Fonts.boldHeight + Fonts.boldHeight/7;
-        height += headerHeight;
+        height += Fonts.boldHeight;
     }
 
     private void calcTimestampAndAuthor() {
         timestampFont = Fonts.get(-1, false, false, false);
         timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
 
-        int timestampPadding = Fonts.plain.stringWidth("  ");
+        int timestampPadding = Fonts.plain.stringWidth(" ")*3/2;
         int timestampWidth = timestampPadding + timestampFont.stringWidth(message.timestamp);
         int authorAvailableWidth = contentWidth - timestampWidth;
         
