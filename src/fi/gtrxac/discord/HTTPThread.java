@@ -7,6 +7,7 @@ import fi.gtrxac.bluewap.Util;
 import fi.gtrxac.discord.model.*;
 import cc.nnproject.json.*;
 import javax.microedition.lcdui.Image;
+import fi.gtrxac.discord.util.*;
 
 public class HTTPThread extends Thread {
     public static final int ACTION_PASSWORD_LOGIN = 0;

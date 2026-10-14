@@ -5,6 +5,7 @@ import java.io.*;
 import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import javax.microedition.lcdui.Image;
+import fi.gtrxac.discord.util.*;
 
 /**
  * LRU Cache for resized user avatars.

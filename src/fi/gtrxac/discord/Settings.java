@@ -6,6 +6,7 @@ import javax.microedition.io.*;
 import javax.microedition.rms.*;
 import javax.microedition.lcdui.Font;
 import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.discord.util.*;
 
 public class Settings implements RecordIOImpl {
     /**

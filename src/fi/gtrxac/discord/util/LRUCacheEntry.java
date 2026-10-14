@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.discord.util;
 
 public class LRUCacheEntry {
     private static long usageCounter;

@@ -4,6 +4,7 @@ import java.util.*;
 import java.io.*;
 import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
+import fi.gtrxac.discord.util.*;
 
 /**
  * Maintains an LRU cache of up to CACHE_SIZE mappings of guild ID to

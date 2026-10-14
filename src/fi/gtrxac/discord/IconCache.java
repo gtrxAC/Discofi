@@ -7,6 +7,7 @@ import fi.gtrxac.discord.model.*;
 import javax.microedition.lcdui.Image;
 import fi.gtrxac.bluewap.Util;
 import javax.microedition.rms.*;
+import fi.gtrxac.discord.util.*;
 
 public class IconCache extends LRUCache implements RecordIOImpl {
     private static final int CACHE_SIZE = 32;

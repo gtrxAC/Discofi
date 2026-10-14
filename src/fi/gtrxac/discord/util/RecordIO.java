@@ -1,4 +1,4 @@
-package fi.gtrxac.discord;
+package fi.gtrxac.discord.util;
 
 import java.io.*;
 import java.util.*;
