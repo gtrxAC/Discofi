@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.tinytls.TLSTest;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Display;
@@ -21,6 +22,7 @@ public class App extends AppBase {
     public static final SmallButtonItem refreshButton = new SmallButtonItem("Refresh");
 
     public void init() {
+        // TLSTest.test();
         Fonts.loadFonts(Settings.fontSize);
         pushScreen(new AccountListScreen());
     }

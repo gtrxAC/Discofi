@@ -316,6 +316,12 @@ public class Util extends Canvas {
         return "";
     }
 
+	public static String stringToLength(String str, int length) {
+		return (str.length() >= length && length > 3) ?
+			str.substring(0, length - 3) + "..." : 
+			str;
+	}
+
 	public static String stringToWidth(String str, Font font, int area) {
         if (font.stringWidth(str) < area) return str;
 
