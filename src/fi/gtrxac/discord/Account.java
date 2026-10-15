@@ -23,6 +23,8 @@ public class Account {
     public static final int VERSION_ADDED_CDN_URL = 3;
     public static final int VERSION_CURRENT = 3;
 
+    public static final String DEFAULT_CDN_URL = "http://cdn.gtrxac.fi";
+
     public String token = "";
     public String username;
     public int connectionMode;
@@ -39,6 +41,7 @@ public class Account {
     public final ChannelCache channelCache = new ChannelCache();
 
     public Account() {
+        cdnUrl = DEFAULT_CDN_URL;
     }
 
     public Account(DataInputStream saveDataStream) throws IOException {
@@ -71,10 +74,6 @@ public class Account {
 
         if (version >= VERSION_ADDED_CDN_URL) {
             cdnUrl = saveDataStream.readUTF();
-        }
-        else {
-            // Default proxy CDN URL when upgrading from older version
-            cdnUrl = "http://cdn.gtrxac.fi";
         }
     }
 

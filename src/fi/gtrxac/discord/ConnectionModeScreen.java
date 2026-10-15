@@ -15,8 +15,9 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     private RadioButtonItem btOption;
     private RadioButtonItem proxyOption;
     private ButtonItem continueButton;
-    private int apiUrlFieldPosition;
+    private int urlFieldsPosition;
     private TextFieldItem apiUrlField;
+    private TextFieldItem cdnUrlField;
 
     public ConnectionModeScreen() {
         super();
@@ -45,7 +46,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
         group.setTickedIndex(App.pendingAccount.connectionMode);
 
-        apiUrlFieldPosition = items.size();
+        urlFieldsPosition = items.size();
 
         if (!Util.hideSelectCommand) {
             addItem(continueButton = new ButtonItem("Continue"));
@@ -88,10 +89,14 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             if (apiUrlField == null) return;
 
             App.pendingAccount.apiUrl = apiUrlField.getValue();
-            removeItem(apiUrlFieldPosition);
-            removeItem(apiUrlFieldPosition);
-            removeItem(apiUrlFieldPosition);
+            App.pendingAccount.cdnUrl = cdnUrlField.getValue();
+
+            for (int itemIndex = 0; itemIndex < 6; itemIndex++) {
+                removeItem(urlFieldsPosition);
+            }
+
             apiUrlField = null;
+            cdnUrlField = null;
         }
         else if (i == proxyOption) {
             App.pendingAccount.connectionMode = Account.CONNECTION_MODE_PROXY;
@@ -99,9 +104,18 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             if (apiUrlField != null) return;
 
             apiUrlField = new TextFieldItem("API URL", App.pendingAccount.apiUrl, 1000, 0);
-            insertItem(new BlankItem(0), apiUrlFieldPosition);
-            insertItem(apiUrlField, apiUrlFieldPosition);
-            insertItem(new LabelItem("API URL"), apiUrlFieldPosition);
+            cdnUrlField = new TextFieldItem("CDN URL", App.pendingAccount.cdnUrl, 1000, 0);
+
+            insertItem(new BlankItem(0), urlFieldsPosition);
+            insertItem(cdnUrlField, urlFieldsPosition);
+            insertItem(new LabelItem("CDN URL"), urlFieldsPosition);
+            insertItem(new BlankItem(0), urlFieldsPosition);
+            insertItem(apiUrlField, urlFieldsPosition);
+            insertItem(new LabelItem("API URL"), urlFieldsPosition);
+
+            // Scroll so the URL fields are visible
+            setHighlightedItem(cdnUrlField);
+            setHighlightedItem(proxyOption);
         }
         else if (i == continueButton) {
             continueLogin();
@@ -114,14 +128,26 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
             if (apiUrl.trim().length() == 0) {
                 new DiscordException(
-                    "Please enter an API URL or use a different connection mode",
-                    "Proxy API URL is required when using a proxy", null)
+                    "API URL required",
+                    "Please enter a proxy API URL or use a different connection mode.", null)
+                    .show();
+
+                return;
+            }
+
+            String cdnUrl = cdnUrlField.getValue();
+
+            if (cdnUrl.trim().length() == 0) {
+                new DiscordException(
+                    "CDN URL required",
+                    "Please enter a proxy CDN URL or use a different connection mode.", null)
                     .show();
 
                 return;
             }
 
             App.pendingAccount.apiUrl = apiUrl;
+            App.pendingAccount.cdnUrl = cdnUrl;
         }
 
         App.pushScreen(new LoginScreen());
