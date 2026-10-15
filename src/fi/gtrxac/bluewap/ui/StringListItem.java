@@ -26,7 +26,7 @@ public class StringListItem extends Item {
         int origTranslate = g.getTranslateY();
 
         g.translate(bulletWidth, 0);
-        g.setColor(0x111111);
+        g.setColor(Colors.stringItemText);
 
         for (int i = 0; i < stringItems.length; i++) {
             g.drawChar('-', -bulletWidth, 0, 0);

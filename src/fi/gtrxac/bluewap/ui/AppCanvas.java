@@ -70,16 +70,16 @@ public class AppCanvas extends Canvas {
     private void drawTitleBar(Graphics g) {
         int barHeight = getTitleBarHeight();
 
-        g.setColor(0xDDDDDD);
+        g.setColor(Colors.titleBarBackground);
         g.fillRect(0, 0, getWidth(), barHeight);
 
-        g.setColor(0x9B9B9B);
+        g.setColor(Colors.titleBarOutline);
         g.drawLine(0, barHeight - 1, getWidth(), barHeight - 1);
 
         boolean showClock = Util.useCustomTitleBarClock;
 
         // draw title (left-aligned with clock, or centered without clock)
-        g.setColor(0x111111);
+        g.setColor(Colors.titleBarText);
         g.setFont(Fonts.bold);
         g.drawString(
             currentTitle,
@@ -100,7 +100,7 @@ public class AppCanvas extends Canvas {
     private void drawSoftkeys(Graphics g) {
         int barHeight = getSoftkeyBarHeight();
 
-        g.setColor(0xEEEEEE);
+        g.setColor(Colors.softkeyBarBackground);
         g.fillRect(0, 0, getWidth(), barHeight);
 
         int margin = Math.max(3, Fonts.boldHeight/7);
@@ -118,14 +118,14 @@ public class AppCanvas extends Canvas {
     private void drawSoftkey(Graphics g, String label, int x, int y, int width, int height, int textY, boolean pressed) {
         if (label == null) return;
 
-        g.setColor(pressed ? 0xBBBBBB : 0xDDDDDD);
+        g.setColor(pressed ? Colors.selSoftkeyBackground : Colors.softkeyBackground);
         g.fillRect(x, y, width, height);
 
         // darkened border colors equal to Util.blend(fillRectColor, 0x000000, 7)
-        g.setColor(pressed ? 0x838383 : 0x9B9B9B);
+        g.setColor(pressed ? Colors.selSoftkeyOutline : Colors.softkeyOutline);
         g.drawRect(x, y, width, height);
 
-        g.setColor(pressed ? 0x000000 : 0x111111);
+        g.setColor(pressed ? Colors.selSoftkeyText : Colors.softkeyText);
         g.drawString(label, x + width/2, textY, Graphics.TOP | Graphics.HCENTER);
     }
 

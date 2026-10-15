@@ -9,10 +9,11 @@ public class ChannelCategoryItem extends StringItem {
 
     public ChannelCategoryItem(String text) {
         super(text, Fonts.bold);
+        color = Colors.channelCategoryText;
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
-        g.setColor(0xE8E8E8);
+        g.setColor(Colors.channelCategoryBackground);
         g.fillRect(0, -screen.itemPadding, width, height + screen.itemPadding*2);
 
         g.translate(padding, padding);

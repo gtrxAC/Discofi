@@ -39,7 +39,7 @@ public class MessageItem extends Item {
 
         // Highlight background
         if (highlighted) {
-            g.setColor(0xAADDFF);
+            g.setColor(Colors.selMessageBackground);
             g.fillRect(
                 0,
                 -pad/2,
@@ -67,12 +67,12 @@ public class MessageItem extends Item {
 
             // Username
             g.setFont(Fonts.bold);
-            g.setColor(0x000000);
+            g.setColor(Colors.username);
             g.drawString(displayedAuthor, contentX, textY, 0);
 
             // Timestamp
             g.setFont(timestampFont);
-            g.setColor(0x666666);
+            g.setColor(Colors.timestamp);
             g.drawString(message.timestamp, timestampX, timestampY, 0);
 
             textY += Fonts.boldHeight;
@@ -80,7 +80,7 @@ public class MessageItem extends Item {
 
         // Message content
         g.setFont(Fonts.plain);
-        g.setColor(highlighted ? 0x000000 : 0x111111);
+        g.setColor(highlighted ? Colors.selMessageText : Colors.messageText);
 
         for (int i = 0; i < textLines.length; i++) {
             g.drawString(textLines[i], contentX, textY, 0);
@@ -94,7 +94,7 @@ public class MessageItem extends Item {
         int horizontalLineEndX = contentX*5/6;
         int verticalLineEndY = replyHeight*5/6;
 
-        g.setColor(0x888888);
+        g.setColor(Colors.replyConnectorLines);
         g.drawLine(linesBeginX, linesBeginY, horizontalLineEndX, linesBeginY);
         g.drawLine(linesBeginX, linesBeginY, linesBeginX, verticalLineEndY);
     }
@@ -105,14 +105,14 @@ public class MessageItem extends Item {
         x += Fonts.height + Fonts.height/3;
         
         // Username
-        g.setColor(0x000000);
+        g.setColor(Colors.replyUsername);
         g.setFont(Fonts.bold);
         g.drawString(message.replyAuthor.name, x, y, 0);
 
         x += replyAuthorWidth;
 
         // Message content
-        g.setColor(0x666666);
+        g.setColor(Colors.replyContent);
         g.setFont(Fonts.plain);
         g.drawString(displayedReplyContent, x, y, 0);
     }
@@ -125,7 +125,7 @@ public class MessageItem extends Item {
         }
         else {
             // Placeholder
-            g.setColor(0x666666);
+            g.setColor(Colors.avatarPlaceholder);
             g.fillArc(x, y, size, size, 0, 360);
         }
     }
@@ -147,7 +147,7 @@ public class MessageItem extends Item {
         Graphics g = replyImage.getGraphics();
 
         if (highlighted) {
-            g.setColor(0xAADDFF);
+            g.setColor(Colors.selMessageBackground);
             g.fillRect(0, 0, contentWidth*4/3, Fonts.height);
         }
 

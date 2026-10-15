@@ -28,12 +28,12 @@ public class TabbedListScreen extends Screen {
     }
 
     public void draw(Graphics g) {
-        g.setColor(0xBBBBBB);
+        g.setColor(Colors.tabBarBackground);
         g.fillRect(0, 0, getWidth(), tabBarHeight);
 
         drawTabs(g);
 
-        g.setColor(0xFFFFFF);
+        g.setColor(Colors.listScreenBackground);
         g.fillRect(0, tabBarHeight, getWidth(), tabMargin);
 
         ListView tab = getCurrentTab();
@@ -43,7 +43,6 @@ public class TabbedListScreen extends Screen {
     }
 
     private void drawTabs(Graphics g) {
-        int outlineColor = Util.blend(0xDDDDDD, 0x000000, 7);
         int tabDrawWidth = tabWidth - tabMargin;
 
         for (int i = 0; i < tabs.size(); i++) {
@@ -54,14 +53,14 @@ public class TabbedListScreen extends Screen {
             int tabY = selected ? tabMargin : Fonts.height/4;
             int tabHeight = tabBarHeight - tabY;
 
-            g.setColor(selected ? 0xFFFFFF : 0xDDDDDD);
+            g.setColor(selected ? Colors.listScreenBackground : Colors.tabBackground);
             g.fillRect(tabX, tabY, tabDrawWidth, tabHeight);
 
             // outline
-            g.setColor(outlineColor);
+            g.setColor(Colors.tabOutlineColor);
             g.drawRect(tabX, tabY, tabDrawWidth, tabHeight + 1);
 
-            g.setColor(selected ? 0x000000 : 0x111111);
+            g.setColor(selected ? Colors.selTabText : Colors.tabText);
             g.setFont(Fonts.plain);
             g.drawString(
                 tabName,
@@ -75,7 +74,7 @@ public class TabbedListScreen extends Screen {
         int selectedTabEnd = selectedTabBegin + tabWidth - tabMargin;
         int lineY = tabBarHeight - 1;
 
-        g.setColor(outlineColor);
+        g.setColor(Colors.tabOutlineColor);
         g.drawLine(0, lineY, selectedTabBegin, lineY);
         g.drawLine(selectedTabEnd, lineY, getWidth(), lineY);
     }

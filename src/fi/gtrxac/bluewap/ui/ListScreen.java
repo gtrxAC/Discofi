@@ -40,7 +40,7 @@ public class ListScreen extends Screen implements Runnable {
     }
 
     public void draw(Graphics g) {
-        g.setColor(0xFFFFFF);
+        g.setColor(Colors.listScreenBackground);
         g.fillRect(0, 0, getWidth(), getFullHeight());
 
         if (bannerText != null) {
@@ -53,13 +53,13 @@ public class ListScreen extends Screen implements Runnable {
     }
 
     private void drawBanner(Graphics g) {
-        g.setColor(0xEEEEEE);
+        g.setColor(Colors.bannerBackground);
         g.fillRect(0, 0, getWidth(), bannerHeight);
 
-        g.setColor(0xAAAAAA);
+        g.setColor(Colors.bannerOutline);
         g.drawLine(0, bannerHeight - 1, getWidth(), bannerHeight - 1);
 
-        g.setColor(0x000000);
+        g.setColor(Colors.bannerText);
         g.setFont(Fonts.plain);
         g.drawString(bannerText, getWidth()/2, Fonts.height/5, Graphics.TOP | Graphics.HCENTER);
     }
@@ -104,7 +104,7 @@ public class ListScreen extends Screen implements Runnable {
         scrollbarHandleHeight = scrollbarHeight*(getHeight()*1000/scrollableHeight)/1000 - margin*2;
         int handleY = (scrollbarHeight - scrollbarHandleHeight)*(curScroll*1000/scrollRange)/1000 + margin;
 
-        g.setColor(usingScrollBar ? 0x888888 : 0xCCCCCC);
+        g.setColor(usingScrollBar ? Colors.selListScreenScrollbar : Colors.listScreenScrollbar);
         g.fillRect(x, handleY, scrollbarWidth, scrollbarHandleHeight);
     }
 

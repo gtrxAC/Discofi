@@ -184,7 +184,7 @@ public abstract class Screen implements CommandListener {
         if (drawingDimmed) return;
         drawingDimmed = true;
 
-        int themeBg = 0xFFFFFF;
+        int themeBg = Colors.listScreenBackground;
         
         checkInitOverlay();
 

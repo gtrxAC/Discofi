@@ -58,7 +58,7 @@ public abstract class Item {
      */
     public void drawHighlight(Graphics g, int x, int y, int width, int height) {
         // int lastColor = g.getColor();
-        g.setColor(0x5599FF);
+        g.setColor(Colors.highlightOutline);
         g.drawRoundRect(x - 1, y - 1, width + 1 - roundRectSizeOffset, height + 1 - roundRectSizeOffset, 2, 2);
         g.drawRect(x, y, width - 1, height - 1);
         // g.setColor(lastColor);

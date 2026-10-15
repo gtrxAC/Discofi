@@ -10,7 +10,7 @@ public class SpacerItem extends Item {
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
-        g.setColor(0x888888);
+        g.setColor(Colors.spacerItem);
         g.drawLine(0, height/2, width, height/2);
     }
 

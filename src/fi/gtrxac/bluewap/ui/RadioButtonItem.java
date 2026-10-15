@@ -23,12 +23,12 @@ public class RadioButtonItem extends Item {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(0xEEF8FF);
+            g.setColor(Colors.selRadioButtonItemBackground);
             g.fillRect(0, 0, width, height);
             drawHighlight(g, width);
-            g.setColor(0x000000);
+            g.setColor(Colors.selRadioButtonItemText);
         } else {
-            g.setColor(0x111111);
+            g.setColor(Colors.radioButtonItemText);
         }
 
         int pad = Fonts.height/10;
@@ -48,16 +48,16 @@ public class RadioButtonItem extends Item {
         Graphics g = result.getGraphics();
 
         // outline
-        g.setColor(0x9A9A9A);
+        g.setColor(Colors.radioButtonOutline);
         g.fillArc(blockSize, blockSize, blockSize*12, blockSize*12, 0, 360);
 
         // fill insides
-        g.setColor(0xDDDDDD);
+        g.setColor(Colors.radioButtonFill);
         g.fillArc(blockSize*2, blockSize*2, blockSize*10, blockSize*10, 0, 360);
 
         // black dot for ticked button
         if (ticked) {
-            g.setColor(0x111111);
+            g.setColor(Colors.radioButtonDot);
             g.fillArc(blockSize*4, blockSize*4, blockSize*6, blockSize*6, 0, 360);
         }
         

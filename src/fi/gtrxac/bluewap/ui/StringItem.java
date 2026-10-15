@@ -30,7 +30,7 @@ public class StringItem extends Item {
         this.text = text;
         this.definedFont = font;
         this.align = align;
-        this.color = 0x111111;
+        this.color = Colors.stringItemText;
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {

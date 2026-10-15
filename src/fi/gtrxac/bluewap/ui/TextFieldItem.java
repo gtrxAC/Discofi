@@ -28,14 +28,14 @@ public class TextFieldItem extends Item implements CommandListener {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(0xEEF8FF);
+            g.setColor(Colors.selTextFieldBackground);
             g.fillRect(0, 0, width, height);
             drawHighlight(g, width);
-            g.setColor(0x000000);
+            g.setColor(Colors.selTextFieldText);
         } else {
-            g.setColor(0x999999);
+            g.setColor(Colors.textFieldBackground);
             g.drawRect(0, 0, width - 1, height - 1);
-            g.setColor(0x222222);
+            g.setColor(Colors.textFieldText);
         }
 
         int x = Math.max(3, Fonts.height/6);

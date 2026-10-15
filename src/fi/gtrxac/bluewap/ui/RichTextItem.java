@@ -17,7 +17,7 @@ public class RichTextItem extends Item {
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
-        g.setColor(0x111111);
+        g.setColor(Colors.stringItemText);
 
         for (int i = 0; i < calculatedParts.length; i++) {
             if (calculatedParts[i].needsRecalc) {

@@ -30,18 +30,18 @@ public class ListItem extends Item {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(0xAADDFF);
+            g.setColor(Colors.selListItemBackground);
             g.fillRect(0, -screen.itemPadding, width, height + screen.itemPadding - 1);
-            g.setColor(0x000000);
+            g.setColor(Colors.selListItemText);
         } else {
-            g.setColor(0x111111);
+            g.setColor(Colors.listItemText);
         }
 
         g.setFont(Fonts.plain);
         g.drawString(displayText, Fonts.height/4, Fonts.height/4, 0);
 
         int prevItemLastPixel = -screen.itemPadding - 1;
-        g.setColor(0x888888);
+        g.setColor(Colors.spacerItem);
         g.drawLine(0, prevItemLastPixel, width - 1, prevItemLastPixel);
         g.drawLine(0, height - 1, width - 1, height - 1);
 
@@ -59,7 +59,7 @@ public class ListItem extends Item {
 
         if (imageSize != newImageSize) {
             arrowImage = null;
-            arrowImage = createArrowImage(newImageSize, 0x444444);
+            arrowImage = createArrowImage(newImageSize, Colors.listItemArrow);
             imageSize = newImageSize;
         }
     }

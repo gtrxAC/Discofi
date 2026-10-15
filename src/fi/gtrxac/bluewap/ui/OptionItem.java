@@ -5,6 +5,9 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Command;
 
+/**
+ * Item shown in OptionsScreen.
+ */
 public class OptionItem extends Item {
     public String text;
     private String displayText;
@@ -18,14 +21,14 @@ public class OptionItem extends Item {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(0xAADDFF);
+            g.setColor(Colors.selOptionItemBackground);
             g.fillRect(0, 0, width, height);
 
             drawHighlight(g, 0, 0, width, height);
 
-            g.setColor(0x000000);
+            g.setColor(Colors.selOptionItemText);
         } else {
-            g.setColor(0x111111);
+            g.setColor(Colors.optionItemText);
         }
 
         g.setFont(Fonts.plain);
