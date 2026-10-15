@@ -30,9 +30,9 @@ public class ListItem extends Item {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(Colors.selListItemBackground);
+            g.setColor(Colors.listItemBackgroundSel);
             g.fillRect(0, -screen.itemPadding, width, height + screen.itemPadding - 1);
-            g.setColor(Colors.selListItemText);
+            g.setColor(Colors.listItemTextSel);
         } else {
             g.setColor(Colors.listItemText);
         }

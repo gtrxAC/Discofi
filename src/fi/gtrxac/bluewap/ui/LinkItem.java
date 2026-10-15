@@ -32,10 +32,10 @@ public class LinkItem extends Item {
         int beginX = getLineX(maxStringWidth);
 
         if (highlighted) {
-            g.setColor(Colors.selLinkBackground);
+            g.setColor(Colors.linkBackgroundSel);
             g.fillRect(beginX, 0, maxStringWidth, height);
             drawHighlight(g, beginX, 0, maxStringWidth, height);
-            g.setColor(Colors.selLinkText);
+            g.setColor(Colors.linkTextSel);
         } else {
             g.setColor(Colors.linkText);
         }

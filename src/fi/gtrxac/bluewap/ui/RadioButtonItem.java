@@ -23,10 +23,10 @@ public class RadioButtonItem extends Item {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(Colors.selRadioButtonItemBackground);
+            g.setColor(Colors.radioButtonItemBackgroundSel);
             g.fillRect(0, 0, width, height);
             drawHighlight(g, width);
-            g.setColor(Colors.selRadioButtonItemText);
+            g.setColor(Colors.radioButtonItemTextSel);
         } else {
             g.setColor(Colors.radioButtonItemText);
         }

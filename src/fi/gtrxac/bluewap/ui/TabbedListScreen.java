@@ -60,7 +60,7 @@ public class TabbedListScreen extends Screen {
             g.setColor(Colors.tabOutlineColor);
             g.drawRect(tabX, tabY, tabDrawWidth, tabHeight + 1);
 
-            g.setColor(selected ? Colors.selTabText : Colors.tabText);
+            g.setColor(selected ? Colors.tabTextSel : Colors.tabText);
             g.setFont(Fonts.plain);
             g.drawString(
                 tabName,

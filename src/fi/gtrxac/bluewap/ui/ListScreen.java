@@ -104,7 +104,7 @@ public class ListScreen extends Screen implements Runnable {
         scrollbarHandleHeight = scrollbarHeight*(getHeight()*1000/scrollableHeight)/1000 - margin*2;
         int handleY = (scrollbarHeight - scrollbarHandleHeight)*(curScroll*1000/scrollRange)/1000 + margin;
 
-        g.setColor(usingScrollBar ? Colors.selListScreenScrollbar : Colors.listScreenScrollbar);
+        g.setColor(usingScrollBar ? Colors.listScreenScrollbarSel : Colors.listScreenScrollbar);
         g.fillRect(x, handleY, scrollbarWidth, scrollbarHandleHeight);
     }
 

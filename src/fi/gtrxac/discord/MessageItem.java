@@ -39,7 +39,7 @@ public class MessageItem extends Item {
 
         // Highlight background
         if (highlighted) {
-            g.setColor(Colors.selMessageBackground);
+            g.setColor(Colors.messageBackgroundSel);
             g.fillRect(
                 0,
                 -pad/2,
@@ -80,7 +80,7 @@ public class MessageItem extends Item {
 
         // Message content
         g.setFont(Fonts.plain);
-        g.setColor(highlighted ? Colors.selMessageText : Colors.messageText);
+        g.setColor(highlighted ? Colors.messageTextSel : Colors.messageText);
 
         for (int i = 0; i < textLines.length; i++) {
             g.drawString(textLines[i], contentX, textY, 0);
@@ -147,7 +147,7 @@ public class MessageItem extends Item {
         Graphics g = replyImage.getGraphics();
 
         if (highlighted) {
-            g.setColor(Colors.selMessageBackground);
+            g.setColor(Colors.messageBackgroundSel);
             g.fillRect(0, 0, contentWidth*4/3, Fonts.height);
         }
 

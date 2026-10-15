@@ -13,7 +13,7 @@ public class ButtonItem extends Item {
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
-        g.setColor(highlighted ? Colors.selButtonBackground : Colors.buttonBackground);
+        g.setColor(highlighted ? Colors.buttonBackgroundSel : Colors.buttonBackground);
         g.fillRect(0, 0, width, height);
 
         if (highlighted) {
@@ -24,7 +24,7 @@ public class ButtonItem extends Item {
         }
         
         g.setFont(Fonts.bold);
-        g.setColor(highlighted ? Colors.selButtonText : Colors.buttonText);
+        g.setColor(highlighted ? Colors.buttonTextSel : Colors.buttonText);
         g.drawString(text, width/2, (height - Fonts.boldHeight)/2, Graphics.HCENTER | Graphics.TOP);
     }
 

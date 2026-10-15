@@ -118,14 +118,14 @@ public class AppCanvas extends Canvas {
     private void drawSoftkey(Graphics g, String label, int x, int y, int width, int height, int textY, boolean pressed) {
         if (label == null) return;
 
-        g.setColor(pressed ? Colors.selSoftkeyBackground : Colors.softkeyBackground);
+        g.setColor(pressed ? Colors.softkeyBackgroundSel : Colors.softkeyBackground);
         g.fillRect(x, y, width, height);
 
         // darkened border colors equal to Util.blend(fillRectColor, 0x000000, 7)
-        g.setColor(pressed ? Colors.selSoftkeyOutline : Colors.softkeyOutline);
+        g.setColor(pressed ? Colors.softkeyOutlineSel : Colors.softkeyOutline);
         g.drawRect(x, y, width, height);
 
-        g.setColor(pressed ? Colors.selSoftkeyText : Colors.softkeyText);
+        g.setColor(pressed ? Colors.softkeyTextSel : Colors.softkeyText);
         g.drawString(label, x + width/2, textY, Graphics.TOP | Graphics.HCENTER);
     }
 

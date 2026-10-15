@@ -21,12 +21,12 @@ public class OptionItem extends Item {
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         if (highlighted) {
-            g.setColor(Colors.selOptionItemBackground);
+            g.setColor(Colors.optionItemBackgroundSel);
             g.fillRect(0, 0, width, height);
 
             drawHighlight(g, 0, 0, width, height);
 
-            g.setColor(Colors.selOptionItemText);
+            g.setColor(Colors.optionItemTextSel);
         } else {
             g.setColor(Colors.optionItemText);
         }
