@@ -517,8 +517,8 @@ public class Util extends Canvas {
                 bytes.write(32);
             }
 			else if (c == '%' && i + 2 < value.length()) {
-                int hi = hexDigit(value.charAt(i + 1));
-                int lo = hexDigit(value.charAt(i + 2));
+                int hi = hexToInt(value.charAt(i + 1));
+                int lo = hexToInt(value.charAt(i + 2));
 
                 if (hi >= 0 && lo >= 0) {
                     bytes.write((hi << 4) | lo);
@@ -555,8 +555,8 @@ public class Util extends Canvas {
         byte[] result = new byte[count];
 
         for (int i = 0; i < hex.length(); i += 2) {
-            int hi = hexDigit(hex.charAt(i));
-            int lo = hexDigit(hex.charAt(i + 1));
+            int hi = hexToInt(hex.charAt(i));
+            int lo = hexToInt(hex.charAt(i + 1));
 
             result[i/2] = (byte) ((hi << 4) | lo);
         }
@@ -569,7 +569,7 @@ public class Util extends Canvas {
 	 * Returns -1 if input is not a hex digit.
 	 * Case insensitive.
 	 */
-    public static int hexDigit(char c) {
+    public static int hexToInt(char c) {
         if (c >= '0' && c <= '9') {
             return c - '0';
         }
@@ -581,6 +581,16 @@ public class Util extends Canvas {
         }
         return -1;
     }
+
+	/**
+	 * Get hex digit corresponding to integer (e.g. 15 to 'f').
+	 */
+	public static char intToHex(int x) {
+        if (x < 10) {
+            return (char) ('0' + x);
+        }
+        return (char) ('a' + x - 10);
+	}
 
 	/**
 	 * Convert byte array to hex string (lowercase, no separators or other characters)

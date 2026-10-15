@@ -251,7 +251,7 @@ public final class TinyTLS {
         buf[p++] = 3;
         buf[p++] = 3;
 
-        TLSUtil.temporaryRandom(
+        TLSUtil.random(
             clientRandom,
             0,
             32
@@ -899,7 +899,7 @@ public final class TinyTLS {
 
     private void generateClientPrivateKey() {
 
-        TLSUtil.temporaryRandom(
+        TLSUtil.random(
             clientPrivateKey,
             0,
             32
