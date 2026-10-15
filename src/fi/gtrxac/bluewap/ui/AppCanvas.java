@@ -56,6 +56,9 @@ public class AppCanvas extends Canvas {
             g.setClip(0, 0, getWidth(), getSoftkeyBarHeight());
             drawSoftkeys(g);
         }
+
+        // debug:
+        // drawMemoryUsage(g);
     }
 
     private static boolean useCustomTitleBar() {
@@ -124,6 +127,27 @@ public class AppCanvas extends Canvas {
 
         g.setColor(pressed ? 0x000000 : 0x111111);
         g.drawString(label, x + width/2, textY, Graphics.TOP | Graphics.HCENTER);
+    }
+
+    private void drawMemoryUsage(Graphics g) {
+        Runtime rt = Runtime.getRuntime();
+        long totalMem = rt.totalMemory()/1000;
+        long usedMem = (rt.totalMemory() - rt.freeMemory())/1000;
+
+        String memStr = usedMem + "/" + totalMem + "K";
+        int memStrWidth = Fonts.plain.stringWidth(memStr);
+
+        g.translate(-g.getTranslateX(), -g.getTranslateY());
+        g.setClip(0, 0, memStrWidth, Fonts.height);
+        
+        g.setColor(0xFFFFFF);
+        g.fillRect(0, 0, memStrWidth, Fonts.height);
+
+        g.setColor(0xFF0000);
+        g.setFont(Fonts.plain);
+        g.drawString(memStr, 0, 0, 0);
+
+        repaint();
     }
 
     private static int getTitleBarHeight() {

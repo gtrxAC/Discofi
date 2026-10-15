@@ -11,15 +11,6 @@ public class HTTPQueue implements Runnable {
 
     // Max amount of possible HTTP connections
     // Nokia S40 has a limit of 8 HTTP connections, if they run out, you get "No response entries available"
-//#ifdef MAX_HTTP_SLOTS_32
-    // private static final int MAX_SLOTS = 32;
-//#else
-//#ifdef MAX_HTTP_SLOTS_16
-    // private static final int MAX_SLOTS = 16;
-//#else
-    // private static final int MAX_SLOTS = 8;
-//#endif
-//#endif
     public static int maxSlots = 4;
 
     private long timestamp;
