@@ -24,6 +24,7 @@ public class App extends AppBase {
     public void init() {
         // TLSTest.test();
         Fonts.loadFonts(Settings.fontSize);
+        Theme.load();
         pushScreen(new AccountListScreen());
     }
 

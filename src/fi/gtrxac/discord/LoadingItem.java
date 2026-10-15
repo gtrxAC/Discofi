@@ -94,7 +94,7 @@ public class LoadingItem extends Item {
                 Graphics.BOTTOM | Graphics.LEFT);
         }
 
-        g.setColor(Colors.loadingItemText);
+        g.setColor(Theme.loadingItemText);
         g.setFont(Fonts.plain);
         g.drawString(
             "Loading...",

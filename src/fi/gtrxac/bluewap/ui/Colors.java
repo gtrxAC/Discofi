@@ -1,78 +1,164 @@
 package fi.gtrxac.bluewap.ui;
 
-public final class Colors {
-    public static final int titleBarBackground = 0xDDDDDD;
-    public static final int titleBarOutline = 0x9B9B9B;
-    public static final int titleBarText = 0x111111;
+public class Colors {
+    /**
+     * ListScreen
+     */
+    public static int listScreenBackground;
+    public static int listScreenScrollbar;
+    public static int listScreenScrollbarSel;
+    public static int bannerBackground;
+    public static int bannerOutline;
+    public static int bannerText;
 
-    public static final int softkeyBarBackground = 0xEEEEEE;
-    public static final int softkeyBackgroundSel = 0xBBBBBB;
-    public static final int softkeyBackground = 0xDDDDDD;
-    public static final int softkeyOutlineSel = 0x838383;
-    public static final int softkeyOutline = 0x9B9B9B;
-    public static final int softkeyTextSel = 0x000000;
-    public static final int softkeyText = 0x111111;
+    /**
+     * TabbedListScreen
+     */
+    public static int tabBarBackground;
+    public static int tabBackground;
+    public static int tabOutlineColor;
+    public static int tabText;
+    public static int tabTextSel;
 
-    public static final int buttonBackground = 0xDDDDDD;
-    public static final int buttonBackgroundSel = 0xAADDFF;
-    public static final int buttonOutline = 0x9A9A9A;
-    public static final int buttonText = 0x111111;
-    public static final int buttonTextSel = 0x000000;
+    /**
+     * StringItem and similar text-only items (ListItem, RichTextItem)
+     */
+    public static int stringItemText;
 
-    public static final int highlightOutline = 0x5599FF;
+    /**
+     * Custom title bar (some platforms)
+     */
+    public static int titleBarBackground;
+    public static int titleBarOutline;
+    public static int titleBarText;
 
-    public static final int linkBackgroundSel = 0xEEF8FF;
-    public static final int linkTextSel = 0x2244AA;
-    public static final int linkText = 0x3355CC;
+    /**
+     * Custom softkey bar (some platforms)
+     */
+    public static int softkeyBarBackground;
+    public static int softkeyBackground;
+    public static int softkeyBackgroundSel;
+    public static int softkeyOutline;
+    public static int softkeyOutlineSel;
+    public static int softkeyText;
+    public static int softkeyTextSel;
 
-    public static final int listItemBackgroundSel = 0xAADDFF;
-    public static final int listItemTextSel = 0x000000;
-    public static final int listItemText = 0x111111;
-    public static final int spacerItem = 0x888888;
-    public static final int listItemArrow = 0x444444;
+    /**
+     * Common highlight used by Items
+     */
+    public static int highlightOutline;
+    
+    /**
+     * Common spacer line (SpacerItem and ListItem)
+     */
+    public static int spacerItem;
 
-    public static final int listScreenBackground = 0xFFFFFF;
-    public static final int bannerBackground = 0xEEEEEE;
-    public static final int bannerOutline = 0xAAAAAA;
-    public static final int bannerText = 0x000000;
-    public static final int listScreenScrollbarSel = 0x888888;
-    public static final int listScreenScrollbar = 0xCCCCCC;
+    /**
+     * ButtonItem
+     * Uses highlightOutline when selected
+     */
+    public static int buttonBackground;
+    public static int buttonBackgroundSel;
+    public static int buttonOutline;
+    public static int buttonText;
+    public static int buttonTextSel;
 
-    public static final int optionItemBackgroundSel = 0xAADDFF;
-    public static final int optionItemTextSel = 0x000000;
-    public static final int optionItemText = 0x111111;
+    /**
+     * LinkItem
+     */
+    public static int linkBackgroundSel;
+    public static int linkText;
+    public static int linkTextSel;
 
-    public static final int radioButtonItemBackgroundSel = 0xEEF8FF;
-    public static final int radioButtonItemTextSel = 0x000000;
-    public static final int radioButtonItemText = 0x111111;
-    public static final int radioButtonOutline = 0x9A9A9A;
-    public static final int radioButtonFill = 0xDDDDDD;
-    public static final int radioButtonDot = 0x111111;
+    /**
+     * ListItem
+     */
+    public static int listItemBackgroundSel;
+    public static int listItemText;
+    public static int listItemTextSel;
+    public static int listItemArrow;
 
-    public static final int stringItemText = 0x111111;
+    /**
+     * OptionItem
+     */
+    public static int optionItemBackgroundSel;
+    public static int optionItemText;
+    public static int optionItemTextSel;
 
-    public static final int tabBarBackground = 0xBBBBBB;
-    public static final int tabBackground = 0xDDDDDD;
-    public static final int tabOutlineColor = 0x9A9A9A;
-    public static final int tabTextSel = 0x000000;
-    public static final int tabText = 0x111111;
+    /**
+     * RadioButtonItem
+     */
+    public static int radioButtonItemBackgroundSel;
+    public static int radioButtonItemText;
+    public static int radioButtonItemTextSel;
+    public static int radioButtonOutline;
+    public static int radioButtonFill;
+    public static int radioButtonDot;
 
-    public static final int textFieldBackgroundSel = 0xEEF8FF;
-    public static final int textFieldTextSel = 0x000000;
-    public static final int textFieldBackground = 0x999999;
-    public static final int textFieldText = 0x222222;
+    /**
+     * TextFieldItem
+     */
+    public static int textFieldBackground;
+    public static int textFieldBackgroundSel;
+    public static int textFieldText;
+    public static int textFieldTextSel;
 
-    public static final int channelCategoryText = 0x111111;
-    public static final int channelCategoryBackground = 0xE8E8E8;
-    public static final int loadingItemText = 0x333333;
+    /**
+     * Load built-in color scheme (white, gray, blue)
+     */
+    public static void loadDefaults() {
+        listScreenBackground = 0xFFFFFF;
+        listScreenScrollbar = 0xCCCCCC;
+        listScreenScrollbarSel = 0x888888;
+        bannerBackground = 0xEEEEEE;
+        bannerOutline = 0xAAAAAA;
+        bannerText = 0x000000;
+        tabBarBackground = 0xBBBBBB;
+        tabBackground = 0xDDDDDD;
+        tabOutlineColor = 0x9A9A9A;
+        tabText = 0x111111;
+        tabTextSel = 0x000000;
+        stringItemText = 0x111111;
+        titleBarBackground = 0xDDDDDD;
+        titleBarOutline = 0x9B9B9B;
+        titleBarText = 0x111111;
+        softkeyBarBackground = 0xEEEEEE;
+        softkeyBackground = 0xDDDDDD;
+        softkeyBackgroundSel = 0xBBBBBB;
+        softkeyOutline = 0x9B9B9B;
+        softkeyOutlineSel = 0x838383;
+        softkeyText = 0x111111;
+        softkeyTextSel = 0x000000;
+        highlightOutline = 0x5599FF;
+        spacerItem = 0x888888;
+        buttonBackground = 0xDDDDDD;
+        buttonBackgroundSel = 0xAADDFF;
+        buttonOutline = 0x9A9A9A;
+        buttonText = 0x111111;
+        buttonTextSel = 0x000000;
+        linkBackgroundSel = 0xEEF8FF;
+        linkText = 0x3355CC;
+        linkTextSel = 0x2244AA;
+        listItemBackgroundSel = 0xAADDFF;
+        listItemText = 0x111111;
+        listItemTextSel = 0x000000;
+        listItemArrow = 0x444444;
+        optionItemBackgroundSel = 0xAADDFF;
+        optionItemText = 0x111111;
+        optionItemTextSel = 0x000000;
+        radioButtonItemBackgroundSel = 0xEEF8FF;
+        radioButtonItemText = 0x111111;
+        radioButtonItemTextSel = 0x000000;
+        radioButtonOutline = 0x9A9A9A;
+        radioButtonFill = 0xDDDDDD;
+        radioButtonDot = 0x111111;
+        textFieldBackground = 0x999999;
+        textFieldBackgroundSel = 0xEEF8FF;
+        textFieldText = 0x222222;
+        textFieldTextSel = 0x000000;
+    }
 
-    public static final int messageBackgroundSel = 0xAADDFF;
-    public static final int username = 0x000000;
-    public static final int timestamp = 0x666666;
-    public static final int messageTextSel = 0x000000;
-    public static final int messageText = 0x111111;
-    public static final int replyConnectorLines = 0x888888;
-    public static final int replyUsername = 0x000000;
-    public static final int replyContent = 0x666666;
-    public static final int avatarPlaceholder = 0x666666;
+    public static void load() {
+        loadDefaults();
+    }
 }
