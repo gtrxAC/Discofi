@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 public final class TLSUtil {
     public static void log(StringBuffer log, String s) {
+//#ifdef DEBUG
         if (log == null) {
             return;
         }
@@ -19,6 +20,7 @@ public final class TLSUtil {
 
         log.append(s);
         log.append('\n');
+//#endif
     }
 
     public static void logHex(
@@ -28,6 +30,7 @@ public final class TLSUtil {
             int off,
             int len) {
 
+//#ifdef DEBUG
         if (log == null || log.length() > 4096) {
             return;
         }
@@ -45,6 +48,7 @@ public final class TLSUtil {
         }
 
         log.append('\n');
+//#endif
     }
 
     public static String hex16(int x) {
