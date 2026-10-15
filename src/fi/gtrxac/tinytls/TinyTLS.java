@@ -1,62 +1,9 @@
 package fi.gtrxac.tinytls;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import javax.microedition.io.*;
 
-import javax.microedition.io.Connector;
-import javax.microedition.io.SocketConnection;
-
-/**
- * Minimal TLS implementation for J2ME.
- * 
- * This implementation is not secure or robust. It is only designed to be the
- * bare minimum to connect to services that require TLS 1.2.
- * 
- * It has been designed around the following requirements:
- * - Support for CLDC 1.0
- * - TLS 1.2 only
- * - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 cipher suite only
- * - No certificate checking
- * - No secure random numbers
- * 
- * ------------------
- * 
- * Intended usage is via the modified version of ModernConnector included in this repo.
- * 
- * You may also use:
- * 
- *  TinyTLS tls = new TinyTLS(null);
- *  tls.connect("example.com", 443);
- *  InputStream is = tls.openInputStream();
- *  OutputStream os = tls.openOutputStream();
- * 
- * ------------------
- * 
- * Note that most J2ME devices block socket connections to port 443 if the app is unsigned.
- * Due to this, TinyTLS will only work in the following cases:
- * 
- * - the server accepts connections from a port other than 80, 443, or 8080 - for example 8443
- * - your device has a way to install Java code-signing certificates (Nokia, Sony Ericsson)
- * - your device has a way to remove this restriction
- * - your device does not have this restriction (usually emulators)
- * - your device is not JTWI-compliant (mainly older devices, e.g. Motorola)
- * 
- * ------------------
- * 
- * Debug logging can be enabled by supplying a StringBuffer to the constructor.
- * 
- * Note that if you are using gtrxAC/j2me-template or a build system with
- * compatible pre-processing, you will need to enable the DEBUG define to use logging.
- * 
- *  StringBuffer log = new StringBuffer();
- *  TinyTLS tls = new TinyTLS(log);
- *  // ...
- *  displayLog(log.toString());
- * 
- */
 public final class TinyTLS {
-
     private static final int TYPE_CHANGE_CIPHER_SPEC = 20;
     private static final int TYPE_ALERT = 21;
     private static final int TYPE_HANDSHAKE = 22;
@@ -83,32 +30,16 @@ public final class TinyTLS {
     /*
      * Running TLS handshake transcript.
      */
-    private final SHA256 transcript =
-        new SHA256();
+    private final SHA256 transcript = new SHA256();
 
-    private final X25519 x25519 =
-        new X25519();
-
-    private final byte[] clientRandom =
-        new byte[32];
-
-    private final byte[] serverRandom =
-        new byte[32];
-
-    private final byte[] serverKey =
-        new byte[32];
-
-    private final byte[] clientPrivateKey =
-        new byte[32];
-
-    private final byte[] clientPublicKey =
-        new byte[32];
-
-    private final byte[] sharedSecret =
-        new byte[32];
-
-    private final byte[] masterSecret =
-        new byte[48];
+    private final X25519 x25519 = new X25519();
+    private final byte[] clientRandom = new byte[32];
+    private final byte[] serverRandom = new byte[32];
+    private final byte[] serverKey = new byte[32];
+    private final byte[] clientPrivateKey = new byte[32];
+    private final byte[] clientPublicKey = new byte[32];
+    private final byte[] sharedSecret = new byte[32];
+    private final byte[] masterSecret = new byte[48];
 
     /*
      * AES-128-GCM key block:
@@ -120,8 +51,7 @@ public final class TinyTLS {
      *
      * Total = 40.
      */
-    private final byte[] keyBlock =
-        new byte[40];
+    private final byte[] keyBlock = new byte[40];
 
     private final GCM clientGCM = new GCM();
     private final GCM serverGCM = new GCM();
@@ -132,16 +62,14 @@ public final class TinyTLS {
     private long clientSequence;
     private long serverSequence;
 
-    private final byte[] receiveBuffer =
-        new byte[16408];
+    private final byte[] receiveBuffer = new byte[16408];
 
     private boolean eof;
 
     /*
      * Small scratch buffer for streaming skips/hashing.
      */
-    private final byte[] scratch =
-        new byte[128];
+    private final byte[] scratch = new byte[128];
 
     /*
      * State of the current incoming TLS record.
@@ -152,10 +80,7 @@ public final class TinyTLS {
         this.log = log;
     }
 
-    public void connect(
-            String host,
-            int port) throws IOException {
-
+    public void connect(String host, int port) throws IOException {
         eof = false;
         pendingOff = 0;
         pendingLen = 0;
@@ -164,17 +89,11 @@ public final class TinyTLS {
         // and the connection might close if we spend too long not responding
         generateClientPrivateKey();
 
-        String url =
-            "socket://" + host + ":" + port;
+        String url = "socket://" + host + ":" + port;
 
         log("Connecting");
 
-        socket =
-            (SocketConnection)
-            Connector.open(
-                url,
-                Connector.READ_WRITE
-            );
+        socket = (SocketConnection) Connector.open(url, Connector.READ_WRITE);
 
         in = socket.openInputStream();
         out = socket.openOutputStream();
@@ -200,26 +119,9 @@ public final class TinyTLS {
     }
 
     public void close() {
-        try {
-            if (in != null) {
-                in.close();
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            if (out != null) {
-                out.close();
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            if (socket != null) {
-                socket.close();
-            }
-        } catch (Exception e) {
-        }
+        try { in.close(); } catch (Exception e) {}
+        try { out.close(); } catch (Exception e) {}
+        try { socket.close(); } catch (Exception e) {}
     }
 
     private void log(String s) {
