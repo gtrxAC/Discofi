@@ -4,8 +4,13 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
 /**
- * Utility method to make a circle cut-out for an image (useful for profile pictures)
- * From Discord J2ME
+ * Utility method to make a circle cut-out for an image (useful for profile pictures).
+ * From Discord J2ME.
+ * 
+ * Example usage (ideally in a separate thread):
+ * 
+ *  boolean useAlphaBlend = (myDisplay.numAlphaLevels() > 2);
+ *  Image myImageCutout = CircleCutout.make(myImage, useAlphaBlend);
  */
 public class CircleCutout {
     private static final int[] alphaAndValues = {0x00000000, 0x3FFFFFFF, 0x7FFFFFFF, 0xBFFFFFFF, 0xFFFFFFFF};

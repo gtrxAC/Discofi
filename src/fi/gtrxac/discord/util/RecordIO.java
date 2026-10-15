@@ -6,6 +6,10 @@ import javax.microedition.io.*;
 import javax.microedition.rms.*;
 import fi.gtrxac.bluewap.Util;
 
+/**
+ * Helper class to read/write binary data to an RMS record store.
+ * Implement RecordIOImpl in your application and call RecordIO.load() and RecordIO.save().
+ */
 public class RecordIO {
     public static void load(String rmsName, RecordIOImpl impl) {
         RecordStore rms = null;
