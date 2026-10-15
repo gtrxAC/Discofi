@@ -40,8 +40,7 @@ Any device meeting the [system requirements](#system-requirements) should be abl
 * Nokia devices running Series 40 3rd Edition FP1 or later
   * TLS on these phones is slow, so it's recommended to find one with a faster CPU or use a Symbian/Sony Ericsson device instead
   * Series 40 Lite devices are not supported
-* Symbian devices that support the [nnproject TLS patch](https://nnproject.cc/tls/)
-  * Note that as of writing this, Symbian 8.0 (e.g. Nokia 6630/6680) is not supported.
+* Symbian devices with the [nnproject TLS patch](https://nnproject.cc/tls/) installed
 * Sony Ericsson devices with DB2020 chipset or newer
   * This includes most devices from 2006 onwards; check your device [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones)
 
