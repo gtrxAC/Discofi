@@ -30,6 +30,12 @@ public class Settings implements RecordIOImpl {
      * Device vendor ID used in Discord X-Super-Properties header (persistent random UUID for each device)
      */
     public static String deviceVendorID = DiscordUtil.generateRandomUUID();
+
+    /**
+     * Use light UI theme instead of dark theme.
+     * This may be reworked later if/when more themes are added.
+     */
+    public static boolean lightTheme = false;
     
     public void readData(DataInputStream dis) throws IOException {
         int numAccounts = dis.readInt();
@@ -56,6 +62,7 @@ public class Settings implements RecordIOImpl {
         }
 
         deviceVendorID = dis.readUTF();
+        lightTheme = dis.readBoolean();
     }
 
     public void writeData(DataOutputStream dos) throws IOException {
@@ -81,6 +88,7 @@ public class Settings implements RecordIOImpl {
         }
 
         dos.writeUTF(deviceVendorID);
+        dos.writeBoolean(lightTheme);
     }
 
     private Settings() {}

@@ -11,7 +11,7 @@ public class ListItem extends Item {
     private String displayText;
     public Object object;
 
-    private static int imageSize;
+    private static int imageHash;
     private static Image arrowImage;
 
     public ListItem(String text) {
@@ -56,11 +56,12 @@ public class ListItem extends Item {
         displayText = Util.stringToWidth(text, Fonts.plain, textWidth);
 
         int newImageSize = Fonts.height;
+        int newImageHash = newImageSize + Colors.listItemArrow;
 
-        if (imageSize != newImageSize) {
+        if (imageHash != newImageHash) {
             arrowImage = null;
             arrowImage = createArrowImage(newImageSize, Colors.listItemArrow);
-            imageSize = newImageSize;
+            imageHash = newImageHash;
         }
     }
 

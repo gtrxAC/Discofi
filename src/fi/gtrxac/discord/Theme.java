@@ -119,6 +119,11 @@ public class Theme extends Colors {
     }
 
     public static void load() {
-        loadDarkTheme();
+        if (Settings.lightTheme) {
+            loadLightTheme();
+        }
+        else {
+            loadDarkTheme();
+        }
     }
 }

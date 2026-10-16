@@ -13,6 +13,7 @@ public class SettingsScreen extends ListScreen implements CommandListener {
     public static final int CMD_BACK = 1;
 
     private RadioButtonGroup fontSizeGroup;
+    private RadioButtonGroup themeGroup;
 
     public SettingsScreen() {
         super();
@@ -28,6 +29,13 @@ public class SettingsScreen extends ListScreen implements CommandListener {
             Settings.fontSize == Font.SIZE_MEDIUM ? 1 : 2;
 
         fontSizeGroup.setTickedIndex(sizeIndex);
+
+        addItem("Theme:");
+        themeGroup = new RadioButtonGroup();
+        addItem(new RadioButtonItem(themeGroup, "Dark"));
+        addItem(new RadioButtonItem(themeGroup, "Light"));
+
+        themeGroup.setTickedIndex(Settings.lightTheme ? 1 : 0);
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
@@ -47,11 +55,14 @@ public class SettingsScreen extends ListScreen implements CommandListener {
                 int[] fontSizes = { Font.SIZE_SMALL, Font.SIZE_MEDIUM, Font.SIZE_LARGE };
                 Settings.fontSize = fontSizes[fontSizeGroup.getTickedIndex()];
 
+                Settings.lightTheme = (themeGroup.getTickedIndex() == 1);
+
                 // HTTPQueue.maxSlots = Integer.parseInt(connLimitField.getValue());
                 // if (HTTPQueue.maxSlots < 1) HTTPQueue.maxSlots = 1;
                 
                 Settings.save();
                 Fonts.loadFonts(Settings.fontSize);
+                Theme.load();
 
                 App.popScreen();
                 break;

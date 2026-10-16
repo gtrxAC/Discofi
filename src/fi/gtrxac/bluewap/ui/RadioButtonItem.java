@@ -10,7 +10,7 @@ public class RadioButtonItem extends Item {
     private StringItem strItem;
     public boolean ticked;
 
-    private static int imageSize;
+    private static int imageHash;
     private static Image tickedImage;
     private static Image untickedImage;
     
@@ -79,13 +79,16 @@ public class RadioButtonItem extends Item {
 
     public void recalc(int width) {
         int newImageSize = Fonts.height - Fonts.height/10*2;
+        
+        int newImageHash = newImageSize + Colors.radioButtonOutline +
+            Colors.radioButtonFill + Colors.radioButtonDot;
 
-        if (imageSize != newImageSize) {
+        if (imageHash != newImageHash) {
             untickedImage = null;
             tickedImage = null;
             untickedImage = createRadioButtonImage(newImageSize, false);
             tickedImage = createRadioButtonImage(newImageSize, true);
-            imageSize = newImageSize;
+            imageHash = newImageHash;
         }
 
         strItem.recalc(width - Fonts.height*5/4);
