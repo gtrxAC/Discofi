@@ -20,10 +20,12 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Profile pictures
 * Theme settings (light/dark)
 
+### Work in progress
+* Viewing attachments
+
 ### Planned for first release
 * Message editing
 * Message deleting
-* Viewing attachments
 * Token file import
 * HTTP connection over BlueWAP
 

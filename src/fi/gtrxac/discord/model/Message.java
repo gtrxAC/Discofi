@@ -2,6 +2,7 @@ package fi.gtrxac.discord.model;
 
 import fi.gtrxac.discord.DiscordUtil;
 import cc.nnproject.json.*;
+import java.util.*;
 
 public class Message {
     public static final int TYPE_ADDED = 1;  // user added another user to group DM
@@ -21,6 +22,7 @@ public class Message {
     public String content;
     public boolean showAuthor;
     public String timestamp;
+    public Vector attachments;
 
     public User replyAuthor;
     public String replyContent;
@@ -38,30 +40,38 @@ public class Message {
         }
         else {
             content = data.getString("content", "");
+            parseReply(data);
+            parseAttachments(data);
+        }
+    }
 
-            try {
-                JSONObject replyMessage = data.getObject("referenced_message");
+    private void parseReply(JSONObject data) {
+        try {
+            JSONObject replyMessage = data.getObject("referenced_message");
 
-                replyAuthor = new User(replyMessage.getObject("author"));
-                replyContent = replyMessage.getString("content", null);
+            replyAuthor = new User(replyMessage.getObject("author"));
+            replyContent = replyMessage.getString("content", null);
 
-                if (replyContent == null || replyContent.length() == 0) {
-                    replyContent = "(no content)";
-                }
+            if (replyContent == null || replyContent.length() == 0) {
+                replyContent = "(no content)";
             }
-            catch (Exception e) {}
+        }
+        catch (Exception e) {}
+    }
 
-            // Temporary - list attachment count
+    private void parseAttachments(JSONObject data) {
+        JSONArray attachArray = data.getArray("attachments", null);
+        if (attachArray == null) return;
+
+        for (int i = 0; i < attachArray.size(); i++) {
             try {
-                JSONArray attachments = data.getArray("attachments");
+                JSONObject attachJson = attachArray.getObject(i);
+                Attachment attachment = new Attachment(attachJson);
 
-                if (attachments.size() > 0) {
-                    if (content.length() > 0) {
-                        content += "\n";
-                    }
-                    content += "(" + attachments.size() + " attachment" +
-                        (attachments.size() != 1 ? "s" : "") + ")";
+                if (attachments == null) {
+                    attachments = new Vector();
                 }
+                attachments.addElement(attachment);
             }
             catch (Exception e) {}
         }
@@ -122,7 +132,7 @@ public class Message {
         if (replyAuthor != null) return true;
 
         // This message only consists of an attachment -> true
-        // if ((imageAttachments != null || fileAttachments != null) && content.length() == 0) return true;
+        if (attachments != null && content.length() == 0) return true;
 
         // This message or above message is a status message -> true
         // if (isStatus || above.isStatus) return true;
