@@ -25,8 +25,8 @@ public class MessageItem extends Item {
     private static Font timestampFont;
     private static int leftMargin;
     private static int avatarSize;
-    private static int contentX;
-    private static int contentWidth;
+    public static int contentX;
+    public static int contentWidth;
     private static int replyHeight;
 
     public MessageItem(Message m) {

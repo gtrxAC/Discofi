@@ -172,6 +172,14 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
             messages.addElement(message);
             newItemsOutput.addElement(new MessageItem(message));
+
+            if (message.attachments != null) {
+                for (int j = 0; j < message.attachments.size(); j++) {
+                    Attachment att = (Attachment) message.attachments.elementAt(j);
+
+                    newItemsOutput.addElement(new AttachmentItem(att));
+                }
+            }
         }
     }
 
