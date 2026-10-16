@@ -18,6 +18,7 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Viewing replies
 * Password login
 * Profile pictures
+* Theme settings (light/dark)
 
 ### Planned for first release
 * Message editing
@@ -25,7 +26,6 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Viewing attachments
 * Token file import
 * HTTP connection over BlueWAP
-* Theme settings (light/dark)
 
 ### Not implemented
 * Emojis, reactions
