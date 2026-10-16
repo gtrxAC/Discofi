@@ -24,5 +24,6 @@ public class AttachmentItem extends SingleLineLinkItem {
     }
 
     public void itemSelected() {
+        App.pushScreen(new AttachmentScreen(attachment));
     }   
 }
