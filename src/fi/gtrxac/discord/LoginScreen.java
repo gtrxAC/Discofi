@@ -32,6 +32,8 @@ public class LoginScreen extends ListScreen implements CommandListener {
         if (hasToken) {
             addItem("To keep using your previous session, select 'Continue'.");
             addItem(continueButton = new ButtonItem("Continue"));
+            addItem(new BlankItem(Fonts.height/4));
+            
             setHighlightedItem(continueButton);
         }
 
@@ -51,7 +53,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
         addItem(loginButton = new ButtonItem(hasToken ? "Log in again" : "Log in"));
 
-        addItem(new BlankItem(0));
+        addItem(new BlankItem(Fonts.height/4));
 
         addItem("Token login is unsafe and only intended for advanced users.");
 

@@ -61,6 +61,9 @@ public class Theme extends Colors {
         0xC5C5D1, 0xD8D8E0, 0xEBEBF0, 0xFFFFFF
     };
 
+    private static final int darkSelHighlight = 0x414E87;
+    private static final int darkSelHighlightDim = 0x3A426B;
+
     public static void loadDarkTheme() {
         listScreenBackground = darkGradient[0x3];
         listScreenScrollbar = darkGradient[0x9];
@@ -86,27 +89,27 @@ public class Theme extends Colors {
         softkeyTextSel = darkGradient[0xF];
         highlightOutline = 0x6688FF;
         spacerItem = darkGradient[0x1];
-        buttonBackground = darkGradient[0x4];
-        buttonBackgroundSel = darkGradient[0x5];
+        buttonBackground = darkGradient[0x5];
+        buttonBackgroundSel = darkSelHighlight;
         buttonOutline = darkGradient[0x2];
         buttonText = darkGradient[0xF];
         buttonTextSel = darkGradient[0xF];
-        linkBackgroundSel = darkGradient[0x5];
+        linkBackgroundSel = darkSelHighlightDim;
         linkText = 0x5577EE;
         linkTextSel = 0x6688FF;
-        listItemBackgroundSel = darkGradient[0x5];
+        listItemBackgroundSel = darkSelHighlight;
         listItemText = darkGradient[0xF];
         listItemTextSel = darkGradient[0xF];
         listItemArrow = darkGradient[0x9];
-        optionItemBackgroundSel = darkGradient[0x5];
+        optionItemBackgroundSel = darkSelHighlightDim;
         optionItemText = darkGradient[0xF];
         optionItemTextSel = darkGradient[0xF];
-        radioButtonItemBackgroundSel = darkGradient[0x5];
+        radioButtonItemBackgroundSel = darkSelHighlightDim;
         radioButtonOutline = darkGradient[0x2];
         radioButtonFill = darkGradient[0xA];
         radioButtonDot = darkGradient[0x0];
         textFieldOutline = darkGradient[0x8];
-        textFieldBackgroundSel = darkGradient[0x5];
+        textFieldBackgroundSel = darkSelHighlightDim;
         textFieldText = darkGradient[0xF];
         textFieldTextSel = darkGradient[0xF];
 
@@ -114,7 +117,7 @@ public class Theme extends Colors {
         channelCategoryBackground = darkGradient[0x2];
         labelItem = darkGradient[0xC];
         loadingItemText = darkGradient[0xC];
-        messageBackgroundSel = darkGradient[0x5];
+        messageBackgroundSel = 0x414E87;
         username = darkGradient[0xF];
         timestamp = darkGradient[0xA];
         messageText = darkGradient[0xF];
