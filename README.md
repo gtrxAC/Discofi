@@ -28,6 +28,8 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * HTTP connection over BlueWAP
 
 ### Planned for later
+* Threads
+* Forums
 * Emojis
 * Reactions
 * Embeds

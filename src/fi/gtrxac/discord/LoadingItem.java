@@ -12,11 +12,12 @@ import tube42.lib.imagelib.*;
  * Item that shows a loading animation.
  * This is meant to be the only item shown on the screen at a time, and it draws on the center of the screen.
  */
-public class LoadingItem extends Item {
+public class LoadingItem extends Item implements Runnable {
     private int curFrame;
     private int animDirection;
-    private long animDeltaTime;
-    private long lastFrameTime;
+
+    private volatile long threadExpiryTime;
+    private volatile boolean threadAlive;
 
     private static Image animationSheet;
     private static int scale;
@@ -31,7 +32,6 @@ public class LoadingItem extends Item {
     public LoadingItem() {
         super(false);
         animDirection = 1;
-        lastFrameTime = System.currentTimeMillis();
     }
 
     private static void loadAnimationSheet() {
@@ -50,7 +50,7 @@ public class LoadingItem extends Item {
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
         // Draw current animation frame
         int iconHeight = 48*scale;
-        int padding = Fonts.height*3/5;
+        int padding = 7*scale;
         int containerHeight = iconHeight + padding + Fonts.height*2;
         int containerBegin = (screen.getHeight() - containerHeight)/2;
 
@@ -101,13 +101,16 @@ public class LoadingItem extends Item {
             width/2,
             containerBegin + iconHeight + padding,
             Graphics.TOP | Graphics.HCENTER);
-        
-        // Issue another repaint to draw the next animation frame.
-        // Ideally we would use a thread to time these correctly and avoid unnecessary repaints,
-        // but our current architecture doesn't really allow for that,
-        // as the thread would have to be stopped when the loading icon is no longer visible
-        advanceAnimation();
-        App.repaint();
+
+        // Keep the animation thread alive for longer.
+        // This timer system is used so we roughly know when the LoadingItem is
+        // no longer being shown, and then the thread will end.
+        threadExpiryTime = System.currentTimeMillis() + 1000;
+
+        if (!threadAlive) {
+            threadAlive = true;
+            new Thread(this).start();
+        }
     }
 
     public void recalc(int width) {
@@ -128,25 +131,24 @@ public class LoadingItem extends Item {
         bubbleOffset = (-3 - 24)*scale;
     }
 
-    /**
-     * Advance the animation by the appropriate amount of frames that have passed
-     * since the last screen frame was drawn.
-     */
-    private void advanceAnimation() {
-        long now = System.currentTimeMillis();
-        animDeltaTime += (now - lastFrameTime);
+    // Icon animation thread
+    public void run() {
+        long loopStartTime;
 
-        while (true) {
-            int nextFrameWait;
+        while ((loopStartTime = System.currentTimeMillis()) < threadExpiryTime) {
+            App.repaint();
+            AppCanvas.instance.serviceRepaints();
 
+            long paintTime = System.currentTimeMillis() - loopStartTime;
+
+            // Sleep based on the frame number that was just drawn (first frame = 167 ms, last frame = 500 ms)
+            int sleepTime;
             switch (curFrame) {
-                case 0: nextFrameWait = 167; break;
-                case 7: nextFrameWait = 500; break;
-                default: nextFrameWait = 83; break;
+                case 0: sleepTime = 167; break;
+                case 7: sleepTime = 500; break;
+                default: sleepTime = 83; break;
             }
-
-            if (animDeltaTime < nextFrameWait) break;
-            animDeltaTime -= nextFrameWait;
+            Util.sleep(sleepTime - (int) paintTime);
 
             // Go to next animation frame.
             // If end reached, start going through frames in descending order.
@@ -156,6 +158,6 @@ public class LoadingItem extends Item {
             if (curFrame == 0) animDirection = 1;
         }
 
-        lastFrameTime = now;
+        threadAlive = false;
     }
 }
