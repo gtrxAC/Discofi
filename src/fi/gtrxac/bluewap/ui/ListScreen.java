@@ -133,14 +133,20 @@ public class ListScreen extends Screen implements Runnable {
             y = prevItem.y;
         }
 
+        Item prevItem = null;
+
         for (int i = startIndex; i < items.size(); i++) {
             Item item = (Item) items.elementAt(i);
+
             if (forceAll || item.needsRecalc) {
+                // Two recalc methods with different args - an item should only define one of them
                 item.recalc(contentWidth);
+                item.recalc(contentWidth, this, prevItem);
                 item.needsRecalc = false;
             }
             item.y = y;
             y += item.height + itemPadding;
+            prevItem = item;
         }
 
         maxScroll = Math.max(-itemPadding, y - getHeight());

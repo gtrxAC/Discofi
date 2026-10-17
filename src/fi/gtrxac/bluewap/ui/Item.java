@@ -36,7 +36,15 @@ public abstract class Item {
      * This method should calculate the height of the item and assign a value to the 'height' field.
      * @param width Screen width in pixels
      */
-    public abstract void recalc(int width);
+    public void recalc(int width) {}
+
+    /**
+     * Same as recalc(int), but with additional context:
+     * the screen where the item is going to be drawn, and the item above this item.
+     * 
+     * One of the recalc methods should be overridden, but not both.
+     */
+    public void recalc(int width, ListScreen screen, Item aboveItem) {}
 
     /**
      * Called when this item is selected (OK button pressed or selectItem() called when it's highlighted)

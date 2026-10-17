@@ -61,12 +61,11 @@ public class Theme extends Colors {
         0xC5C5D1, 0xD8D8E0, 0xEBEBF0, 0xFFFFFF
     };
 
-    private static final int darkSelHighlight = 0x414E87;
-    private static final int darkSelHighlightDim = 0x3A426B;
+    private static final int darkSelHighlight = 0x3A426B;
 
     public static void loadDarkTheme() {
         listScreenBackground = darkGradient[0x3];
-        listScreenScrollbar = darkGradient[0x9];
+        listScreenScrollbar = darkGradient[0x8];
         listScreenScrollbarSel = darkGradient[0xB];
         bannerBackground = darkGradient[0x4];
         bannerOutline = darkGradient[0x2];
@@ -90,26 +89,26 @@ public class Theme extends Colors {
         highlightOutline = 0x6688FF;
         spacerItem = darkGradient[0x1];
         buttonBackground = darkGradient[0x5];
-        buttonBackgroundSel = darkSelHighlight;
+        buttonBackgroundSel = 0x445392;
         buttonOutline = darkGradient[0x2];
         buttonText = darkGradient[0xF];
         buttonTextSel = darkGradient[0xF];
-        linkBackgroundSel = darkSelHighlightDim;
+        linkBackgroundSel = darkSelHighlight;
         linkText = 0x5577EE;
         linkTextSel = 0x6688FF;
         listItemBackgroundSel = darkSelHighlight;
         listItemText = darkGradient[0xF];
         listItemTextSel = darkGradient[0xF];
         listItemArrow = darkGradient[0xA];
-        optionItemBackgroundSel = darkSelHighlightDim;
+        optionItemBackgroundSel = darkSelHighlight;
         optionItemText = darkGradient[0xF];
         optionItemTextSel = darkGradient[0xF];
-        radioButtonItemBackgroundSel = darkSelHighlightDim;
+        radioButtonItemBackgroundSel = darkSelHighlight;
         radioButtonOutline = darkGradient[0x2];
         radioButtonFill = darkGradient[0xA];
         radioButtonDot = darkGradient[0x0];
         textFieldOutline = darkGradient[0x8];
-        textFieldBackgroundSel = darkSelHighlightDim;
+        textFieldBackgroundSel = darkSelHighlight;
         textFieldText = darkGradient[0xF];
         textFieldTextSel = darkGradient[0xF];
 
