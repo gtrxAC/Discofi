@@ -19,8 +19,6 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Password login
 * Profile pictures
 * Theme settings (light/dark)
-
-### Work in progress
 * Viewing attachments
 
 ### Planned for first release
@@ -29,22 +27,28 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Token file import
 * HTTP connection over BlueWAP
 
-### Not implemented
-* Emojis, reactions
-* Gateway
-* Sending attachments
+### Planned for later
+* Emojis
+* Reactions
 * Embeds
 * Text formatting (plan is to use [nnmarkdown](https://github.com/shinovon/nnmarkdown))
-* etc.
+* Custom themes
+
+### Not planned
+* Gateway (not practical without a proxy, which is unsafe)
+* Sending attachments (unsafe for third-party clients)
+* Friend requests (unsafe)
+* Joining servers (unsafe)
 
 ## Officially supported devices
 Any device meeting the [system requirements](#system-requirements) should be able to run the app, but technical support will mainly be provided for these officially supported devices, and the app will be developed mainly with them in mind.
-* Nokia devices running Series 40 3rd Edition FP1 or later
-  * TLS on these phones is slow, so it's recommended to find one with a faster CPU or use a Symbian/Sony Ericsson device instead
-  * Series 40 Lite devices are not supported
 * Symbian devices with the [nnproject TLS patch](https://nnproject.cc/tls/) installed
 * Sony Ericsson devices with DB2020 chipset or newer
   * This includes most devices from 2006 onwards; check your device [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones)
+  * Newer DB2010 devices may also work well (e.g. W300, W810, Z530)
+* Nokia devices running Series 40 3rd Edition FP1 or later
+  * TLS on these phones is slow, so it's recommended to find one with a faster CPU or use a Symbian/Sony Ericsson device instead
+  * Series 40 Lite devices are not supported
 
 ## System requirements
 | Specification | Minimum | Recommended |
