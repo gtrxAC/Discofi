@@ -30,8 +30,13 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
         addItem(new BlankItem(0));
 
+        String directDescription =
+            Platform.isSymbian() ?
+            "Recommended - requires the nnproject TLS 1.2 patch." :
+            "Recommended - requires TLS 1.2 (supported on some Nokia S40 and Sony Ericsson devices if the app was installed via signed JAD).";
+
         addItem(directOption = new RadioButtonItem(group, "Direct"));
-        addItem("Recommended - requires TLS 1.2 support (Symbian with nnproject's TLS patch, and select Nokia S40 and Sony Ericsson devices).");
+        addItem(directDescription);
 
         addItem(new BlankItem(0));
 
