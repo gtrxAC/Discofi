@@ -1,6 +1,6 @@
 package fi.gtrxac.discord;
 
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;

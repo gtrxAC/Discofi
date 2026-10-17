@@ -2,7 +2,7 @@ package fi.gtrxac.discord;
 
 import java.util.*;
 import java.io.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.discord.util.*;
 import javax.microedition.lcdui.Image;

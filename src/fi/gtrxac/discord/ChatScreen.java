@@ -3,7 +3,7 @@ package fi.gtrxac.discord;
 import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import java.util.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -43,7 +43,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Send", Command.SCREEN, CMD_SEND));
         addCommand(new Command("Reply", Command.ITEM, CMD_REPLY));
 
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
 

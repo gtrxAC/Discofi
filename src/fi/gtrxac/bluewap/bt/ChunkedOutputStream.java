@@ -1,7 +1,7 @@
 //#ifndef NO_BLUETOOTH
 package fi.gtrxac.bluewap.bt;
 
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import javax.microedition.io.*;
 import java.io.*;
 

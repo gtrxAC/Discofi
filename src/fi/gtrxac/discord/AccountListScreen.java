@@ -1,7 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.tinytls.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import fi.gtrxac.bluewap.http.*;
 import fi.gtrxac.bluewap.client.*;
 import fi.gtrxac.bluewap.ui.*;
@@ -47,7 +47,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             }
         }
 
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addItem(addAccountButton = new ButtonItem("Add account"));
 
             if (numAccounts == 0) {
@@ -61,7 +61,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Delete", Command.ITEM, CMD_DELETE));
         addCommand(new Command("Settings", Command.SCREEN, CMD_SETTINGS));
 
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
         else {

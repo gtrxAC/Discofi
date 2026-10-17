@@ -2,7 +2,7 @@ package fi.gtrxac.bluewap.ui;
 
 import java.util.Vector;
 import javax.microedition.lcdui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 
 public class Dialog extends PopupScreen implements CommandListener {
     private static final Command DISMISS_COMMAND = new Command("OK", Command.BACK, 0);

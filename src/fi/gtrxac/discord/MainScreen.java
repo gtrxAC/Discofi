@@ -3,7 +3,7 @@ package fi.gtrxac.discord;
 import fi.gtrxac.discord.model.*;
 import java.util.*;
 import fi.gtrxac.bluewap.ui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -49,7 +49,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         addCommand(new Command("Settings", Command.SCREEN, CMD_SETTINGS));
         addCommand(new Command("Log out", Command.SCREEN, CMD_LOG_OUT));
 
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
     }

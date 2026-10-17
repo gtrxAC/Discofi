@@ -2,7 +2,7 @@ package fi.gtrxac.bluewap.ui;
 
 import java.util.*;
 import javax.microedition.lcdui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 
 /**
  * The canvas that shows and handles all screens managed by the UI framework.
@@ -26,10 +26,10 @@ public class AppCanvas extends Canvas {
     private AppCanvas() {
         super();
 
-        if (Util.useCustomSoftkeys && Util.useCustomTitleBar) {
+        if (Platform.useCustomSoftkeys && Platform.useCustomTitleBar) {
             setFullScreenMode(true);
         }
-        if (Util.useCustomTitleBarClock) {
+        if (Platform.useCustomTitleBarClock) {
             new ClockThread().start();
             updateClock();
         }
@@ -48,7 +48,7 @@ public class AppCanvas extends Canvas {
             curr.prepareAndDraw(g);
         }
 
-        if (Util.useCustomSoftkeys) {
+        if (Platform.useCustomSoftkeys) {
             int softkeyBarY = getHeight();
             if (useCustomTitleBar()) softkeyBarY += getTitleBarHeight();
 
@@ -64,7 +64,7 @@ public class AppCanvas extends Canvas {
     private static boolean useCustomTitleBar() {
         Screen curr = AppBase.getCurrentScreen();
 
-        return Util.useCustomTitleBar && curr != null && curr.getTitle() != null;
+        return Platform.useCustomTitleBar && curr != null && curr.getTitle() != null;
     }
 
     private void drawTitleBar(Graphics g) {
@@ -76,7 +76,7 @@ public class AppCanvas extends Canvas {
         g.setColor(Colors.titleBarOutline);
         g.drawLine(0, barHeight - 1, getWidth(), barHeight - 1);
 
-        boolean showClock = Util.useCustomTitleBarClock;
+        boolean showClock = Platform.useCustomTitleBarClock;
 
         // draw title (left-aligned with clock, or centered without clock)
         g.setColor(Colors.titleBarText);
@@ -165,7 +165,7 @@ public class AppCanvas extends Canvas {
     public int getHeight() {
         int result = super.getHeight();
         if (useCustomTitleBar()) result -= getTitleBarHeight();
-        if (Util.useCustomSoftkeys) result -= getSoftkeyBarHeight();
+        if (Platform.useCustomSoftkeys) result -= getSoftkeyBarHeight();
         return result;
     }
 
@@ -220,7 +220,7 @@ public class AppCanvas extends Canvas {
     }
 
     protected boolean handleSoftkeyPress(int x, int y, boolean runCommand) {
-        if (!Util.useCustomSoftkeys) return false;
+        if (!Platform.useCustomSoftkeys) return false;
 
         leftSoftkeyPressed = false;
         rightSoftkeyPressed = false;
@@ -262,7 +262,7 @@ public class AppCanvas extends Canvas {
         for (int i = 0; i < canvasCommands.size(); ) {
             Command c = (Command) canvasCommands.elementAt(i);
             if (curr == null || curr.getCommands().indexOf(c) == -1) {
-                if (!Util.useCustomSoftkeys) removeCommand(c);
+                if (!Platform.useCustomSoftkeys) removeCommand(c);
                 canvasCommands.removeElementAt(i);
             }
             else i++;
@@ -283,12 +283,12 @@ public class AppCanvas extends Canvas {
         for (int i = 0; i < curr.getCommands().size(); i++) {
             Command c = (Command) curr.getCommands().elementAt(i);
             if (canvasCommands.indexOf(c) == -1) {
-                if (!Util.useCustomSoftkeys) addCommand(c);
+                if (!Platform.useCustomSoftkeys) addCommand(c);
                 canvasCommands.addElement(c);
             }
         }
 
-        if (Util.useCustomSoftkeys) assignCommandPositions();
+        if (Platform.useCustomSoftkeys) assignCommandPositions();
     }
 
     private final Vector remainingCommands = new Vector();
@@ -355,7 +355,7 @@ public class AppCanvas extends Canvas {
 
         String title = curr.getTitle();
 
-        if (Util.useCustomTitleBar) {
+        if (Platform.useCustomTitleBar) {
             // Set title shown in custom title bar
             if (title == null) {
                 title = midletName;
@@ -363,7 +363,7 @@ public class AppCanvas extends Canvas {
 
             int availableWidth = getWidth() - Fonts.boldHeight/4*2;
 
-            if (Util.useCustomTitleBarClock) {
+            if (Platform.useCustomTitleBarClock) {
                 availableWidth -= Fonts.plain.stringWidth("88:88");
             }
 

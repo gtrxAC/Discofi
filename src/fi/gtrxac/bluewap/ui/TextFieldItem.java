@@ -5,7 +5,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 
 /**
  * A ListScreen item that contains and handles text input from the user.

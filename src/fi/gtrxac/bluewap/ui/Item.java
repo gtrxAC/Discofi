@@ -13,7 +13,7 @@ public abstract class Item {
     private boolean selectable;
     public boolean needsRecalc;
 
-    private static final int roundRectSizeOffset = Util.hasRoundRectSizeBug ? 1 : 0;
+    private static final int roundRectSizeOffset = Platform.hasRoundRectSizeBug ? 1 : 0;
 
     protected Item(boolean selectable) {
         this.selectable = selectable;

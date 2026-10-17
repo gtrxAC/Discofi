@@ -45,7 +45,7 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
 
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
         setCommandListener(this);

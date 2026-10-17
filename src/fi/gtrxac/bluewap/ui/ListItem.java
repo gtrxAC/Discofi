@@ -66,7 +66,7 @@ public class ListItem extends Item {
     }
 
     private Image createArrowImage(int size, int color) {
-        int renderSize = (size*Util.vectorRenderScale + 13)/14*14;
+        int renderSize = (size*Platform.vectorRenderScale + 13)/14*14;
         int blockSize = renderSize/14;
 
         Image result = Image.createImage(renderSize, renderSize);

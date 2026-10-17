@@ -2,7 +2,7 @@ package fi.gtrxac.discord;
 
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;

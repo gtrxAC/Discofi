@@ -1,7 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -70,7 +70,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
 
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
     }

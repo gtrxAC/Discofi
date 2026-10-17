@@ -2,7 +2,7 @@ package fi.gtrxac.discord;
 
 import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -42,7 +42,7 @@ public class ReplyScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         addCommand(new Command("Send", Command.OK, CMD_SEND));
 
-        if (!Util.hideSelectCommand) {
+        if (!Platform.hideSelectCommand) {
             addCommand(new Command("Select", Command.OK, CMD_SELECT));
         }
     }

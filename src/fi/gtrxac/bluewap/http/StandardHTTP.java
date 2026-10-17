@@ -29,7 +29,7 @@ public class StandardHTTP extends HTTP {
 	}
 
 	private static Object dispatchConnectorOpen(String url) throws Exception {
-		if (Util.preferModernConnector) {
+		if (Platform.preferModernConnector) {
 			try {
 //#ifdef DEBUG
 				// Debug log the requested URL, as the URL is not
@@ -39,7 +39,7 @@ public class StandardHTTP extends HTTP {
 				return ModernConnector.open(url);
 			}
 			catch (SecurityException e) {
-				if (!Util.allowSecondaryConnector) throw e;
+				if (!Platform.allowSecondaryConnector) throw e;
 			}
 		}
 		return Connector.open(url);

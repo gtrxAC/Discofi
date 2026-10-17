@@ -1,6 +1,6 @@
 package fi.gtrxac.bluewap.ui;
 
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 
 public class ClockThread extends Thread {
     public ClockThread() {}

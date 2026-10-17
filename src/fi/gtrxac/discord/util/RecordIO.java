@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 import javax.microedition.io.*;
 import javax.microedition.rms.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 
 /**
  * Helper class to read/write binary data to an RMS record store.

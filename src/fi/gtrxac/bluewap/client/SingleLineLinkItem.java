@@ -1,6 +1,6 @@
 package fi.gtrxac.bluewap.client;
 
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import fi.gtrxac.bluewap.ui.*;
 
 public class SingleLineLinkItem extends LinkItem {

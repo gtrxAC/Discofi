@@ -3,7 +3,7 @@ package fi.gtrxac.bluewap.ui;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Canvas;
 import java.util.*;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 
 /**
  * A list that can display a vertical scrollable list of Items.

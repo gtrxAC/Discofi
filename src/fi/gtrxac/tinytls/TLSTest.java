@@ -1,6 +1,6 @@
 package fi.gtrxac.tinytls;
 
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import java.io.*;
 
 /**

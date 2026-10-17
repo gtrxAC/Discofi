@@ -48,7 +48,7 @@ public class LinkItem extends Item {
             g.drawString(textLines[i], lineX, y, 0);
             y += Fonts.underlinedHeight;
 
-            if (!Util.useUnderlinedFont) {
+            if (!Platform.useUnderlinedFont) {
                 // Draw the underline manually
                 g.drawLine(lineX, y - 1, lineX + textLineWidths[i], y - 1);
             }
@@ -60,7 +60,7 @@ public class LinkItem extends Item {
     }
 
     public void recalc(int width) {
-        font = Util.useUnderlinedFont ? Fonts.underlined : Fonts.plain;
+        font = Platform.useUnderlinedFont ? Fonts.underlined : Fonts.plain;
         fontHeight = font.getHeight();
         textLines = Util.wordWrap(text, width, font);
         height = fontHeight*textLines.length;

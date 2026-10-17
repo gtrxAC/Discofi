@@ -5,7 +5,7 @@ import java.io.*;
 import cc.nnproject.json.*;
 import fi.gtrxac.discord.model.*;
 import javax.microedition.lcdui.Image;
-import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.*;
 import javax.microedition.rms.*;
 import fi.gtrxac.discord.util.*;
 
