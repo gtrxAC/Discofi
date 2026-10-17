@@ -164,8 +164,9 @@ public class AttachmentScreen extends Screen implements CommandListener {
             return;
         }
 
-        int maxOffsetX = Math.max(0, (attachmentImage.getWidth() - getWidth())/2);
-        int maxOffsetY = Math.max(0, (attachmentImage.getHeight() - getHeight())/2);
+        // Allow image to go almost off-screen
+        int maxOffsetX = attachmentImage.getWidth()/2 + getWidth()*4/10;
+        int maxOffsetY = attachmentImage.getHeight()/2 + getHeight()*4/10;
 
         if (offsetX < -maxOffsetX) offsetX = -maxOffsetX;
         if (offsetX > maxOffsetX) offsetX = maxOffsetX;
@@ -220,5 +221,19 @@ public class AttachmentScreen extends Screen implements CommandListener {
                 break;
             }
         }
+    }
+
+    private int lastPointerX, lastPointerY;
+
+    public void pointerPressed(int x, int y) {
+        lastPointerX = x;
+        lastPointerY = y; 
+    }
+
+    public void pointerDragged(int x, int y) {
+        offsetX += (x - lastPointerX);
+        offsetY += (y - lastPointerY);
+        pointerPressed(x, y);
+        clampViewOffset();
     }
 }

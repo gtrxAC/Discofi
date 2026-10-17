@@ -399,8 +399,6 @@ public class HTTPThread extends Thread {
             String imageURL = attachment.getPreviewUrl(
                 attachmentPreviewWidth, attachmentPreviewHeight);
 
-            System.out.println(imageURL);
-
             if (imageURL == null) imageURL = attachment.url;
 
             if (imageURL == null) {
