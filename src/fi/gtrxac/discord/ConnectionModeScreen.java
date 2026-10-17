@@ -36,7 +36,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
         addItem(new BlankItem(0));
 
         addItem(btOption = new RadioButtonItem(group, "BT tethering"));
-        addItem("Not implemented yet."); // "Tether to a device running BlueWAP Server. Recommended when TLS 1.2 is unavailable, or in regions without 2G/3G networks.");
+        addItem("Tether to a device running BlueWAP Server. Recommended when TLS 1.2 is unavailable, or in regions without 2G/3G networks.");
 
         addItem(new BlankItem(0));
 

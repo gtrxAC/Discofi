@@ -2,6 +2,8 @@ package fi.gtrxac.discord;
 
 import fi.gtrxac.tinytls.*;
 import fi.gtrxac.bluewap.Util;
+import fi.gtrxac.bluewap.http.*;
+import fi.gtrxac.bluewap.client.*;
 import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -126,7 +128,16 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             // -1 because of the blank item
             int accountIndex = getHighlightedIndex() - 1;
             Accounts.setActive(accountIndex);
-            App.replaceScreen(new MainScreen());
+            Account acc = Accounts.getActive();
+
+            if (acc.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
+                BluetoothHTTP.selectedConnectionUrl == null) {
+
+                App.replaceScreen(new BluetoothDeviceScreen());
+            }
+            else {
+                App.replaceScreen(new MainScreen());
+            }
         }
     }
 
