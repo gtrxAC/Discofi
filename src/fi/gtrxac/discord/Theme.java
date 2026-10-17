@@ -14,6 +14,11 @@ public class Theme extends Colors {
     public static int channelCategoryBackground;
 
     /**
+     * LabelItem
+     */
+    public static int labelItem;
+
+    /**
      * LoadingItem
      */
     public static int loadingItemText;
@@ -36,6 +41,7 @@ public class Theme extends Colors {
 
         channelCategoryText = 0x111111;
         channelCategoryBackground = 0xE8E8E8;
+        labelItem = 0x333333;
         loadingItemText = 0x333333;
         messageBackgroundSel = 0xAADDFF;
         username = 0x000000;
@@ -106,6 +112,7 @@ public class Theme extends Colors {
 
         channelCategoryText = darkGradient[0xE];
         channelCategoryBackground = darkGradient[0x2];
+        labelItem = darkGradient[0xC];
         loadingItemText = darkGradient[0xC];
         messageBackgroundSel = darkGradient[0x5];
         username = darkGradient[0xF];
