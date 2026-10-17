@@ -83,7 +83,7 @@ public class TabbedListScreen extends Screen {
 
     public void recalc() {
         tabMargin = Fonts.height/7;
-        tabBarHeight = Fonts.height*3/2;
+        tabBarHeight = Platform.isTouch ? Fonts.height*7/4 : Fonts.height*3/2;
 
         if (tabs.size() == 0) return;
 

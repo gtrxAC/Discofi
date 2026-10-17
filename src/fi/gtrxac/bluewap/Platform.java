@@ -25,6 +25,7 @@ public class Platform extends Canvas {
 
     public static final String plat;
 
+	public static final boolean isTouch;
 	public static final boolean isJ2MELoader;
 	public static final int vectorRenderScale;
 	public static final boolean useUnderlinedFont;
@@ -40,6 +41,11 @@ public class Platform extends Canvas {
 		String p = System.getProperty("microedition.platform");
 		if (p == null) p = "";
 		plat = p;
+
+		// On the Samsung S7220 and S7350, hasPointerEvents() returns true
+		// even though they are not touchscreen phones
+		isTouch = (new Platform()).hasPointerEvents() && 
+			plat.indexOf("S7220") == -1 && plat.indexOf("S7350") == -1;
 
 		isJ2MELoader = "The Android Project".equals(System.getProperty("java.vendor"));
 
@@ -71,7 +77,7 @@ public class Platform extends Canvas {
 
 		// Use custom drawn softkeys and custom 'Options' menu
 		// on platforms that have bad softkeys by default (Samsung, J2ME Loader).
-		useCustomSoftkeys = isJ2MELoader || isSamsungTouch();
+		useCustomSoftkeys = isJ2MELoader || (isSamsung() && isTouch);
 
 		// Use custom title bar on platforms with custom softkeys,
 		// but also on Sony Ericsson where title bars have a couple issues on some models
@@ -132,12 +138,6 @@ public class Platform extends Canvas {
 
 		char last = plat.charAt(plat.length() - 1);
 		return Character.isDigit(last);
-	}
-
-	public static boolean isSamsungTouch() {
-		return isSamsung() && (new Platform()).hasPointerEvents() &&
-			// On these two phones, hasPointerEvents() returns true even though they are not touchscreen phones
-			plat.indexOf("S7220") == -1 && plat.indexOf("S7350") == -1;
 	}
 
     public static boolean isSymbian() {

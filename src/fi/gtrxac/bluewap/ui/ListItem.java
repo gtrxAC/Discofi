@@ -11,6 +11,7 @@ public class ListItem extends Item {
     private String displayText;
     public Object object;
 
+    private static int paddingY;
     private static int imageHash;
     private static Image arrowImage;
 
@@ -38,19 +39,21 @@ public class ListItem extends Item {
         }
 
         g.setFont(Fonts.plain);
-        g.drawString(displayText, Fonts.height/4, Fonts.height/4, 0);
+        g.drawString(displayText, Fonts.height/4, paddingY, 0);
 
         int prevItemLastPixel = -screen.itemPadding - 1;
         g.setColor(Colors.spacerItem);
         g.drawLine(0, prevItemLastPixel, width - 1, prevItemLastPixel);
         g.drawLine(0, height - 1, width - 1, height - 1);
 
-        g.drawImage(arrowImage, width - Fonts.height/3, Fonts.height/4,
+        g.drawImage(arrowImage, width - Fonts.height/3, paddingY,
             Graphics.TOP | Graphics.RIGHT);
     }
 
     public void recalc(int width) {
-        height = Fonts.height + Fonts.height/4*2 + 3;
+        paddingY = Platform.isTouch ? Fonts.height*2/5 : Fonts.height/5;
+
+        height = Fonts.height + paddingY*2 + 3;
 
         int textWidth = width - Fonts.height/4 - Fonts.height - Fonts.height/3;
         displayText = Util.stringToWidth(text, Fonts.plain, textWidth);

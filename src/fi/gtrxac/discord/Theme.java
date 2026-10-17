@@ -100,7 +100,7 @@ public class Theme extends Colors {
         listItemBackgroundSel = darkSelHighlight;
         listItemText = darkGradient[0xF];
         listItemTextSel = darkGradient[0xF];
-        listItemArrow = darkGradient[0x9];
+        listItemArrow = darkGradient[0xA];
         optionItemBackgroundSel = darkSelHighlightDim;
         optionItemText = darkGradient[0xF];
         optionItemTextSel = darkGradient[0xF];
