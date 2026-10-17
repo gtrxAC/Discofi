@@ -157,21 +157,26 @@ public abstract class HTTP {
 	 * Get server response as a byte array.
 	 */
 	public byte[] getResponseBytes() throws Exception {
-		checkMakeRequest();
-		if (responseBytes != null) {
-			close();
-			return responseBytes;
+		try {
+			checkMakeRequest();
+			
+			if (responseBytes != null) {
+				return responseBytes;
+			}
+			byte[] result = Util.readBytes(is);
+			return result;
 		}
-		byte[] result = Util.readBytes(is);
-		close();
-		return result;
+		finally {
+			close();
+		}
 	}
 
 	/**
 	 * Get server response as a string.
 	 */
 	public String getResponseString() throws Exception {
-		String charset = Util.getCharsetFromContentType(getResponseHeader("Content-Type"));
+		String contentType = getResponseHeader("Content-Type");
+		String charset = Util.getCharsetFromContentType(contentType);
 		return Util.bytesToString(getResponseBytes(), charset);
 	}
 
@@ -179,9 +184,13 @@ public abstract class HTTP {
 	 * Get server response as an image.
 	 */
 	public Image getResponseImage() throws Exception {
-		Image result = Image.createImage(getResponseStream());
-		close();
-		return result;
+		try {
+			Image result = Image.createImage(getResponseStream());
+			return result;
+		}
+		finally {
+			close();
+		}
 	}
 	
 	/**

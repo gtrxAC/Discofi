@@ -1,6 +1,7 @@
 package fi.gtrxac.discord.model;
 
 import cc.nnproject.json.JSONObject;
+import fi.gtrxac.bluewap.Util;
 
 /**
  * Created by Leap on 4.10.2026.
@@ -10,9 +11,6 @@ public class Attachment {
     private static final String[] VIDEO_EXTENSIONS = {
         ".mp4", ".3gp", ".webm", ".mov", ".m4v", ".mkv", ".avi", ".gifv"
     };
-
-    // requesting a proxy-scaled preview wider than this is a waste of data
-    private static final int MAX_PREVIEW_WIDTH = 512;
 
     public String id;
     public String filename;
@@ -59,17 +57,24 @@ public class Attachment {
         return contentType != null && contentType.startsWith(check);
     }
 
-    public String getPreviewUrl(int maxWidth) {
+    public String getPreviewUrl(int maxWidth, int maxHeight) {
         if (!previewable) return null;
 
-        int width = maxWidth > 0 ? maxWidth : 512;
-        if (width > MAX_PREVIEW_WIDTH) width = MAX_PREVIEW_WIDTH;
-        return appendQuery(proxyUrl, "format=jpeg&width=" + width);
+        int[] actualSize = Util.resizeFit(width, height, maxWidth, maxHeight);
+
+        return appendQuery(proxyUrl, 
+            "format=jpeg&quality=low&width=" + actualSize[0] + "&height=" + actualSize[1]);
     }
 
     private static String appendQuery(String url, String query) {
         if (url == null) return null;
-        return url + (url.indexOf('?') == -1 ? "?" : "&") + query;
+
+        // Discord's proxy URLs already have a '&' at the end
+        if (!url.endsWith("?") && !url.endsWith("&")) {
+            url += (url.indexOf('?') == -1) ? "?" : "&";
+        }
+
+        return url + query;
     }
 
     private static boolean endsWithAny(String name, String[] extensions) {

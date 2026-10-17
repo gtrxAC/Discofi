@@ -19,6 +19,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_MESSAGES = 6;
     public static final int ACTION_SEND_MESSAGE = 7;
     public static final int ACTION_FETCH_ICON = 8;
+    public static final int ACTION_FETCH_ATTACHMENT = 9;
 
     private int action;
     private Screen callerScreen;
@@ -36,6 +37,10 @@ public class HTTPThread extends Thread {
 	public String recipientMessage;
 	public boolean sendPing;
     public IconRequest iconRequest;
+	public Attachment attachment;
+	public int attachmentPreviewWidth;
+	public int attachmentPreviewHeight;
+	public int attachmentRequestId;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -59,6 +64,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_MESSAGES: runFetchMessages(); break;
                 case ACTION_SEND_MESSAGE: runSendMessage(); break;
                 case ACTION_FETCH_ICON: runFetchIcon(); break;
+                case ACTION_FETCH_ATTACHMENT: runFetchAttachment(); break;
             }
         }
         catch (DiscordException e) {
@@ -383,6 +389,32 @@ public class HTTPThread extends Thread {
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void runFetchAttachment() {
+        AttachmentScreen screen = (AttachmentScreen) callerScreen;
+
+        try {
+            String imageURL = attachment.getPreviewUrl(
+                attachmentPreviewWidth, attachmentPreviewHeight);
+
+            System.out.println(imageURL);
+
+            if (imageURL == null) imageURL = attachment.url;
+
+            if (imageURL == null) {
+                throw new Exception("Attachment has no image URL");
+            }
+
+            HTTP h = HTTP.createRequest(imageURL);
+            Image image = h.getResponseImage();
+
+            screen.imageLoaded(attachmentRequestId, image);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            screen.imageLoadFailed(attachmentRequestId);
         }
     }
 }

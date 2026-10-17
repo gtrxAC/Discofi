@@ -399,6 +399,39 @@ public class Util extends Canvas {
 		catch (Exception e) {}
 	}
 
+	/**
+	 * Get the dimensions that an image should be resized to
+	 * in order to fit the specified maximum dimensions and keep the original aspect ratio.
+	 * 
+	 * If mustUpscale is false, the original image size is kept if it's smaller than the max dimensions.
+	 * 
+	 * Returns array [width, height]
+	 */
+	public static int[] resizeFit(int imgW, int imgH, int maxW, int maxH, boolean mustUpscale) {
+		int imgAspect = imgW*1000 / imgH;
+		int maxAspect = maxW*1000 / maxH;
+		int width, height;
+
+		if (!mustUpscale && imgW <= maxW && imgH <= maxH) {
+			width = imgW;
+			height = imgH;
+		}
+		else if (imgAspect > maxAspect) {
+			width = maxW;
+			height = (maxW*1000)/imgAspect;
+		}
+		else {
+			height = maxH;
+			width = (maxH*imgAspect)/1000;
+		}
+
+		return new int[] {width, height};
+	}
+
+	public static int[] resizeFit(int imgW, int imgH, int maxW, int maxH) {
+		return resizeFit(imgW, imgH, maxW, maxH, false);
+	}
+
     // _________________________________________________________________________
     //
     //  Color utilities

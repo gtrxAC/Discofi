@@ -24,6 +24,16 @@ public class AttachmentItem extends SingleLineLinkItem {
     }
 
     public void itemSelected() {
-        App.pushScreen(new AttachmentScreen(attachment));
+        if (attachment.previewable) {
+            App.pushScreen(new AttachmentScreen(attachment));
+        }
+        else {
+            try {
+                App.instance.platformRequest(attachment.url);
+            }
+            catch (Exception e) {
+                new DiscordException(e).show();
+            }
+        }
     }   
 }

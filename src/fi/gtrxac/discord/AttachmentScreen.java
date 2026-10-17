@@ -21,38 +21,68 @@ public class AttachmentScreen extends Screen implements CommandListener {
     private static final Command zoomOutCommand =
         new Command("Zoom out", Command.SCREEN, CMD_ZOOM_OUT);
 
+    private static final int MIN_ZOOM_LEVEL = 1;
+    private static final int MAX_ZOOM_LEVEL = 4;
+
     private Attachment attachment;
     private Image attachmentImage;
     private int offsetX;
     private int offsetY;
     private boolean isLoading;
+    private boolean loadFailed;
+    private int imageRequestId;
+
     private int zoomLevel;
+    private int zoomWidth;
+    private int zoomHeight;
 
     public AttachmentScreen(Attachment att) {
         super(0);
         setTitle(att.filename);
 
+        attachment = att;
+        zoomLevel = MIN_ZOOM_LEVEL;
+        // zoomWidth and zoomHeight are set in recalc()
+        // where getWidth() and getHeight() are available
+
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         addCommand(zoomInCommand);
-
-        loadImage();
     }
 
     private void loadImage() {
+        int requestId = ++imageRequestId;
         isLoading = true;
+        loadFailed = false;
 
-        // HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_ATTACHMENT);
-        // ...
-        // h.start();
+        HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_ATTACHMENT, this);
+        h.attachment = attachment;
+        h.attachmentPreviewWidth = zoomWidth;
+        h.attachmentPreviewHeight = zoomHeight;
+        h.attachmentRequestId = requestId;
+        h.start();
 
         App.repaint();
     }
 
     // Callback
-    public void imageLoaded(Image image) {
+    public void imageLoaded(int requestId, Image image) {
+        if (requestId != imageRequestId) return;
+
         attachmentImage = image;
         isLoading = false;
+        loadFailed = false;
+        clampViewOffset();
+
+        App.repaint();
+    }
+
+    public void imageLoadFailed(int requestId) {
+        if (requestId != imageRequestId) return;
+
+        isLoading = false;
+        loadFailed = true;
+
         App.repaint();
     }
 
@@ -68,42 +98,53 @@ public class AttachmentScreen extends Screen implements CommandListener {
                 Graphics.HCENTER | Graphics.VCENTER);
         }
 
-        if (isLoading) {
-            int textWidth = Fonts.plain.stringWidth("Loading...");
+        if (isLoading || loadFailed) {
+            String status = loadFailed ? "Failed to load image" : "Loading...";
+            int textWidth = Fonts.plain.stringWidth(status);
             int textX = getWidth()/2 - textWidth/2;
             int textY = getHeight()/2 - Fonts.height/2;
 
             g.fillRect(textX, textY, textWidth, Fonts.height);
 
             g.setColor(0xFFFFFF);
-            g.drawString("Loading...", textX, textY, 0);
+            g.drawString(status, textX, textY, 0);
         }
     }
 
     public void recalc() {
+        if (attachmentImage == null && !isLoading && !loadFailed) {
+            int[] fitSize = Util.resizeFit(
+                attachment.width, attachment.height, getWidth(), getHeight());
+                
+            zoomWidth = fitSize[0];
+            zoomHeight = fitSize[1];
+
+            // Start initial load
+            loadImage();
+        }
         clampViewOffset();
     }
 
     public void keyEvent(int keyCode, int gameAction) {
         if (attachmentImage == null) return;
 
-        int increment = Math.min(getWidth(), getHeight())/10;
+        int increment = Math.min(getWidth(), getHeight())/5;
 
         switch (gameAction) {
             case Canvas.UP: {
-                offsetY -= increment;
-                break;
-            }
-            case Canvas.DOWN: {
                 offsetY += increment;
                 break;
             }
+            case Canvas.DOWN: {
+                offsetY -= increment;
+                break;
+            }
             case Canvas.LEFT: {
-                offsetX -= increment;
+                offsetX += increment;
                 break;
             }
             case Canvas.RIGHT: {
-                offsetX += increment;
+                offsetX -= increment;
                 break;
             }
             case Canvas.FIRE: {
@@ -116,34 +157,48 @@ public class AttachmentScreen extends Screen implements CommandListener {
     }
 
     private void clampViewOffset() {
-        // ...
+        if (attachmentImage == null) {
+            offsetX = 0;
+            offsetY = 0;
+            return;
+        }
+
+        int maxOffsetX = Math.max(0, (attachmentImage.getWidth() - getWidth())/2);
+        int maxOffsetY = Math.max(0, (attachmentImage.getHeight() - getHeight())/2);
+
+        if (offsetX < -maxOffsetX) offsetX = -maxOffsetX;
+        if (offsetX > maxOffsetX) offsetX = maxOffsetX;
+        if (offsetY < -maxOffsetY) offsetY = -maxOffsetY;
+        if (offsetY > maxOffsetY) offsetY = maxOffsetY;
     }
 
     private void zoomIn() {
-        zoomLevel++;
         addCommand(zoomOutCommand);
 
-        if (zoomLevel >= 5) {
-            zoomLevel = 5;
-            removeCommand(zoomInCommand);
+        if (zoomLevel < MAX_ZOOM_LEVEL) {
+            zoomLevel++;
+            zoomWidth *= 2;
+            zoomHeight *= 2;
         }
-        else {
-            addCommand(zoomInCommand);
+
+        if (zoomLevel == MAX_ZOOM_LEVEL) {
+            removeCommand(zoomInCommand);
         }
         
         loadImage();
     }
 
     private void zoomOut() {
-        zoomLevel--;
         addCommand(zoomInCommand);
-        
-        if (zoomLevel <= 1) {
-            zoomLevel = 1;
-            removeCommand(zoomOutCommand);
+
+        if (zoomLevel > MIN_ZOOM_LEVEL) {
+            zoomLevel--;
+            zoomWidth /= 2;
+            zoomHeight /= 2;
         }
-        else {
-            addCommand(zoomOutCommand);
+        
+        if (zoomLevel == MIN_ZOOM_LEVEL) {
+            removeCommand(zoomOutCommand);
         }
 
         loadImage();
