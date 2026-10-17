@@ -8,6 +8,7 @@ import fi.gtrxac.bluewap.*;
 public class TabbedListScreen extends Screen {
     public int currentTabIndex;
     public Vector tabNames;
+    public Vector shortTabNames;
     public Vector truncatedTabNames;
     public Vector tabs;
 
@@ -19,6 +20,7 @@ public class TabbedListScreen extends Screen {
         super(margin);
         currentTabIndex = -1;
         tabNames = new Vector();
+        shortTabNames = new Vector();
         truncatedTabNames = new Vector();
         tabs = new Vector();
     }
@@ -87,6 +89,7 @@ public class TabbedListScreen extends Screen {
 
         tabWidth = (getWidth() - tabMargin)/tabs.size();
         int tabBeginY = tabBarHeight + tabMargin;
+        int availableWidth = tabWidth - tabMargin*2;
 
         truncatedTabNames.setSize(0);
 
@@ -94,15 +97,35 @@ public class TabbedListScreen extends Screen {
             ListView tab = (ListView) tabs.elementAt(i);
             tab.setPosition(0, tabBeginY, getWidth(), getHeight() - tabBeginY);
 
-            String tabName = (String) tabNames.elementAt(i);
-            String truncatedName = Util.stringToWidth(tabName, Fonts.plain, tabWidth - tabMargin*2);
+            String truncatedName = getTruncatedTabName(i, availableWidth);
             truncatedTabNames.addElement(truncatedName);
         }
     }
 
+    private String getTruncatedTabName(int index, int availableWidth) {
+        String tabName = (String) tabNames.elementAt(index);
+        String result = Util.stringToWidth(tabName, Fonts.plain, availableWidth);
+
+        // If full tab name doesn't fit, try short tab name if present
+        if (!result.equals(tabName)) {
+            String shortName = (String) shortTabNames.elementAt(index);
+
+            if (shortName != null) {
+                result = Util.stringToWidth(shortName, Fonts.plain, availableWidth);
+            }
+        }
+
+        return result;
+    }
+
     public void addTab(String name, ListView view) {
+        addTab(name, null, view);
+    }
+
+    public void addTab(String name, String shortName, ListView view) {
         synchronized (tabs) {
             tabNames.addElement(name);
+            shortTabNames.addElement(shortName);
             tabs.addElement(view);
 
             if (currentTabIndex == -1) {
@@ -117,6 +140,7 @@ public class TabbedListScreen extends Screen {
     public void removeTab(int index) {
         synchronized (tabs) {
             tabNames.removeElementAt(index);
+            shortTabNames.removeElementAt(index);
             tabs.removeElementAt(index);
 
             if (currentTabIndex >= index) {

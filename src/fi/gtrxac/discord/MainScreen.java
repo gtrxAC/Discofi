@@ -39,7 +39,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         createDmsTab();
         createInboxTab();
 
-        addTab("Servers", guildsTab);
+        addTab("Servers", "Serv.", guildsTab);
         addTab("DMs", dmsTab);
         addTab("Inbox", inboxTab);
 
