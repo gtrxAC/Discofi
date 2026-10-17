@@ -185,7 +185,7 @@ public class MessageItem extends Item {
         timestampFont = Fonts.get(-1, false, false, false);
         timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
 
-        int timestampPadding = Fonts.plain.stringWidth(" ")*3/2;
+        int timestampPadding = Fonts.plain.stringWidth("  ");
         int timestampWidth = timestampPadding + timestampFont.stringWidth(message.timestamp);
         int authorAvailableWidth = contentWidth - timestampWidth;
         

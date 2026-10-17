@@ -24,7 +24,7 @@ public class DiscordException extends Exception {
             this.tips.addElement("use a different connection method");
             this.tips.addElement("use a different account");
         }
-        else if (message.startsWith("java.io.IOException") || message.indexOf("UnknownHost") != -1) {
+        else if (message.startsWith("java.io.IOException") || message.indexOf("UnknownHost") != -1 || message.indexOf("SocketException") != -1) {
             this.friendlyMessage = "Failed to load data";
             this.tips.addElement("try again");
             this.tips.addElement("check that your internet connection is working");

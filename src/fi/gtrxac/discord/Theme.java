@@ -56,43 +56,43 @@ public class Theme extends Colors {
     };
 
     public static void loadDarkTheme() {
-        listScreenBackground = darkGradient[0x4];
+        listScreenBackground = darkGradient[0x3];
         listScreenScrollbar = darkGradient[0x9];
         listScreenScrollbarSel = darkGradient[0xB];
-        bannerBackground = darkGradient[0x5];
+        bannerBackground = darkGradient[0x4];
         bannerOutline = darkGradient[0x2];
         bannerText = darkGradient[0xF];
-        tabBarBackground = darkGradient[0x2];
-        tabBackground = darkGradient[0x3];
+        tabBarBackground = darkGradient[0x0];
+        tabBackground = darkGradient[0x2];
         tabOutlineColor = darkGradient[0x0];
         tabText = darkGradient[0xF];
         tabTextSel = darkGradient[0xF];
         stringItemText = darkGradient[0xF];
-        titleBarBackground = darkGradient[0x3];
+        titleBarBackground = darkGradient[0x2];
         titleBarOutline = darkGradient[0x0];
         titleBarText = darkGradient[0xE];
-        softkeyBarBackground = darkGradient[0x3];
-        softkeyBackground = darkGradient[0x5];
-        softkeyBackgroundSel = darkGradient[0x6];
+        softkeyBarBackground = darkGradient[0x2];
+        softkeyBackground = darkGradient[0x4];
+        softkeyBackgroundSel = darkGradient[0x5];
         softkeyOutline = darkGradient[0x0];
         softkeyOutlineSel = darkGradient[0x0];
         softkeyText = darkGradient[0xF];
         softkeyTextSel = darkGradient[0xF];
-        highlightOutline = darkGradient[0x8];
-        spacerItem = darkGradient[0x2];
-        buttonBackground = darkGradient[0x5];
-        buttonBackgroundSel = darkGradient[0x6];
+        highlightOutline = 0x6688FF;
+        spacerItem = darkGradient[0x1];
+        buttonBackground = darkGradient[0x4];
+        buttonBackgroundSel = darkGradient[0x5];
         buttonOutline = darkGradient[0x2];
         buttonText = darkGradient[0xF];
         buttonTextSel = darkGradient[0xF];
         linkBackgroundSel = darkGradient[0x5];
-        linkText = 0x3355CC;     // not used yet
-        linkTextSel = 0x2244AA;  // not used yet
-        listItemBackgroundSel = darkGradient[0x6];
+        linkText = 0x5577EE;
+        linkTextSel = 0x6688FF;
+        listItemBackgroundSel = darkGradient[0x5];
         listItemText = darkGradient[0xF];
         listItemTextSel = darkGradient[0xF];
         listItemArrow = darkGradient[0x9];
-        optionItemBackgroundSel = darkGradient[0x6];
+        optionItemBackgroundSel = darkGradient[0x5];
         optionItemText = darkGradient[0xF];
         optionItemTextSel = darkGradient[0xF];
         radioButtonItemBackgroundSel = darkGradient[0x5];
@@ -105,9 +105,9 @@ public class Theme extends Colors {
         textFieldTextSel = darkGradient[0xF];
 
         channelCategoryText = darkGradient[0xE];
-        channelCategoryBackground = darkGradient[0x3];
+        channelCategoryBackground = darkGradient[0x2];
         loadingItemText = darkGradient[0xC];
-        messageBackgroundSel = darkGradient[0x6];
+        messageBackgroundSel = darkGradient[0x5];
         username = darkGradient[0xF];
         timestamp = darkGradient[0xA];
         messageText = darkGradient[0xF];
@@ -115,7 +115,7 @@ public class Theme extends Colors {
         replyConnectorLines = darkGradient[0x8];
         replyUsername = darkGradient[0xF];
         replyContent = darkGradient[0xC];
-        avatarPlaceholder = darkGradient[0x8];
+        avatarPlaceholder = darkGradient[0x7];
     }
 
     public static void load() {
