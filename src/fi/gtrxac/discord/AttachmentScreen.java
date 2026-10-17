@@ -107,6 +107,7 @@ public class AttachmentScreen extends Screen implements CommandListener {
             g.fillRect(textX, textY, textWidth, Fonts.height);
 
             g.setColor(0xFFFFFF);
+            g.setFont(Fonts.plain);
             g.drawString(status, textX, textY, 0);
         }
     }
