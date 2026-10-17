@@ -50,10 +50,13 @@ public class Message {
             JSONObject replyMessage = data.getObject("referenced_message");
 
             replyAuthor = new User(replyMessage.getObject("author"));
-            replyContent = replyMessage.getString("content", null);
+            replyContent = replyMessage.getString("content", "");
 
-            if (replyContent == null || replyContent.length() == 0) {
+            if (replyContent.length() == 0) {
                 replyContent = "(no content)";
+            }
+            else {
+                replyContent = replyContent.replace('\n', ' ');
             }
         }
         catch (Exception e) {}
