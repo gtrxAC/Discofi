@@ -21,15 +21,18 @@ public class Account {
     public static final int VERSION_BASE = 1;
     public static final int VERSION_ADDED_CHANNEL_CACHE = 2;
     public static final int VERSION_ADDED_CDN_URL = 3;
-    public static final int VERSION_CURRENT = 3;
+    public static final int VERSION_ADDED_MEDIA_PROXY_URL = 4;
+    public static final int VERSION_CURRENT = 4;
 
     public static final String DEFAULT_CDN_URL = "http://cdn.gtrxac.fi";
+    public static final String DEFAULT_MEDIA_PROXY_URL = "http://media.discordapp.net";
 
     public String token = "";
     public String username;
     public int connectionMode;
     public String apiUrl = "";
     public String cdnUrl = "";
+    public String mediaProxyUrl = "";
     public String email = "";
     public String password = "";
 
@@ -42,6 +45,7 @@ public class Account {
 
     public Account() {
         cdnUrl = DEFAULT_CDN_URL;
+        mediaProxyUrl = DEFAULT_MEDIA_PROXY_URL;
     }
 
     public Account(DataInputStream saveDataStream) throws IOException {
@@ -75,6 +79,10 @@ public class Account {
         if (version >= VERSION_ADDED_CDN_URL) {
             cdnUrl = saveDataStream.readUTF();
         }
+
+        if (version >= VERSION_ADDED_MEDIA_PROXY_URL) {
+            mediaProxyUrl = saveDataStream.readUTF();
+        }
     }
 
     public void writeSaveData(DataOutputStream saveDataStream) throws IOException {
@@ -103,6 +111,7 @@ public class Account {
         channelCache.writeSaveData(saveDataStream);
 
         saveDataStream.writeUTF(cdnUrl);
+        saveDataStream.writeUTF(mediaProxyUrl);
     }
 
     public String getDisplayTitle() throws DiscordException {
@@ -115,11 +124,18 @@ public class Account {
     }
 
     public String getApiUrl() {
-        return (connectionMode == CONNECTION_MODE_PROXY) ? apiUrl : "https://discord.com";
+        return (connectionMode == CONNECTION_MODE_PROXY) ?
+            apiUrl : "https://discord.com";
     }
 
     public String getCdnUrl() {
-        return (connectionMode == CONNECTION_MODE_PROXY) ? cdnUrl : "https://cdn.discordapp.com";
+        return (connectionMode == CONNECTION_MODE_PROXY) ?
+            cdnUrl : "https://cdn.discordapp.com";
+    }
+
+    public String getMediaProxyUrl() {
+        return (connectionMode == CONNECTION_MODE_PROXY) ?
+            mediaProxyUrl : "http://media.discordapp.net";
     }
 
     public HTTP createApiRequest(String method, String route) throws Exception {

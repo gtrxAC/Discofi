@@ -31,6 +31,11 @@ public class StandardHTTP extends HTTP {
 	private static Object dispatchConnectorOpen(String url) throws Exception {
 		if (Util.preferModernConnector) {
 			try {
+//#ifdef DEBUG
+				// Debug log the requested URL, as the URL is not
+				// shown in KEmulator logs due to being a socket
+				System.out.println(url);
+//#endif
 				return ModernConnector.open(url);
 			}
 			catch (SecurityException e) {

@@ -397,7 +397,7 @@ public class HTTPThread extends Thread {
 
         try {
             String imageURL = attachment.getPreviewUrl(
-                attachmentPreviewWidth, attachmentPreviewHeight);
+                acc.getMediaProxyUrl(), attachmentPreviewWidth, attachmentPreviewHeight);
 
             if (imageURL == null) imageURL = attachment.url;
 

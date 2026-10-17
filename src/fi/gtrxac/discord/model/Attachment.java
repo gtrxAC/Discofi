@@ -57,7 +57,38 @@ public class Attachment {
         return contentType != null && contentType.startsWith(check);
     }
 
-    public String getPreviewUrl(int maxWidth, int maxHeight) {
+    /**
+     * Get the URL that can be used to download this attachment.
+     * 
+     * Use cdnProxyUrl = null to connect directly.
+     */
+    public String getDownloadUrl(String cdnProxyUrl) {
+        if (cdnProxyUrl == null) return url;
+
+        String route = url.substring("https://cdn.discordapp.com".length());
+
+        return cdnProxyUrl + route;
+    }
+
+    /**
+     * Get the media proxy URL that can be used to download a preview 
+     * for this attachment at the specified resolution.
+     * 
+     * Discord's media proxy can be further proxied if they ever start requiring HTTPS
+     * or if Discord is blocked in the user's region.
+     * 
+     * Use mediaProxyUrl = null to use Discord's media proxy without another proxy.
+     */
+    public String getPreviewUrl(String mediaProxyUrl, int maxWidth, int maxHeight) {
+        String upstreamUrl = getUpstreamPreviewUrl(maxWidth, maxHeight);
+        if (mediaProxyUrl == null) return upstreamUrl;
+
+        String route = upstreamUrl.substring("https://media.discordapp.net".length());
+
+        return mediaProxyUrl + route;
+    }
+
+    private String getUpstreamPreviewUrl(int maxWidth, int maxHeight) {
         if (!previewable) return null;
 
         int[] actualSize = Util.resizeFit(width, height, maxWidth, maxHeight);

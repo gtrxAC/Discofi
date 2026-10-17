@@ -18,6 +18,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     private int urlFieldsPosition;
     private TextFieldItem apiUrlField;
     private TextFieldItem cdnUrlField;
+    private TextFieldItem mediaProxyUrlField;
 
     public ConnectionModeScreen() {
         super();
@@ -75,7 +76,11 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             // Show if needed
             apiUrlField = new TextFieldItem("API URL", App.pendingAccount.apiUrl, 1000, 0);
             cdnUrlField = new TextFieldItem("CDN URL", App.pendingAccount.cdnUrl, 1000, 0);
+            mediaProxyUrlField = new TextFieldItem("Media proxy URL", App.pendingAccount.mediaProxyUrl, 1000, 0);
 
+            insertItem(new BlankItem(0), urlFieldsPosition);
+            insertItem(mediaProxyUrlField, urlFieldsPosition);
+            insertItem(new LabelItem("Media proxy URL"), urlFieldsPosition);
             insertItem(new BlankItem(0), urlFieldsPosition);
             insertItem(cdnUrlField, urlFieldsPosition);
             insertItem(new LabelItem("CDN URL"), urlFieldsPosition);
@@ -87,13 +92,15 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             // Hide if needed - save values first
             App.pendingAccount.apiUrl = apiUrlField.getValue();
             App.pendingAccount.cdnUrl = cdnUrlField.getValue();
+            App.pendingAccount.mediaProxyUrl = mediaProxyUrlField.getValue();
 
-            for (int itemIndex = 0; itemIndex < 6; itemIndex++) {
+            for (int itemIndex = 0; itemIndex < 9; itemIndex++) {
                 removeItem(urlFieldsPosition);
             }
 
             apiUrlField = null;
             cdnUrlField = null;
+            mediaProxyUrlField = null;
         }
     }
 
@@ -128,7 +135,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             setUrlFieldsVisibility(true);
 
             // Scroll so the URL fields are visible
-            setHighlightedItem(cdnUrlField);
+            setHighlightedItem(mediaProxyUrlField);
             setHighlightedItem(proxyOption);
         }
         else if (i == continueButton) {
@@ -160,8 +167,20 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
                 return;
             }
 
+            String mediaProxyUrl = mediaProxyUrlField.getValue();
+
+            if (mediaProxyUrl.trim().length() == 0) {
+                new DiscordException(
+                    "Media proxy URL required",
+                    "Please enter a media proxy URL or use a different connection mode.", null)
+                    .show();
+
+                return;
+            }
+
             App.pendingAccount.apiUrl = apiUrl;
             App.pendingAccount.cdnUrl = cdnUrl;
+            App.pendingAccount.mediaProxyUrl = mediaProxyUrl;
         }
 
         App.pushScreen(new LoginScreen());

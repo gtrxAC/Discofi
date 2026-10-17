@@ -29,7 +29,9 @@ public class AttachmentItem extends SingleLineLinkItem {
         }
         else {
             try {
-                App.instance.platformRequest(attachment.url);
+                Account acc = Accounts.getActive();
+                String url = attachment.getDownloadUrl(acc.getCdnUrl());
+                App.instance.platformRequest(url);
             }
             catch (Exception e) {
                 new DiscordException(e).show();
