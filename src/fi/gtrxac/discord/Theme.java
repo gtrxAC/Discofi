@@ -116,7 +116,7 @@ public class Theme extends Colors {
         channelCategoryBackground = darkGradient[0x2];
         labelItem = darkGradient[0xC];
         loadingItemText = darkGradient[0xC];
-        messageBackgroundSel = 0x414E87;
+        messageBackgroundSel = 0x3A426B;
         username = darkGradient[0xF];
         timestamp = darkGradient[0xA];
         messageText = darkGradient[0xF];
