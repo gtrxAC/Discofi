@@ -23,8 +23,18 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public int page;
     public boolean hasLoaded;
 
-    private static SmallButtonItem olderMessagesButton = new SmallButtonItem("Older messages");
-    private static SmallButtonItem newerMessagesButton = new SmallButtonItem("Newer messages");
+    // type should be SCREEN, but I used ITEM so that it shows above replyCommand
+    private static final Command sendCommand = 
+        new Command("Send", "Send message", Command.ITEM, CMD_SEND);
+
+    private static final Command replyCommand =
+        new Command("Reply", Command.ITEM, CMD_REPLY);
+
+    private static SmallButtonItem olderMessagesButton =
+        new SmallButtonItem("Older messages");
+
+    private static SmallButtonItem newerMessagesButton =
+        new SmallButtonItem("Newer messages");
 
     public ChatScreen(Channel channel) {
         // By default, fetch latest messages
@@ -39,13 +49,14 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
-        addCommand(new Command("Send", Command.SCREEN, CMD_SEND));
-        addCommand(new Command("Reply", Command.ITEM, CMD_REPLY));
 
         fetchMessages(paginationType, paginationMessage, newPage, true);
     }
 
     public void fetchMessages(String paginationType, String paginationMessage, int newPage, boolean showLoadingAnimation) {
+        removeCommand(sendCommand);
+        removeCommand(replyCommand);
+
         if (showLoadingAnimation) {
             removeAllItems();
             addItem(new LoadingItem());
@@ -125,6 +136,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
     }
 
     public void populate(JSONArray messagesJson, boolean scrollToTop) {
+        addCommand(sendCommand);
+        addCommand(replyCommand);
+
         Vector newItems = new Vector();
 
         if (messagesJson.size() >= 20) {
