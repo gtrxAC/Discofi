@@ -24,6 +24,7 @@ public class Message {
     public String timestamp;
     public Vector attachments;
 
+    public boolean isStatus;
     public boolean isForwarded;
     public boolean isReply;
     public User replyAuthor;
@@ -37,7 +38,7 @@ public class Message {
         JSONObject contentObject = getContentObject(data);
 
         int type = contentObject.getInt("type", 0);
-        boolean isStatus = (type >= TYPE_ADDED && type <= TYPE_BOOSTED_LEVEL_3);
+        isStatus = (type >= TYPE_ADDED && type <= TYPE_BOOSTED_LEVEL_3);
 
         if (isStatus) {
             content = parseStatusMessage(contentObject, type);
@@ -46,13 +47,6 @@ public class Message {
             content = contentObject.getString("content", "");
             parseReply(contentObject);
             parseAttachments(contentObject);
-        }
-
-        if (isForwarded) {
-            String prefix = "Forwarded message";
-            if (content.length() != 0) prefix += ":\n";
-
-            content = prefix + content;
         }
     }
 

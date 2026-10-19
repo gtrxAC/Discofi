@@ -31,6 +31,8 @@ public class Theme extends Colors {
     public static int timestamp;
     public static int messageText;
     public static int messageTextSel;
+    public static int messageTextStatus;
+    public static int messageTextStatusSel;
     public static int replyConnectorLines;
     public static int replyUsername;
     public static int replyContent;
@@ -48,6 +50,8 @@ public class Theme extends Colors {
         timestamp = 0x666666;
         messageText = 0x111111;
         messageTextSel = 0x000000;
+        messageTextStatus = 0x666666;
+        messageTextStatusSel = 0x555555;
         replyConnectorLines = 0x888888;
         replyUsername = 0x000000;
         replyContent = 0x666666;
@@ -121,6 +125,8 @@ public class Theme extends Colors {
         timestamp = darkGradient[0xA];
         messageText = darkGradient[0xF];
         messageTextSel = darkGradient[0xF];
+        messageTextStatus = darkGradient[0xA];
+        messageTextStatusSel = darkGradient[0xB];
         replyConnectorLines = darkGradient[0x8];
         replyUsername = darkGradient[0xE];
         replyContent = darkGradient[0xB];

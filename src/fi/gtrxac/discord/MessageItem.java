@@ -80,13 +80,7 @@ public class MessageItem extends Item {
         }
 
         // Message content
-        g.setFont(Fonts.plain);
-        g.setColor(highlighted ? Theme.messageTextSel : Theme.messageText);
-
-        for (int i = 0; i < textLines.length; i++) {
-            g.drawString(textLines[i], contentX, textY, 0);
-            textY += Fonts.height;
-        }
+        drawMessageContent(g, textY, highlighted);
     }
 
     private void drawReplyConnectorLines(Graphics g) {
@@ -168,6 +162,29 @@ public class MessageItem extends Item {
         g.fillArc(x, y, size, size, 0, 360);
     }
 
+    private void drawMessageContent(Graphics g, int y, boolean highlighted) {
+        if (message.isStatus || message.isForwarded) {
+            g.setColor(highlighted ? Theme.messageTextStatusSel : Theme.messageTextStatus);
+        }
+
+        if (message.isForwarded) {
+            g.setFont(Fonts.italic);
+            g.drawString("Forwarded", contentX, y, 0);
+            y += Fonts.height;
+        }
+
+        if (!message.isStatus) {
+            g.setColor(highlighted ? Theme.messageTextSel : Theme.messageText);
+        }
+
+        g.setFont(Fonts.plain);
+
+        for (int i = 0; i < textLines.length; i++) {
+            g.drawString(textLines[i], contentX, y, 0);
+            y += Fonts.height;
+        }
+    }
+
     // Callback
     public void avatarLoaded() {
         synchronized (replyImageLock) {
@@ -204,6 +221,10 @@ public class MessageItem extends Item {
         textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);
         height = Fonts.height*textLines.length;
 
+        if (message.isForwarded) {
+            height += Fonts.height;  // extra line for the "Forwarded" text
+        }
+
         if (!message.showAuthor) return;
         calcFonts();
         calcAuthorHeight();
@@ -211,6 +232,7 @@ public class MessageItem extends Item {
 
         if (!message.isReply) return;
         calcReplyHeight();
+        calcUnloadedReplyContent();
 
         if (message.replyAuthor == null) return;
         calcReplyContent();
@@ -254,11 +276,13 @@ public class MessageItem extends Item {
         timestampY += replyHeight;
     }
 
-    private void calcReplyContent() {
-        int replyAuthorRightMargin = Fonts.height/3;
-
+    private void calcUnloadedReplyContent() {
         unloadedReplyText = getDisplayedReplyContent(
             "Message could not be loaded", smallerItalicFont, 0);
+    }
+
+    private void calcReplyContent() {
+        int replyAuthorRightMargin = Fonts.height/3;
 
         if (message.replyAuthor != null) {
             displayedReplyAuthor = Util.stringToWidth(
