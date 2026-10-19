@@ -15,6 +15,7 @@ public class MessageItem extends Item {
     private int timestampX;
     private int timestampY;
 
+    private static String unloadedReplyText;
     private int replyAuthorWidth;
     private String displayedReplyContent;
     private boolean replyImageHighlighted;
@@ -22,7 +23,10 @@ public class MessageItem extends Item {
 
     private final Object replyImageLock = new Object();
 
-    private static Font timestampFont;
+    private static Font smallerFont;
+    private static Font smallerBoldFont;
+    private static Font smallerItalicFont;
+    
     private static int leftMargin;
     private static int avatarSize;
     public static int contentX;
@@ -55,11 +59,7 @@ public class MessageItem extends Item {
             if (message.isReply) {
                 // Lines connecting reply to message
                 drawReplyConnectorLines(g);
-
-                synchronized (replyImageLock) {
-                    updateReplyImage(highlighted);
-                    g.drawImage(replyImage, contentX, Fonts.height/6, 0);
-                }
+                drawReplyOnScreen(g, highlighted);
                 textY += replyHeight;
             }
 
@@ -71,7 +71,7 @@ public class MessageItem extends Item {
             g.drawString(displayedAuthor, contentX, textY, 0);
 
             // Timestamp
-            g.setFont(timestampFont);
+            g.setFont(smallerFont);
             g.setColor(Theme.timestamp);
             g.drawString(message.timestamp, timestampX, timestampY, 0);
 
@@ -99,6 +99,18 @@ public class MessageItem extends Item {
         g.drawLine(linesBeginX, linesBeginY, linesBeginX, verticalLineEndY);
     }
 
+    private void drawReplyOnScreen(Graphics g, boolean highlighted) {
+        if (Settings.fontSize == Font.SIZE_SMALL) {
+            synchronized (replyImageLock) {
+                updateReplyImage(highlighted);
+                g.drawImage(replyImage, contentX, Fonts.height/6, 0);
+            }
+        }
+        else {
+            drawReply(g, contentX, Fonts.height/6);
+        }
+    }
+
     private void drawReply(Graphics g, int x, int y) {
         if (message.replyAuthor != null) {
             drawLoadedReply(g, x, y);
@@ -109,32 +121,34 @@ public class MessageItem extends Item {
     }
 
     private void drawLoadedReply(Graphics g, int x, int y) {
-        drawAvatar(g, message.replyAuthor, x, y, Fonts.height);
+        int avatarSize = smallerFont.getHeight();
+        drawAvatar(g, message.replyAuthor, x, y, avatarSize);
 
-        x += Fonts.height + Fonts.height/3;
+        x += avatarSize + Fonts.height/3;
         
         // Username
         g.setColor(Theme.replyUsername);
-        g.setFont(Fonts.bold);
+        g.setFont(smallerBoldFont);
         g.drawString(message.replyAuthor.name, x, y, 0);
 
         x += replyAuthorWidth;
 
         // Message content
         g.setColor(Theme.replyContent);
-        g.setFont(Fonts.plain);
+        g.setFont(smallerFont);
         g.drawString(displayedReplyContent, x, y, 0);
     }
 
     private void drawUnloadedReply(Graphics g, int x, int y) {
-        drawAvatarPlaceholder(g, x, y, Fonts.height);
+        int avatarSize = smallerFont.getHeight();
+        drawAvatarPlaceholder(g, x, y, avatarSize);
 
-        x += Fonts.height + Fonts.height/3;
+        x += avatarSize + Fonts.height/3;
 
         // Message content
         g.setColor(Theme.replyContent);
-        g.setFont(Fonts.italic);
-        g.drawString("Message could not be loaded", x, y, 0);
+        g.setFont(smallerItalicFont);
+        g.drawString(unloadedReplyText, x, y, 0);
     }
 
     private void drawAvatar(Graphics g, User user, int x, int y, int size) {
@@ -190,13 +204,13 @@ public class MessageItem extends Item {
         height = Fonts.height*textLines.length;
 
         if (!message.showAuthor) return;
-
         calcAuthorHeight();
         calcTimestampAndAuthor();
 
         if (!message.isReply) return;
-
         calcReplyHeight();
+
+        if (message.replyAuthor == null) return;
         calcReplyContent();
     }
 
@@ -205,11 +219,14 @@ public class MessageItem extends Item {
     }
 
     private void calcTimestampAndAuthor() {
-        timestampFont = Fonts.get(-1, false, false, false);
-        timestampY = Fonts.bold.getBaselinePosition() - timestampFont.getBaselinePosition();
+        smallerFont = Fonts.get(-1, false, false, false);
+        smallerBoldFont = Fonts.get(-1, true, false, false);
+        smallerItalicFont = Fonts.get(-1, false, true, false);
+
+        timestampY = Fonts.bold.getBaselinePosition() - smallerFont.getBaselinePosition();
 
         int timestampPadding = Fonts.plain.stringWidth("  ");
-        int timestampWidth = timestampPadding + timestampFont.stringWidth(message.timestamp);
+        int timestampWidth = timestampPadding + smallerFont.stringWidth(message.timestamp);
         int authorAvailableWidth = contentWidth - timestampWidth;
         
         displayedAuthor = Util.stringToWidth(
@@ -223,9 +240,12 @@ public class MessageItem extends Item {
     private void calcReplyHeight() {
         int replyTopMargin = Fonts.height/6;
         int replyBottomMargin = Fonts.height/5;
-        int replyImageHeight = Fonts.height*3/4;
 
-        replyHeight = replyTopMargin + replyImageHeight + replyBottomMargin;
+        int replyContentHeight = (Settings.fontSize == Font.SIZE_SMALL) ?
+            Fonts.height*3/4 :
+            smallerFont.getHeight();
+
+        replyHeight = replyTopMargin + replyContentHeight + replyBottomMargin;
         height += replyHeight;
         timestampY += replyHeight;
     }
@@ -233,19 +253,35 @@ public class MessageItem extends Item {
     private void calcReplyContent() {
         int replyAuthorRightMargin = Fonts.height/3;
 
+        unloadedReplyText = getDisplayedReplyContent(
+            "Message could not be loaded", smallerItalicFont, 0);
+
         if (message.replyAuthor != null) {
-            replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name)
+            replyAuthorWidth = smallerBoldFont.stringWidth(message.replyAuthor.name)
                 + replyAuthorRightMargin;
+
+            displayedReplyContent = getDisplayedReplyContent(
+                message.replyContent, smallerFont, replyAuthorWidth);
         }
-    
-        // for when we add reply direct drawing:
+    }
 
-        // int replyContentAvailableWidth =
-        //     contentWidth - Fonts.height - Fonts.height/3 - replyAuthorWidth;
+    private static String getDisplayedReplyContent(String text, Font font, int replyAuthorWidth) {
+        if (Settings.fontSize == Font.SIZE_SMALL) {
+            // Small font size
+            // -> replies are drawn to separate image to be downscaled
+            // -> truncation not needed as the text is already cut off by image borders
+            return text;
+        }
+        else {
+            // Larger font size
+            // -> replies are drawn directly on screen
+            // -> needs truncation so the text doesn't draw over the scrollbar
+            int avatarAreaWidth = smallerFont.getHeight() + Fonts.height/3;
 
-        // displayedReplyContent = Util.stringToWidth(
-        //     message.replyContent, Fonts.plain, replyContentAvailableWidth);
+            int replyContentAvailableWidth =
+                contentWidth - avatarAreaWidth - replyAuthorWidth;
 
-        displayedReplyContent = message.replyContent;
+            return Util.stringToWidth(text, font, replyContentAvailableWidth);
+        }
     }
 }

@@ -122,8 +122,8 @@ public class Theme extends Colors {
         messageText = darkGradient[0xF];
         messageTextSel = darkGradient[0xF];
         replyConnectorLines = darkGradient[0x8];
-        replyUsername = darkGradient[0xF];
-        replyContent = darkGradient[0xC];
+        replyUsername = darkGradient[0xE];
+        replyContent = darkGradient[0xB];
         avatarPlaceholder = darkGradient[0x7];
     }
 
