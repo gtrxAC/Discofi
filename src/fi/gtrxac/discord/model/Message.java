@@ -24,6 +24,7 @@ public class Message {
     public String timestamp;
     public Vector attachments;
 
+    public boolean isForwarded;
     public boolean isReply;
     public User replyAuthor;
     public String replyContent;
@@ -33,17 +34,43 @@ public class Message {
         author = new User(data.getObject("author"));
         timestamp = DiscordUtil.formatTimestamp(id, false);
 
-        int t = data.getInt("type", 0);
-        boolean isStatus = (t >= TYPE_ADDED && t <= TYPE_BOOSTED_LEVEL_3);
+        JSONObject contentObject = getContentObject(data);
+
+        int type = contentObject.getInt("type", 0);
+        boolean isStatus = (type >= TYPE_ADDED && type <= TYPE_BOOSTED_LEVEL_3);
 
         if (isStatus) {
-            content = parseStatusMessage(data, t);
+            content = parseStatusMessage(contentObject, type);
         }
         else {
-            content = data.getString("content", "");
-            parseReply(data);
-            parseAttachments(data);
+            content = contentObject.getString("content", "");
+            parseReply(contentObject);
+            parseAttachments(contentObject);
         }
+
+        if (isForwarded) {
+            String prefix = "Forwarded message";
+            if (content.length() != 0) prefix += ":\n";
+
+            content = prefix + content;
+        }
+    }
+
+    /**
+     * Get JSON object to use for filling out message content and related fields.
+     * For forwarded messages, this is an inner object inside the message object.
+     */
+    private JSONObject getContentObject(JSONObject data) {
+        JSONObject result = data;
+        isForwarded = false;
+
+        try {
+            result = data.getArray("message_snapshots").getObject(0).getObject("message");
+            isForwarded = true;
+        }
+        catch (Exception e) {}
+
+        return result;
     }
 
     private void parseReply(JSONObject data) {
@@ -54,10 +81,9 @@ public class Message {
         catch (Exception e) {}
 
         try {
-            JSONObject replyMessage = data.getObject("referenced_message");
-
-            replyAuthor = new User(replyMessage.getObject("author"));
-            replyContent = replyMessage.getString("content", "");
+            Message replyMessage = new Message(data.getObject("referenced_message"));
+            replyAuthor = replyMessage.author;
+            replyContent = replyMessage.content;
 
             if (replyContent.length() == 0) {
                 replyContent = "(no content)";
