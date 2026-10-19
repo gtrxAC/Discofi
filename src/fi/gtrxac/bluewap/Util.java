@@ -315,10 +315,17 @@ public class Util {
         if (font.stringWidth(str) < area) return str;
 
         area -= font.stringWidth("...");
+		
         // Reduce string length until it fits in the area
         while (font.stringWidth(str) >= area && str.length() > 0) {
             str = str.substring(0, str.length() - 1);
         }
+
+		// For a little bit nicer display, remove one trailing space if there is one
+		if (charIsWhitespace(str.charAt(str.length() - 1))) {
+            str = str.substring(0, str.length() - 1);
+		}
+
         return str + "...";
 	}
 

@@ -15,8 +15,8 @@ public class MessageItem extends Item {
     private int timestampX;
     private int timestampY;
 
-    private static String unloadedReplyText;
     private int replyAuthorWidth;
+    private String displayedReplyAuthor;
     private String displayedReplyContent;
     private boolean replyImageHighlighted;
     private Image replyImage;
@@ -27,6 +27,7 @@ public class MessageItem extends Item {
     private static Font smallerBoldFont;
     private static Font smallerItalicFont;
     
+    private static String unloadedReplyText;
     private static int leftMargin;
     private static int avatarSize;
     public static int contentX;
@@ -129,7 +130,7 @@ public class MessageItem extends Item {
         // Username
         g.setColor(Theme.replyUsername);
         g.setFont(smallerBoldFont);
-        g.drawString(message.replyAuthor.name, x, y, 0);
+        g.drawString(displayedReplyAuthor, x, y, 0);
 
         x += replyAuthorWidth;
 
@@ -204,6 +205,7 @@ public class MessageItem extends Item {
         height = Fonts.height*textLines.length;
 
         if (!message.showAuthor) return;
+        calcFonts();
         calcAuthorHeight();
         calcTimestampAndAuthor();
 
@@ -214,15 +216,17 @@ public class MessageItem extends Item {
         calcReplyContent();
     }
 
+    private void calcFonts() {
+        smallerFont = Fonts.get(-1, false, false, false);
+        smallerBoldFont = Fonts.get(-1, true, false, false);
+        smallerItalicFont = Fonts.get(-1, false, true, false);
+    }
+
     private void calcAuthorHeight() {
         height += Fonts.boldHeight;
     }
 
     private void calcTimestampAndAuthor() {
-        smallerFont = Fonts.get(-1, false, false, false);
-        smallerBoldFont = Fonts.get(-1, true, false, false);
-        smallerItalicFont = Fonts.get(-1, false, true, false);
-
         timestampY = Fonts.bold.getBaselinePosition() - smallerFont.getBaselinePosition();
 
         int timestampPadding = Fonts.plain.stringWidth("  ");
@@ -257,7 +261,10 @@ public class MessageItem extends Item {
             "Message could not be loaded", smallerItalicFont, 0);
 
         if (message.replyAuthor != null) {
-            replyAuthorWidth = smallerBoldFont.stringWidth(message.replyAuthor.name)
+            displayedReplyAuthor = Util.stringToWidth(
+                message.replyAuthor.name, smallerBoldFont, contentWidth/2);
+
+            replyAuthorWidth = smallerBoldFont.stringWidth(displayedReplyAuthor)
                 + replyAuthorRightMargin;
 
             displayedReplyContent = getDisplayedReplyContent(
