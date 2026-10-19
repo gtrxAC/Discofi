@@ -24,6 +24,7 @@ public class Message {
     public String timestamp;
     public Vector attachments;
 
+    public boolean isReply;
     public User replyAuthor;
     public String replyContent;
 
@@ -46,6 +47,12 @@ public class Message {
     }
 
     private void parseReply(JSONObject data) {
+        try {
+            data.getObject("message_reference");
+            isReply = true;
+        }
+        catch (Exception e) {}
+
         try {
             JSONObject replyMessage = data.getObject("referenced_message");
 

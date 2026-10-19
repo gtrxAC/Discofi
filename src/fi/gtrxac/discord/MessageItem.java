@@ -52,7 +52,7 @@ public class MessageItem extends Item {
         // Author line
         if (message.showAuthor) {
             // Reply
-            if (message.replyAuthor != null) {
+            if (message.isReply) {
                 // Lines connecting reply to message
                 drawReplyConnectorLines(g);
 
@@ -100,6 +100,15 @@ public class MessageItem extends Item {
     }
 
     private void drawReply(Graphics g, int x, int y) {
+        if (message.replyAuthor != null) {
+            drawLoadedReply(g, x, y);
+        }
+        else {
+            drawUnloadedReply(g, x, y);
+        }
+    }
+
+    private void drawLoadedReply(Graphics g, int x, int y) {
         drawAvatar(g, message.replyAuthor, x, y, Fonts.height);
 
         x += Fonts.height + Fonts.height/3;
@@ -117,6 +126,17 @@ public class MessageItem extends Item {
         g.drawString(displayedReplyContent, x, y, 0);
     }
 
+    private void drawUnloadedReply(Graphics g, int x, int y) {
+        drawAvatarPlaceholder(g, x, y, Fonts.height);
+
+        x += Fonts.height + Fonts.height/3;
+
+        // Message content
+        g.setColor(Theme.replyContent);
+        g.setFont(Fonts.italic);
+        g.drawString("Message could not be loaded", x, y, 0);
+    }
+
     private void drawAvatar(Graphics g, User user, int x, int y, int size) {
         Image avatar = IconManager.get(user, size, this);
 
@@ -124,10 +144,13 @@ public class MessageItem extends Item {
             g.drawImage(avatar, x, y, Graphics.TOP | Graphics.LEFT);
         }
         else {
-            // Placeholder
-            g.setColor(Theme.avatarPlaceholder);
-            g.fillArc(x, y, size, size, 0, 360);
+            drawAvatarPlaceholder(g, x, y, size);
         }
+    }
+
+    private void drawAvatarPlaceholder(Graphics g, int x, int y, int size) {
+        g.setColor(Theme.avatarPlaceholder);
+        g.fillArc(x, y, size, size, 0, 360);
     }
 
     // Callback
@@ -171,7 +194,7 @@ public class MessageItem extends Item {
         calcAuthorHeight();
         calcTimestampAndAuthor();
 
-        if (message.replyAuthor == null) return;
+        if (!message.isReply) return;
 
         calcReplyHeight();
         calcReplyContent();
@@ -210,8 +233,10 @@ public class MessageItem extends Item {
     private void calcReplyContent() {
         int replyAuthorRightMargin = Fonts.height/3;
 
-        replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name)
-            + replyAuthorRightMargin;
+        if (message.replyAuthor != null) {
+            replyAuthorWidth = Fonts.bold.stringWidth(message.replyAuthor.name)
+                + replyAuthorRightMargin;
+        }
     
         // for when we add reply direct drawing:
 
