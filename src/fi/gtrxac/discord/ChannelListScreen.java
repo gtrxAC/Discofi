@@ -10,7 +10,6 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
 public class ChannelListScreen extends ListScreen implements CommandListener {
-    public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
     public static final int CMD_REFRESH = 2;
 
@@ -25,10 +24,6 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
-
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
         
         fetchData();
     }
@@ -44,10 +39,6 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_SELECT: {
-                selectItem();
-                break;
-            }
             case CMD_BACK: {
                 App.popScreen();
                 break;

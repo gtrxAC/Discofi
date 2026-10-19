@@ -33,7 +33,6 @@ public class Platform extends Canvas {
 	public static final boolean useCustomSoftkeys;
 	public static final boolean useCustomTitleBar;
 	public static final boolean useCustomTitleBarClock;
-	public static final boolean hideSelectCommand;
 	public static final boolean preferModernConnector;
 	public static final boolean allowSecondaryConnector;
 
@@ -92,13 +91,6 @@ public class Platform extends Canvas {
 		// Draw the clock on the custom title bar on platforms with custom softkeys (full-screen),
 		// but also on older SE (JP-6 and below) where the clock is not shown on the system statusbar.
 		useCustomTitleBarClock = useCustomSoftkeys || (isSonyEricsson && sejp == null);
-
-		// Hide the "Select" softkey on full-touch phones where you would instead tap on the item you want to select
-		// This check could be expanded to other devices
-		// (ideally by checking APIs or OS-related plat strings rather than listing individual phone models)
-		// but for now we only check for Symbian S60v5 and up, and platforms that use custom softkeys,
-		// as the custom softkey impl is made for touchscreens
-		hideSelectCommand = plat.indexOf("sw_platform_version=5.") != -1 || useCustomSoftkeys;
 
 		// Which type of Connector(s) to prefer/use for TLS on different platforms:
 

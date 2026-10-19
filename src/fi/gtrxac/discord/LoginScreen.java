@@ -12,7 +12,6 @@ import javax.microedition.lcdui.Font;
  * Screen used for entering email/password or token when adding a new account or editing an existing account.
  */
 public class LoginScreen extends ListScreen implements CommandListener {
-    public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
 
     private TextFieldItem emailField;
@@ -71,18 +70,10 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
-
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
     }
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_SELECT: {
-                selectItem();
-                break;
-            }
             case CMD_BACK: {
                 App.popScreen();
                 break;

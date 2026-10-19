@@ -10,7 +10,6 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 
 public class MainScreen extends TabbedListScreen implements CommandListener, ListViewItemListener {
-    public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
     public static final int CMD_REFRESH = 2;
     public static final int CMD_SETTINGS = 3;
@@ -48,10 +47,6 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
         addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
         addCommand(new Command("Settings", Command.SCREEN, CMD_SETTINGS));
         addCommand(new Command("Log out", Command.SCREEN, CMD_LOG_OUT));
-
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
     }
 
     private void createGuildsTab() {
@@ -155,10 +150,6 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_SELECT: {
-                getCurrentTab().selectItem();
-                break;
-            }
             case CMD_QUIT: {
                 promptQuit();
                 break;

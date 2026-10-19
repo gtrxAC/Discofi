@@ -87,7 +87,7 @@ public class Theme extends Colors {
         softkeyText = darkGradient[0xF];
         softkeyTextSel = darkGradient[0xF];
         highlightOutline = 0x6688FF;
-        spacerItem = darkGradient[0x1];
+        spacerItem = darkGradient[0x0];
         buttonBackground = darkGradient[0x5];
         buttonBackgroundSel = 0x445392;
         buttonOutline = darkGradient[0x2];

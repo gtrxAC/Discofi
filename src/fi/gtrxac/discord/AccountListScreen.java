@@ -8,20 +8,19 @@ import fi.gtrxac.bluewap.ui.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.io.*;
 import java.io.*;
 
 public class AccountListScreen extends ListScreen implements CommandListener {
-    public static final int CMD_SELECT = 0;
     public static final int CMD_QUIT = 1;
-    public static final int CMD_ADD_ACCOUNT = 2;
     public static final int CMD_EDIT = 3;
     public static final int CMD_DELETE = 4;
     public static final int CMD_SETTINGS = 5;
     public static final int CMD_DELETE_PROMPT_YES = 100;
     public static final int CMD_DELETE_PROMPT_NO = 101;
 
-    private ButtonItem addAccountButton;
+    private SmallButtonItem addAccountButton;
 
     public AccountListScreen() {
         super();
@@ -30,7 +29,9 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         int numAccounts = Accounts.list.size();
 
         if (numAccounts == 0) {
-            addItem("No accounts defined. Select 'Add account' to log in.");
+            int align = Graphics.HCENTER | Graphics.TOP;
+            addItem(new StringItem("No accounts", Fonts.bold, align));
+            addItem(new StringItem("Select 'Add account' to log in.", Fonts.plain, align));
         }
         else {
             addItem(new BlankItem(0));
@@ -47,12 +48,11 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             }
         }
 
-        if (!Platform.hideSelectCommand) {
-            addItem(addAccountButton = new ButtonItem("Add account"));
+        addItem(new BlankItem(0));
+        addItem(addAccountButton = new SmallButtonItem("Add account"));
 
-            if (numAccounts == 0) {
-                setHighlightedItem(addAccountButton);
-            }
+        if (numAccounts == 0) {
+            setHighlightedItem(addAccountButton);
         }
 
         setCommandListener(this);
@@ -60,27 +60,12 @@ public class AccountListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Edit", Command.ITEM, CMD_EDIT));
         addCommand(new Command("Delete", Command.ITEM, CMD_DELETE));
         addCommand(new Command("Settings", Command.SCREEN, CMD_SETTINGS));
-
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
-        else {
-            addCommand(new Command("Add", Command.OK, CMD_ADD_ACCOUNT));
-        }
     }
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_SELECT: {
-                selectItem();
-                break;
-            }
             case CMD_QUIT: {
                 App.instance.notifyDestroyed();
-                break;
-            }
-            case CMD_ADD_ACCOUNT: {
-                addAccount();
                 break;
             }
             case CMD_EDIT: {

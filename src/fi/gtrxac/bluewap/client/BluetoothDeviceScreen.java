@@ -15,7 +15,6 @@ import fi.gtrxac.discord.*;
 
 public class BluetoothDeviceScreen extends ListScreen implements BluetoothClientListener, CommandListener {
     private static final int CMD_BACK = 0;
-    private static final int CMD_SELECT = 1;
 
     private ButtonItem searchButton = new ButtonItem("Search devices");
     private ButtonItem autoConnectButton = new ButtonItem("Auto connect");
@@ -44,10 +43,6 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
         }
 
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
-        
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
         setCommandListener(this);
     }
 
@@ -104,9 +99,6 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
                 client.stopSearching();
             }
             App.replaceScreen(new AccountListScreen());
-        }
-        else if (c.getPriority() == CMD_SELECT) {
-            selectItem();
         }
     }
 

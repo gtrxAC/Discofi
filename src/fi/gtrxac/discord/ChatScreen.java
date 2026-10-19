@@ -11,7 +11,6 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
 
 public class ChatScreen extends ListScreen implements CommandListener {
-    public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
     public static final int CMD_SEND = 2;
     public static final int CMD_REPLY = 3;
@@ -43,10 +42,6 @@ public class ChatScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Send", Command.SCREEN, CMD_SEND));
         addCommand(new Command("Reply", Command.ITEM, CMD_REPLY));
 
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
-
         fetchMessages(paginationType, paginationMessage, newPage, true);
     }
 
@@ -71,10 +66,6 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_SELECT: {
-                selectItem();
-                break;
-            }
             case CMD_BACK: {
                 IconManager.iconCache.save();
                 App.popScreen();

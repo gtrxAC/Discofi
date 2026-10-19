@@ -7,7 +7,6 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
 public class ConnectionModeScreen extends ListScreen implements CommandListener {
-    public static final int CMD_SELECT = 0;
     public static final int CMD_BACK = 1;
     public static final int CMD_CONTINUE = 2;
 
@@ -59,19 +58,9 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
         setUrlFieldsVisibility(usingProxy);
 
-        if (!Platform.hideSelectCommand) {
-            addItem(continueButton = new ButtonItem("Continue"));
-        }
-
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
-
-        if (!Platform.hideSelectCommand) {
-            addCommand(new Command("Select", Command.OK, CMD_SELECT));
-        }
-        else {
-            addCommand(new Command("Continue", Command.OK, CMD_CONTINUE));
-        }
+        addCommand(new Command("Next", Command.OK, CMD_CONTINUE));
     }
 
     private void setUrlFieldsVisibility(boolean newVisibility) {
@@ -111,10 +100,6 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
-            case CMD_SELECT: {
-                selectItem();
-                break;
-            }
             case CMD_BACK: {
                 App.popScreen();
                 break;
