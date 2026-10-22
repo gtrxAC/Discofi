@@ -197,4 +197,13 @@ public class Message {
             return false;
         }
     }
+
+    public void markDeleted() {
+        content = "(deleted)";
+        isStatus = true;
+        isForwarded = false;
+        attachments = null;
+        // isEdited = false;
+        // embeds = null;
+    }
 }

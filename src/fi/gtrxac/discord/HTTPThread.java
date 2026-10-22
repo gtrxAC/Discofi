@@ -20,6 +20,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_SEND_MESSAGE = 7;
     public static final int ACTION_FETCH_ICON = 8;
     public static final int ACTION_FETCH_ATTACHMENT = 9;
+    public static final int ACTION_DELETE_MESSAGE = 10;
 
     private int action;
     private Screen callerScreen;
@@ -41,6 +42,7 @@ public class HTTPThread extends Thread {
 	public int attachmentPreviewWidth;
 	public int attachmentPreviewHeight;
 	public int attachmentRequestId;
+    public Message editOrDeleteMessage;
 
     public HTTPThread(int action) {
         this(action, App.getCurrentScreen());
@@ -65,6 +67,7 @@ public class HTTPThread extends Thread {
                 case ACTION_SEND_MESSAGE: runSendMessage(); break;
                 case ACTION_FETCH_ICON: runFetchIcon(); break;
                 case ACTION_FETCH_ATTACHMENT: runFetchAttachment(); break;
+                case ACTION_DELETE_MESSAGE: runDeleteMessage(); break;
             }
         }
         catch (DiscordException e) {
@@ -330,10 +333,15 @@ public class HTTPThread extends Thread {
         try {
             String url = createFetchMessagesUrl(channel.id, paginationType, paginationMessage);
             JSONArray messagesJson = (JSONArray) acc.fetchJSON(url);
-            boolean scrollToTop = ("after".equals(paginationType));
 
             chatScreen.page = newPage;
-            chatScreen.populate(messagesJson, scrollToTop);
+            chatScreen.populate(messagesJson);
+
+            boolean scrollToTop = ("after".equals(paginationType));
+
+            int highlightIndex = scrollToTop ? 0 : (chatScreen.items.size() - 1);
+
+            chatScreen.setHighlightedIndex(highlightIndex);
         }
         catch (DiscordException e) {
             if (!chatScreen.hasLoaded) {
@@ -413,6 +421,46 @@ public class HTTPThread extends Thread {
         catch (Exception e) {
             e.printStackTrace();
             screen.imageLoadFailed(attachmentRequestId);
+        }
+    }
+
+    private void runDeleteMessage() throws DiscordException {
+        ChatScreen chatScreen = (ChatScreen) callerScreen;
+
+        try {
+            chatScreen.setBannerText("Deleting message");
+
+            HTTP h = acc.createApiRequest("DELETE",
+                "/channels/" + channel.id + "/messages/" + editOrDeleteMessage.id);
+
+            int responseCode = h.getResponseCode();
+            String responseText = h.getResponseString();
+            acc.checkApiResponse(responseCode, responseText);
+
+            editOrDeleteMessage.markDeleted();
+
+            // Re-add the message items to the screen to reflect any changes
+            // in the deleted message (e.g. deleted attachments).
+            // Keep the same message item selected.
+            int prevHighlighted = chatScreen.getHighlightedIndex();
+            chatScreen.readdItems();
+            chatScreen.setHighlightedIndex(prevHighlighted);
+        }
+        catch (Exception e) {
+            if (e == StandardHTTP.requestMethodException) {
+                Vector tips = new Vector();
+                tips.addElement("use a different connection mode");
+
+                throw new DiscordException(
+                    "Deleting messages is not supported",
+                    "Your device does not support the HTTP DELETE method",
+                    tips);
+            }
+
+            throw new DiscordException(e);
+        }
+        finally {
+            chatScreen.setBannerText(null);
         }
     }
 }

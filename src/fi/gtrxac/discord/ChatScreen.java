@@ -83,12 +83,17 @@ public class ChatScreen extends ListScreen implements CommandListener {
         IconManager.iconCache.save();
     }
 
+    /**
+     * Show/hide commands according to which ones are relevant
+     * for the currently highlighted item
+     */
     protected void highlightedItemChanged() {
-        // Update commands to only show the ones relevant for this item
-
         Item highlighted = getHighlightedItem();
+
         boolean messageHighlighted = (highlighted instanceof MessageItem);
-        boolean ownMessageHighlighted = messageHighlighted && ((MessageItem) highlighted).message.isOwn();
+
+        boolean ownMessageHighlighted =
+            messageHighlighted && ((MessageItem) highlighted).message.isOwn();
 
         if (messageHighlighted) {
             addCommand(replyCommand);
@@ -129,6 +134,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
             }
             case CMD_MESSAGE_BOX_SEND: {
                 TextBox t = (TextBox) App.disp.getCurrent();
+                
                 HTTPThread h = new HTTPThread(HTTPThread.ACTION_SEND_MESSAGE, this);
                 h.channel = channel;
                 h.message = t.getString();
@@ -145,6 +151,13 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_DELETE_PROMPT_YES: {
+                MessageItem item = (MessageItem) getHighlightedItem();
+
+                HTTPThread h = new HTTPThread(HTTPThread.ACTION_DELETE_MESSAGE, this);
+                h.editOrDeleteMessage = item.message;
+                h.channel = channel;
+                h.start();
+
                 App.popScreen();
                 break;
             }
@@ -194,18 +207,34 @@ public class ChatScreen extends ListScreen implements CommandListener {
         }
     }
 
-    public void populate(JSONArray messagesJson, boolean scrollToTop) {
+    public void populate(JSONArray messagesJson) {
         addCommand(sendCommand);
-        addCommand(replyCommand);
 
+        addMessages(messagesJson);
+        readdItems();
+
+        hasLoaded = true;
+    }
+
+    private void addMessages(JSONArray messagesJson) {
+        messages = new Vector(messagesJson.size());
+
+        for (int i = messagesJson.size() - 1; i >= 0; i--) {
+            JSONObject messageJson = messagesJson.getObject(i);
+            Message message = new Message(messageJson);
+
+            messages.addElement(message);
+        }
+    }
+
+    public void readdItems() {
         Vector newItems = new Vector();
 
-        if (messagesJson.size() >= 20) {
+        if (messages.size() >= 20) {
             newItems.addElement(olderMessagesButton);
         }
 
-        addMessageItems(messagesJson, newItems);
-        calculateMessageGrouping();
+        addMessageItems(newItems);
 
         if (page > 0) {
             newItems.addElement(newerMessagesButton);
@@ -214,27 +243,16 @@ public class ChatScreen extends ListScreen implements CommandListener {
             newItems.addElement(new BlankItem(-itemPadding));
         }
 
+        calculateMessageGrouping();
+
         removeAllItems();
         addItems(newItems);
-
-        if (scrollToTop) {
-            setHighlightedItem(olderMessagesButton);
-        }
-        else {
-            setHighlightedItem((Item) items.lastElement());
-        }
-
-        hasLoaded = true;
     }
 
-    private void addMessageItems(JSONArray messagesJson, Vector newItemsOutput) {
-        messages = new Vector(messagesJson.size());
+    private void addMessageItems(Vector newItemsOutput) {
+        for (int i = 0; i < messages.size(); i++) {
+            Message message = (Message) messages.elementAt(i);
 
-        for (int i = messagesJson.size() - 1; i >= 0; i--) {
-            JSONObject messageJson = messagesJson.getObject(i);
-            Message message = new Message(messageJson);
-
-            messages.addElement(message);
             newItemsOutput.addElement(new MessageItem(message));
 
             if (message.attachments != null) {

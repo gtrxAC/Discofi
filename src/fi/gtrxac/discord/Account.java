@@ -245,7 +245,10 @@ public class Account {
         return postJSON(route, body, null);
     }
 
-    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
+    /**
+     * Throw exception if API response is an error, otherwise do nothing
+     */
+    public void checkApiResponse(int responseCode, String responseText) throws DiscordException {
         if (responseText == null) responseText = "";
 
         if (responseCode == 400 && responseText.indexOf("captcha") != -1) {
@@ -254,7 +257,10 @@ public class Account {
         if (responseCode < 200 || responseCode >= 300) {
             throw new DiscordException(getApiErrorMessage(responseCode, responseText));
         }
+    }
 
+    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
+        checkApiResponse(responseCode, responseText);
         return JSON.get(responseText);
     }
 
