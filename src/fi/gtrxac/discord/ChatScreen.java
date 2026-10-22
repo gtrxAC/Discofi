@@ -15,7 +15,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_BACK = 1;
     public static final int CMD_SEND = 2;
     public static final int CMD_REPLY = 3;
-    // public static final int CMD_EDIT = 4;
+    public static final int CMD_EDIT = 4;
     public static final int CMD_DELETE = 5;
     public static final int CMD_MESSAGE_BOX_SEND = 100;
     public static final int CMD_MESSAGE_BOX_BACK = 101;
@@ -34,6 +34,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
     private static final Command replyCommand =
         new Command("Reply", Command.ITEM, CMD_REPLY);
+
+    private static final Command editCommand =
+        new Command("Edit", Command.ITEM, CMD_EDIT);
 
     private static final Command deleteCommand =
         new Command("Delete", Command.ITEM, CMD_DELETE);
@@ -103,11 +106,11 @@ public class ChatScreen extends ListScreen implements CommandListener {
         }
 
         if (ownMessageHighlighted) {
-            // addCommand(editCommand);
+            addCommand(editCommand);
             addCommand(deleteCommand);
         }
         else {
-            // removeCommand(editCommand);
+            removeCommand(editCommand);
             removeCommand(deleteCommand);
         }
     }
@@ -128,13 +131,17 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 App.pushScreen(new ReplyScreen(channel, item.message, messageDraft));
                 break;
             }
+            case CMD_EDIT: {
+                // ...
+                break;
+            }
             case CMD_DELETE: {
                 showDeletePrompt();
                 break;
             }
             case CMD_MESSAGE_BOX_SEND: {
                 TextBox t = (TextBox) App.disp.getCurrent();
-                
+
                 HTTPThread h = new HTTPThread(HTTPThread.ACTION_SEND_MESSAGE, this);
                 h.channel = channel;
                 h.message = t.getString();

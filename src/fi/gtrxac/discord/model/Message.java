@@ -198,6 +198,10 @@ public class Message {
         }
     }
 
+    /**
+     * Mark this message as deleted in the UI and remove its content.
+     * This does not make the actual delete request. Use this after a delete request has gone through.
+     */
     public void markDeleted() {
         content = "(deleted)";
         isStatus = true;

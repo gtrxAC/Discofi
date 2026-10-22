@@ -21,6 +21,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_ICON = 8;
     public static final int ACTION_FETCH_ATTACHMENT = 9;
     public static final int ACTION_DELETE_MESSAGE = 10;
+    public static final int ACTION_EDIT_MESSAGE = 11;
 
     private int action;
     private Screen callerScreen;
@@ -68,6 +69,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_ICON: runFetchIcon(); break;
                 case ACTION_FETCH_ATTACHMENT: runFetchAttachment(); break;
                 case ACTION_DELETE_MESSAGE: runDeleteMessage(); break;
+                case ACTION_EDIT_MESSAGE: runEditMessage(); break;
             }
         }
         catch (DiscordException e) {
@@ -462,5 +464,32 @@ public class HTTPThread extends Thread {
         finally {
             chatScreen.setBannerText(null);
         }
+    }
+
+    private void runEditMessage() throws DiscordException {
+        ChatScreen chatScreen = (ChatScreen) callerScreen;
+
+        try {
+            chatScreen.setBannerText("Editing message");
+
+            // ...
+        }
+        catch (Exception e) {
+            if (e == StandardHTTP.requestMethodException) {
+                Vector tips = new Vector();
+                tips.addElement("use a different connection mode");
+
+                throw new DiscordException(
+                    "Editing messages is not supported",
+                    "Your device does not support the HTTP PATCH method",
+                    tips);
+            }
+
+            throw new DiscordException(e);
+        }
+        finally {
+            chatScreen.setBannerText(null);
+        }
+
     }
 }
