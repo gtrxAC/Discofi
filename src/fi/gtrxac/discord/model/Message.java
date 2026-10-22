@@ -154,6 +154,14 @@ public class Message {
         }
     }
 
+    /**
+     * Determine whether or not the author/timestamp row should be shown for
+     * this message.
+     *
+     * @param above        The message shown above this message.
+     * @param clusterStart The ID of the top-most message in this message cluster.
+     * @return true if author should be shown, false if messages are "merged"
+     */
     public boolean shouldShowAuthor(Message above, String clusterStart) {
         // Different authors -> true
         if (!above.author.id.equals(author.id)) return true;
