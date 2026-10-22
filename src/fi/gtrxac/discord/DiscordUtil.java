@@ -15,7 +15,6 @@ public class DiscordUtil {
     }
 
     public static String getUserIDFromToken(String token) throws DiscordException {
-        // StringBuffer id = new StringBuffer();
         int b64idLength = token.indexOf('.');
 
         if (b64idLength < 20) {

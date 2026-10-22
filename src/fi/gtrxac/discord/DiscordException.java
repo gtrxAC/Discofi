@@ -45,6 +45,9 @@ public class DiscordException extends Exception {
             this.tips.addElement("use a different connection method");
             this.tips.addElement("try on another device");
         }
+        else {
+            this.friendlyMessage = "Error";
+        }
     }
 
     public DiscordException(String friendlyMessage, String message, Vector tips) {

@@ -1,5 +1,6 @@
 package fi.gtrxac.discord.model;
 
+import fi.gtrxac.discord.*;
 import fi.gtrxac.discord.DiscordUtil;
 import cc.nnproject.json.*;
 import java.util.*;
@@ -173,11 +174,27 @@ public class Message {
         if (attachments != null && content.length() == 0) return true;
 
         // This message or above message is a status message -> true
-        // if (isStatus || above.isStatus) return true;
+        if (isStatus || above.isStatus) return true;
 
         // Finally, check if message was sent more than 7 minutes after the first message of the cluster
         long thisMsgTime = Long.parseLong(id) >> 22;
         long firstMsgTime = Long.parseLong(clusterStart) >> 22;
         return (thisMsgTime - firstMsgTime > 7*60*1000);
+    }
+
+    /**
+     * Check if this message was sent by the currently logged-in user.
+     */
+    public boolean isOwn() {
+        Account acc = Accounts.getActive();
+        if (acc == null) return false;
+
+        try {
+            return acc.getUserID().equals(author.id);
+        }
+        catch (DiscordException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

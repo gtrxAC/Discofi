@@ -75,6 +75,30 @@ public class ChatScreen extends ListScreen implements CommandListener {
         IconManager.iconCache.save();
     }
 
+    protected void highlightedItemChanged() {
+        // Update commands to only show the ones relevant for this item
+
+        Item highlighted = getHighlightedItem();
+        boolean messageHighlighted = (highlighted instanceof MessageItem);
+        // boolean ownMessageHighlighted = messageHighlighted && ((MessageItem) highlighted).message.isOwn();
+
+        if (messageHighlighted) {
+            addCommand(replyCommand);
+        }
+        else {
+            removeCommand(replyCommand);
+        }
+
+        // if (ownMessageHighlighted) {
+        //     addCommand(editCommand);
+        //     addCommand(deleteCommand);
+        // }
+        // else {
+        //     removeCommand(editCommand);
+        //     removeCommand(deleteCommand);
+        // }
+    }
+
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
             case CMD_BACK: {
@@ -87,11 +111,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_REPLY: {
-                Object i = items.elementAt(getHighlightedIndex());
-                if (!(i instanceof MessageItem)) break;
-
-                Message replyTarget = ((MessageItem) i).message;
-                App.pushScreen(new ReplyScreen(channel, replyTarget, messageDraft));
+                MessageItem item = (MessageItem) getHighlightedItem();
+                App.pushScreen(new ReplyScreen(channel, item.message, messageDraft));
                 break;
             }
             case CMD_MESSAGE_BOX_SEND: {

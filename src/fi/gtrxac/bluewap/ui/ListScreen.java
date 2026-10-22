@@ -156,8 +156,6 @@ public class ListScreen extends Screen implements Runnable {
     public void keyEvent(int keyCode, int gameAction) {
         if (items.size() == 0) return;
 
-        int oldHighlightedIndex = highlightedIndex;
-
         switch (gameAction) {
             case Canvas.DOWN: {
                 Item highlighted = (Item) items.elementAt(highlightedIndex);
@@ -165,10 +163,16 @@ public class ListScreen extends Screen implements Runnable {
                 if (highlighted.height > getHeight() && highlighted.y + highlighted.height - scroll > getHeight()) {
                     // Item is taller than screen -> scroll down by two lines
                     scroll += Fonts.height*2;
-                    if (scroll > maxScroll) scroll = maxScroll;
+
+                    if (scroll > maxScroll) {
+                        scroll = maxScroll;
+                    }
                 } else {
                     int newSel = getNextSelectableItem();
-                    if (newSel != -1) highlightedIndex = newSel;
+
+                    if (newSel != -1) {
+                        setHighlightedIndex(newSel);
+                    }
                 }
                 break;
             }
@@ -178,10 +182,16 @@ public class ListScreen extends Screen implements Runnable {
                 if (highlighted.height > getHeight() && highlighted.y - scroll < 0) {
                     // Item is taller than screen -> scroll up by two lines
                     scroll -= Fonts.height*2;
-                    if (scroll < -itemPadding) scroll = -itemPadding;
+
+                    if (scroll < -itemPadding) {
+                        scroll = -itemPadding;
+                    }
                 } else {
                     int newSel = getPreviousSelectableItem();
-                    if (newSel != -1) highlightedIndex = newSel;
+
+                    if (newSel != -1) {
+                        setHighlightedIndex(newSel);
+                    }
                 }
                 break;
             }
@@ -190,17 +200,13 @@ public class ListScreen extends Screen implements Runnable {
                 break;
             }
             case Canvas.RIGHT: {
-                highlightedIndex = Math.min(highlightedIndex + 3, items.size() - 1);
+                setHighlightedIndex(Math.min(highlightedIndex + 3, items.size() - 1));
                 break;
             }
             case Canvas.LEFT: {
-                highlightedIndex = Math.max(highlightedIndex - 3, 0);
+                setHighlightedIndex(Math.max(highlightedIndex - 3, 0));
                 break;
             }
-        }
-        if (oldHighlightedIndex != highlightedIndex) {
-            recalcItems(0, false);
-            makeSelectedItemVisible();
         }
     }
 
@@ -340,7 +346,10 @@ public class ListScreen extends Screen implements Runnable {
         lastPointerTime = System.currentTimeMillis();
 
         int tappedItemIndex = getItemIndexAtY(y);
-        if (tappedItemIndex != -1) highlightedIndex = tappedItemIndex;
+
+        if (tappedItemIndex != -1) {
+            setHighlightedIndex(tappedItemIndex);
+        }
 
         AppBase.repaint();
     }
@@ -491,6 +500,11 @@ public class ListScreen extends Screen implements Runnable {
     protected void itemSelected(Item i) {}
 
     /**
+     * Called when a different item is highlighted, usually by pressing a directional key.
+     */
+    protected void highlightedItemChanged() {}
+
+    /**
      * Select the currently highlighted item.
      */
     public void selectItem() {
@@ -516,11 +530,19 @@ public class ListScreen extends Screen implements Runnable {
         highlightedIndex = index;
         recalcItems(0, false);
         makeSelectedItemVisible();
+        highlightedItemChanged();
         AppBase.repaint();
     }
 
     public int getHighlightedIndex() {
         return highlightedIndex;
+    }
+
+    public Item getHighlightedItem() {
+        if (items.size() == 0 || highlightedIndex < 0 || highlightedIndex >= items.size()) {
+            return null;
+        }
+        return (Item) items.elementAt(highlightedIndex);
     }
 
     /**
