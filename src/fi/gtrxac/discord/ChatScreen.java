@@ -5,6 +5,7 @@ import fi.gtrxac.discord.model.*;
 import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.bluewap.*;
 import java.util.*;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -14,8 +15,12 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_BACK = 1;
     public static final int CMD_SEND = 2;
     public static final int CMD_REPLY = 3;
+    // public static final int CMD_EDIT = 4;
+    public static final int CMD_DELETE = 5;
     public static final int CMD_MESSAGE_BOX_SEND = 100;
     public static final int CMD_MESSAGE_BOX_BACK = 101;
+    public static final int CMD_DELETE_PROMPT_YES = 200;
+    public static final int CMD_DELETE_PROMPT_NO = 201;
 
     private Channel channel;
     private Vector messages;
@@ -29,6 +34,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
     private static final Command replyCommand =
         new Command("Reply", Command.ITEM, CMD_REPLY);
+
+    private static final Command deleteCommand =
+        new Command("Delete", Command.ITEM, CMD_DELETE);
 
     private static SmallButtonItem olderMessagesButton =
         new SmallButtonItem("Older messages");
@@ -80,7 +88,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
         Item highlighted = getHighlightedItem();
         boolean messageHighlighted = (highlighted instanceof MessageItem);
-        // boolean ownMessageHighlighted = messageHighlighted && ((MessageItem) highlighted).message.isOwn();
+        boolean ownMessageHighlighted = messageHighlighted && ((MessageItem) highlighted).message.isOwn();
 
         if (messageHighlighted) {
             addCommand(replyCommand);
@@ -89,14 +97,14 @@ public class ChatScreen extends ListScreen implements CommandListener {
             removeCommand(replyCommand);
         }
 
-        // if (ownMessageHighlighted) {
-        //     addCommand(editCommand);
-        //     addCommand(deleteCommand);
-        // }
-        // else {
-        //     removeCommand(editCommand);
-        //     removeCommand(deleteCommand);
-        // }
+        if (ownMessageHighlighted) {
+            // addCommand(editCommand);
+            addCommand(deleteCommand);
+        }
+        else {
+            // removeCommand(editCommand);
+            removeCommand(deleteCommand);
+        }
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -113,6 +121,10 @@ public class ChatScreen extends ListScreen implements CommandListener {
             case CMD_REPLY: {
                 MessageItem item = (MessageItem) getHighlightedItem();
                 App.pushScreen(new ReplyScreen(channel, item.message, messageDraft));
+                break;
+            }
+            case CMD_DELETE: {
+                showDeletePrompt();
                 break;
             }
             case CMD_MESSAGE_BOX_SEND: {
@@ -132,6 +144,14 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 App.disp.setCurrent(AppCanvas.instance);
                 break;
             }
+            case CMD_DELETE_PROMPT_YES: {
+                App.popScreen();
+                break;
+            }
+            case CMD_DELETE_PROMPT_NO: {
+                App.popScreen();
+                break;
+            }
         }
     }
 
@@ -143,6 +163,24 @@ public class ChatScreen extends ListScreen implements CommandListener {
         t.setCommandListener(this);
 
         App.disp.setCurrent(t);
+    }
+
+    private void showDeletePrompt() {
+        Font largerBold = Fonts.get(1, true, false, false);
+
+        MessageItem item = (MessageItem) getHighlightedItem();
+        String messagePreview = Util.stringToLength(item.message.content, 80);
+
+        Dialog d = new Dialog();
+
+        d.listView.addItem(new StringItem("Delete this message?", largerBold));
+        d.listView.addItem("\"" + messagePreview + "\"");
+
+        d.addCommand(new Command("Yes", Command.OK, CMD_DELETE_PROMPT_YES));
+        d.addCommand(new Command("No", Command.BACK, CMD_DELETE_PROMPT_NO));
+        d.setCommandListener(this);
+
+        App.pushScreen(d);
     }
 
     public void itemSelected(Item i) {
