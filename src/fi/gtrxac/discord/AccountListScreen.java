@@ -118,7 +118,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             if (acc.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
                 BluetoothHTTP.selectedConnectionUrl == null) {
 
-                App.replaceScreen(new BluetoothDeviceScreen());
+                App.pushScreen(new BluetoothDeviceScreen());
             }
             else {
                 App.replaceScreen(new MainScreen());

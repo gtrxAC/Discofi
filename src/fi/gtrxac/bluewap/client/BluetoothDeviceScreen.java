@@ -98,7 +98,7 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
             if (client != null) {
                 client.stopSearching();
             }
-            App.replaceScreen(new AccountListScreen());
+            App.popScreen();
         }
     }
 
@@ -190,7 +190,7 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
         }
         else if (prev instanceof AccountListScreen) {
             // Log into the account that was just selected
-            App.replaceScreen(new MainScreen());
+            App.replaceAllScreens(new MainScreen());
         }
     }
 

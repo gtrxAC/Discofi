@@ -163,8 +163,7 @@ public abstract class HTTP {
 			if (responseBytes != null) {
 				return responseBytes;
 			}
-			byte[] result = Util.readBytes(is);
-			return result;
+			return Util.readBytes(is);
 		}
 		finally {
 			close();
