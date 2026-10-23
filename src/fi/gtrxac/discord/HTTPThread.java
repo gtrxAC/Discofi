@@ -378,11 +378,22 @@ public class HTTPThread extends Thread {
     }
 
     private void runSendMessage() throws DiscordException {
+        if (message.trim().length() == 0) {
+            throw new DiscordException("Cannot send an empty message");
+        }
+        
         ChatScreen chatScreen = (ChatScreen) callerScreen;
-        chatScreen.setBannerText("Sending message");
 
-        acc.sendMessage(channel, message, recipientMessage, sendPing);
-        chatScreen.setBannerText(null);
+        try {
+            chatScreen.setBannerText("Sending message");
+            acc.sendMessage(channel, message, recipientMessage, sendPing);
+
+            chatScreen.messageDraft = "";
+        }
+        finally {
+            chatScreen.setBannerText(null);
+        }
+
         chatScreen.fetchMessages(null, null, 0, false);
     }
 
@@ -467,12 +478,29 @@ public class HTTPThread extends Thread {
     }
 
     private void runEditMessage() throws DiscordException {
+        if (message.trim().length() == 0) {
+            throw new DiscordException("Cannot send an empty message");
+        }
+
         ChatScreen chatScreen = (ChatScreen) callerScreen;
 
         try {
             chatScreen.setBannerText("Editing message");
 
-            // ...
+            HTTP h = acc.createApiRequest("PATCH",
+                "/channels/" + channel.id + "/messages/" + editOrDeleteMessage.id);
+
+            JSONObject editData = new JSONObject();
+            editData.put("content", message);
+
+            h.setData(editData.build());
+
+            int responseCode = h.getResponseCode();
+            String responseText = h.getResponseString();
+            acc.checkApiResponse(responseCode, responseText);
+
+            chatScreen.editDraft = "";
+            chatScreen.editDraftTarget = null;
         }
         catch (Exception e) {
             if (e == StandardHTTP.requestMethodException) {
@@ -491,5 +519,6 @@ public class HTTPThread extends Thread {
             chatScreen.setBannerText(null);
         }
 
+        chatScreen.fetchMessages(null, null, 0, false);
     }
 }

@@ -17,16 +17,17 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_REPLY = 3;
     public static final int CMD_EDIT = 4;
     public static final int CMD_DELETE = 5;
-    public static final int CMD_MESSAGE_BOX_SEND = 100;
-    public static final int CMD_MESSAGE_BOX_BACK = 101;
-    public static final int CMD_DELETE_PROMPT_YES = 200;
-    public static final int CMD_DELETE_PROMPT_NO = 201;
+    public static final int CMD_DELETE_PROMPT_YES = 100;
+    public static final int CMD_DELETE_PROMPT_NO = 101;
 
-    private Channel channel;
+    public Channel channel;
     private Vector messages;
-    public String messageDraft = "";
     public int page;
     public boolean hasLoaded;
+
+    public String messageDraft = "";
+    public String editDraft = "";
+    public Message editDraftTarget;
 
     // type should be SCREEN, but I used ITEM so that it shows above replyCommand
     private static final Command sendCommand = 
@@ -123,7 +124,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_SEND: {
-                showMessageBox();
+                App.disp.setCurrent(new MessageBox(this, messageDraft));
                 break;
             }
             case CMD_REPLY: {
@@ -132,29 +133,12 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_EDIT: {
-                // ...
+                MessageItem item = (MessageItem) getHighlightedItem();
+                App.disp.setCurrent(new MessageEditBox(this, item.message));
                 break;
             }
             case CMD_DELETE: {
                 showDeletePrompt();
-                break;
-            }
-            case CMD_MESSAGE_BOX_SEND: {
-                TextBox t = (TextBox) App.disp.getCurrent();
-
-                HTTPThread h = new HTTPThread(HTTPThread.ACTION_SEND_MESSAGE, this);
-                h.channel = channel;
-                h.message = t.getString();
-                h.start();
-
-                App.disp.setCurrent(AppCanvas.instance);
-                break;
-            }
-            case CMD_MESSAGE_BOX_BACK: {
-                TextBox t = (TextBox) App.disp.getCurrent();
-                messageDraft = t.getString();
-
-                App.disp.setCurrent(AppCanvas.instance);
                 break;
             }
             case CMD_DELETE_PROMPT_YES: {
@@ -173,16 +157,6 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
         }
-    }
-
-    private void showMessageBox() {
-        TextBox t = new TextBox("Message " + channel.name, messageDraft, 2000, 0);
-
-        t.addCommand(new Command("Send", Command.OK, CMD_MESSAGE_BOX_SEND));
-        t.addCommand(new Command("Back", Command.BACK, CMD_MESSAGE_BOX_BACK));
-        t.setCommandListener(this);
-
-        App.disp.setCurrent(t);
     }
 
     private void showDeletePrompt() {

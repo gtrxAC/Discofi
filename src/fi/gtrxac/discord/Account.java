@@ -259,7 +259,7 @@ public class Account {
         }
     }
 
-    private AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
+    public AbstractJSON handleJSONResponse(int responseCode, String responseText) throws DiscordException {
         checkApiResponse(responseCode, responseText);
         return JSON.get(responseText);
     }

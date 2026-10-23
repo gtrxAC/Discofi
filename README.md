@@ -24,10 +24,10 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Theme settings (light/dark)
 * Viewing attachments
 * Message deleting
+* Message editing
 
 ### Work in progress
 * HTTP connection over BlueWAP
-* Message editing
 
 ### Planned for first release
 * Token file import
