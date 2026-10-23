@@ -181,7 +181,17 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
 
     public void bluetoothConnected(String url) {
         BluetoothHTTP.selectedConnectionUrl = url;
-        App.replaceScreen(new MainScreen());
+
+        Screen prev = App.getPreviousScreen();
+
+        if (prev instanceof ConnectionModeScreen) {
+            // Continue the login flow
+            App.replaceScreen(new LoginScreen());
+        }
+        else if (prev instanceof AccountListScreen) {
+            // Log into the account that was just selected
+            App.replaceScreen(new MainScreen());
+        }
     }
 
     public void bluetoothSearchError(Exception e) {

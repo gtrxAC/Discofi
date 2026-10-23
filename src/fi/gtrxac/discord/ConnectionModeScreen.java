@@ -1,6 +1,8 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.bluewap.http.*;
+import fi.gtrxac.bluewap.client.*;
 import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -173,6 +175,13 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             App.pendingAccount.mediaProxyUrl = mediaProxyUrl;
         }
 
-        App.pushScreen(new LoginScreen());
+        if (App.pendingAccount.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
+            BluetoothHTTP.selectedConnectionUrl == null) {
+
+            App.pushScreen(new BluetoothDeviceScreen());
+        }
+        else {
+            App.pushScreen(new LoginScreen());
+        }
     }
 }

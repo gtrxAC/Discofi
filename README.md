@@ -25,8 +25,6 @@ The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-t
 * Viewing attachments
 * Message deleting
 * Message editing
-
-### Work in progress
 * HTTP connection over BlueWAP
 
 ### Planned for first release
