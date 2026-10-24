@@ -21,6 +21,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
     private ButtonItem loginButton;
     private ButtonItem tokenLoginButton;
     private ButtonItem tokenJarImportButton;
+    private ButtonItem tokenFileImportButton;
 
     public LoginScreen() {
         super();
@@ -67,6 +68,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
         addItem(tokenLoginButton = new ButtonItem("Use token"));
         addItem(tokenJarImportButton = new ButtonItem("Import from JAR"));
+        addItem(tokenFileImportButton = new ButtonItem("Import from file"));
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
@@ -105,6 +107,9 @@ public class LoginScreen extends ListScreen implements CommandListener {
             }
             jarToken = jarToken.replace('"', ' ').trim();
             verifyAndCompleteLogin(jarToken);
+        }
+        else if (i == tokenFileImportButton) {
+            App.pushScreen(new TokenImportScreen());
         }
     }
 
@@ -154,6 +159,19 @@ public class LoginScreen extends ListScreen implements CommandListener {
             new DiscordException(
                 "Please enter your token",
                 "A token is required when using token login. You may also try password login.",
+                null)
+                .show();
+
+            return;
+        }
+        verifyAndCompleteLogin(token);
+    }
+
+    public void tokenFileLogin(String token) {
+        if (token.length() == 0) {
+            new DiscordException(
+                "Empty file",
+                "The selected token file is empty. Please try another file.",
                 null)
                 .show();
 
