@@ -437,6 +437,9 @@ public class ListScreen extends Screen implements Runnable {
         needRecalc();
     }
 
+    /**
+     * Adds a basic StringItem to the screen containing the specified text.
+     */
     public void addItem(String str) {
         addItem(new StringItem(str));
     }

@@ -89,9 +89,9 @@ public abstract class Screen implements CommandListener {
         return commandListener;
     }
 
-    public void commandAction(Command command, Displayable displayable) {
+    public void commandAction(Command c, Displayable d) {
         if (commandListener != null) {
-            commandListener.commandAction(command, displayable);
+            commandListener.commandAction(c, d);
         }
     }
 

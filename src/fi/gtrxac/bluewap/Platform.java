@@ -30,9 +30,6 @@ public class Platform extends Canvas {
 	public static final int vectorRenderScale;
 	public static final boolean useUnderlinedFont;
 	public static final boolean hasRoundRectSizeBug;
-	public static final boolean useCustomSoftkeys;
-	public static final boolean useCustomTitleBar;
-	public static final boolean useCustomTitleBarClock;
 	public static final boolean preferModernConnector;
 	public static final boolean allowSecondaryConnector;
 
@@ -73,24 +70,6 @@ public class Platform extends Canvas {
 		int[] pixel = new int[1];
 		img.getRGB(pixel, 0, 5, 4, 1, 1, 1);
 		hasRoundRectSizeBug = ((pixel[0] & 0x00FFFFFF) == 0x000000);
-
-		// Use custom drawn softkeys and custom 'Options' menu
-		// on platforms that have bad softkeys by default (Samsung, J2ME Loader).
-		useCustomSoftkeys = isJ2MELoader || (isSamsung() && isTouch);
-
-		// Use custom title bar on platforms with custom softkeys,
-		// but also on Sony Ericsson where title bars have a couple issues on some models
-		// (null title changes causing our UI framework to freeze; and incorrect colors)
-		// If both custom titlebar and softkeys are enabled, then fullscreen mode is also enabled.
-		useCustomTitleBar = useCustomSoftkeys || isSonyEricsson;
-
-		// The system property for identifying the Java Platform version was introduced with JP-7.
-		// If it's null, then we are either on an older JP or on a non-SE device.
-		String sejp = System.getProperty("com.sonyericsson.java.platform");
-
-		// Draw the clock on the custom title bar on platforms with custom softkeys (full-screen),
-		// but also on older SE (JP-6 and below) where the clock is not shown on the system statusbar.
-		useCustomTitleBarClock = useCustomSoftkeys || (isSonyEricsson && sejp == null);
 
 		// Which type of Connector(s) to prefer/use for TLS on different platforms:
 
