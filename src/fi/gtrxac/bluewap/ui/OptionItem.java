@@ -13,6 +13,8 @@ public class OptionItem extends Item {
     private String displayText;
     public Command command;
 
+    private static int paddingY;
+
     public OptionItem(Command command) {
         super(true);
         this.command = command;
@@ -32,13 +34,15 @@ public class OptionItem extends Item {
         }
 
         g.setFont(Fonts.plain);
-        g.drawString(displayText, Fonts.height/3, Fonts.height/3, 0);
+        g.drawString(displayText, Fonts.height/3, paddingY, 0);
     }
 
     public void recalc(int width) {
-        height = Fonts.height + Fonts.height/3*2;
+        paddingY = Platform.isTouch ? Fonts.height/3 : Fonts.height/4;
 
-        int textWidth = width - Fonts.height/3 - Fonts.height - Fonts.height/3;
+        height = Fonts.height + paddingY*2;
+
+        int textWidth = width - Fonts.height/3*2;
         displayText = Util.stringToWidth(text, Fonts.plain, textWidth);
     }
 }

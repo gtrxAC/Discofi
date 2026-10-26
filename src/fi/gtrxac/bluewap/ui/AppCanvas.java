@@ -116,7 +116,7 @@ public class AppCanvas extends Canvas {
             g.drawString(
                 leftSoftkeyLabel,
                 margin,
-                margin,
+                (barHeight - Fonts.boldHeight)/2,
                 Graphics.TOP | Graphics.LEFT);
         }
 
@@ -124,7 +124,7 @@ public class AppCanvas extends Canvas {
             g.drawString(
                 rightSoftkeyLabel,
                 getWidth() - margin,
-                margin,
+                (barHeight - Fonts.boldHeight)/2,
                 Graphics.TOP | Graphics.RIGHT);
         }
     }
@@ -187,7 +187,7 @@ public class AppCanvas extends Canvas {
     }
 
     private static int getTitleBarHeight() {
-        return Fonts.boldHeight + Fonts.boldHeight/4*2;
+        return Fonts.boldHeight + Fonts.boldHeight/5*2;
     }
 
     private static int getSoftkeyBarHeight() {
@@ -215,14 +215,31 @@ public class AppCanvas extends Canvas {
 
     protected void keyPressed(int keyCode) {
         Screen curr = AppBase.getCurrentScreen();
-        if (curr != null) {
-            curr.keyEvent(keyCode, getGameAction(keyCode));
-            AppBase.repaint();
+        if (curr == null) return;
+
+        if (Softkeys.isLeftSoftkey(keyCode)) {
+            if (optionsCommandShown) {
+                AppBase.pushScreen(new OptionsScreen(remainingCommands));
+            }
+            else {
+                runCommand(leftSideCommand);
+            }
+            return;
         }
+
+        if (Softkeys.isRightSoftkey(keyCode)) {
+            runCommand(rightSideCommand);
+            return;
+        }
+
+        curr.keyEvent(keyCode, getGameAction(keyCode));
+        AppBase.repaint();
     }
 
     protected void keyRepeated(int keyCode) {
-        keyPressed(keyCode);
+        if (!Softkeys.isLeftSoftkey(keyCode) && !Softkeys.isRightSoftkey(keyCode)) {
+            keyPressed(keyCode);
+        }
     }
 
     protected void pointerPressed(int x, int y) {
@@ -275,11 +292,7 @@ public class AppCanvas extends Canvas {
             }
             else {
                 Command c = pressedLeft ? leftSideCommand : rightSideCommand;
-
-                if (c != null) {
-                    CommandListener l = AppBase.getCurrentScreen().getCommandListener();
-                    l.commandAction(c, this);
-                }
+                runCommand(c);
             }
         }
         else {
@@ -289,6 +302,15 @@ public class AppCanvas extends Canvas {
 
         AppBase.repaint();
         return true;
+    }
+
+    private void runCommand(Command c) {
+        if (c == null) return;
+
+        CommandListener lis = AppBase.getCurrentScreen().getCommandListener();
+        if (lis == null) return;
+
+        lis.commandAction(c, this);
     }
 
     void updateCommands() {

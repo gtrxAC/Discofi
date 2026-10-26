@@ -27,11 +27,20 @@ public class Platform extends Canvas {
 
 	public static final boolean isTouch;
 	public static final boolean isJ2MELoader;
+	public static final boolean isNokia;
+	public static final boolean isSonyEricsson;
+	public static final boolean isBlackBerry;
+	public static final boolean isSiemens;
+	public static final boolean isMotorola;
+
 	public static final int vectorRenderScale;
 	public static final boolean useUnderlinedFont;
 	public static final boolean hasRoundRectSizeBug;
 	public static final boolean preferModernConnector;
 	public static final boolean allowSecondaryConnector;
+
+    private static int leftSoftkeyCode = -6;
+    private static int rightSoftkeyCode = -7;
 
 	static {
 		String p = System.getProperty("microedition.platform");
@@ -45,21 +54,28 @@ public class Platform extends Canvas {
 
 		isJ2MELoader = "The Android Project".equals(System.getProperty("java.vendor"));
 
+		isNokia = plat.startsWith("Nokia");
+		isSonyEricsson = plat.startsWith("SonyEr");
+		isBlackBerry = plat.startsWith("BlackB");
+		isSiemens = checkClass("com.siemens.mp.lcdui.Image");
+
+		isMotorola = checkClass("com.motorola.multimedia.Vibrator") ||
+			checkClass("com.motorola.graphics.j3d.Effect3D") ||
+			checkClass("com.motorola.multimedia.Lighting") ||
+			checkClass("com.motorola.multimedia.FunLight");
+
 		// Rendering scale used for dynamically generated vector graphics for some UI elements
 		// Larger numbers will look nicer, but above 5 there isn't much of a noticeable difference
 		// Nokia 6600 will freeze when rendering onto too large images - to stay safe we use 1
 		// Other devices (even e.g. Nokia 3230, 6230) have been fine with 5
 		vectorRenderScale = plat.startsWith("Nokia6600/") ? 1 : 5;
 
-		boolean isNokia = plat.startsWith("Nokia");
-		boolean isSonyEricsson = plat.startsWith("SonyEr");
-
 		// Underlined fonts do not render correctly on Samsung touchscreen phones
 		// (either all onscreen fonts show as underlined or none do)
 		// and they do not look different from the standard font on Motorola
 		// They seem to be safe to use on all Nokia, Sony Ericsson, BlackBerry phones
 		// Other devices need more testing
-		useUnderlinedFont = isNokia || isSonyEricsson || plat.startsWith("BlackB");
+		useUnderlinedFont = isNokia || isSonyEricsson || isBlackBerry;
 
 		// On some Motorola phones (seemingly those with only one font size, like the V3 and L6)
 		// drawRoundRect() will draw with a width and height one pixel larger than specified

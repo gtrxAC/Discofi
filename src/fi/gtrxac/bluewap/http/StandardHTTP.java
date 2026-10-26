@@ -12,14 +12,6 @@ public class StandardHTTP extends HTTP {
 	public static final Exception requestMethodException = new Exception();
 	public static final Exception redirectException = new Exception();
 
-//#ifndef NO_HTTP_BLACKBERRY_WIFI
-	private static final boolean isBlackBerry;
-	static {
-		String plat = System.getProperty("microedition.platform");
-		isBlackBerry = (plat != null && plat.toLowerCase().startsWith("blackberry"));
-	}
-//#endif
-
 	private HTTPQueue queueItem;
 	private HttpConnection hc;
 	private OutputStream os;
@@ -97,7 +89,7 @@ public class StandardHTTP extends HTTP {
 
 	private InputStream makeRequestWithBlackBerryWifi() throws Exception {
 //#ifndef NO_HTTP_BLACKBERRY_WIFI
-		if (isBlackBerry) {
+		if (Platform.isBlackBerry) {
 			String bbWifiUrl = url + ";deviceside=true;interface=wifi";
 			long time = System.currentTimeMillis();
 
