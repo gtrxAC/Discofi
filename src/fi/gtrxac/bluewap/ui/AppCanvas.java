@@ -92,7 +92,45 @@ public class AppCanvas extends Canvas {
     private void drawSoftkeys(Graphics g) {
         int barHeight = getSoftkeyBarHeight();
 
-        g.setColor(Colors.softkeyBarBackground);
+        if (Platform.isTouch) {
+            drawSoftkeysTouch(g, barHeight);
+        }
+        else {
+            drawSoftkeysNonTouch(g, barHeight);
+        }
+    }
+
+    private void drawSoftkeysNonTouch(Graphics g, int barHeight) {
+        g.setColor(Colors.softkeyBarBackgroundNonTouch);
+        g.fillRect(0, 0, getWidth(), barHeight);
+
+        g.setColor(Colors.softkeyBarOutline);
+        g.drawLine(0, 0, getWidth(), 0);
+
+        g.setColor(Colors.softkeyText);
+        g.setFont(Fonts.bold);
+
+        int margin = Fonts.boldHeight/4;
+
+        if (leftSoftkeyLabel != null) {
+            g.drawString(
+                leftSoftkeyLabel,
+                margin,
+                margin,
+                Graphics.TOP | Graphics.LEFT);
+        }
+
+        if (rightSoftkeyLabel != null) {
+            g.drawString(
+                rightSoftkeyLabel,
+                getWidth() - margin,
+                margin,
+                Graphics.TOP | Graphics.RIGHT);
+        }
+    }
+
+    private void drawSoftkeysTouch(Graphics g, int barHeight) {
+        g.setColor(Colors.softkeyBarBackgroundTouch);
         g.fillRect(0, 0, getWidth(), barHeight);
 
         int margin = Math.max(3, Fonts.boldHeight/7);
@@ -103,11 +141,17 @@ public class AppCanvas extends Canvas {
         int rightSoftkeyX = getWidth() - margin - softkeyWidth;
 
         g.setFont(Fonts.bold);
-        drawSoftkey(g, leftSoftkeyLabel, leftSoftkeyX, margin, softkeyWidth, softkeyHeight, textY, leftSoftkeyPressed);
-        drawSoftkey(g, rightSoftkeyLabel, rightSoftkeyX, margin, softkeyWidth, softkeyHeight, textY, rightSoftkeyPressed);
+        
+        drawSoftkeyTouch(
+            g, leftSoftkeyLabel, leftSoftkeyX, margin,
+            softkeyWidth, softkeyHeight, textY, leftSoftkeyPressed);
+
+        drawSoftkeyTouch(
+            g, rightSoftkeyLabel, rightSoftkeyX, margin,
+            softkeyWidth, softkeyHeight, textY, rightSoftkeyPressed);
     }
 
-    private void drawSoftkey(Graphics g, String label, int x, int y, int width, int height, int textY, boolean pressed) {
+    private void drawSoftkeyTouch(Graphics g, String label, int x, int y, int width, int height, int textY, boolean pressed) {
         if (label == null) return;
 
         g.setColor(pressed ? Colors.softkeyBackgroundSel : Colors.softkeyBackground);
@@ -147,7 +191,7 @@ public class AppCanvas extends Canvas {
     }
 
     private static int getSoftkeyBarHeight() {
-        return Fonts.boldHeight*2;
+        return Platform.isTouch ? Fonts.boldHeight*2 : getTitleBarHeight();
     }
 
     public static int getBaseY() {

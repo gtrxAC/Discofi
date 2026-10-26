@@ -26,22 +26,29 @@ public class Colors {
     public static int stringItemText;
 
     /**
-     * Custom title bar (some platforms)
+     * Custom title bar
      */
     public static int titleBarBackground;
     public static int titleBarOutline;
     public static int titleBarText;
 
     /**
-     * Custom softkey bar (some platforms)
+     * Custom softkey bar (for touchscreen)
      */
-    public static int softkeyBarBackground;
+    public static int softkeyBarBackgroundTouch;
     public static int softkeyBackground;
     public static int softkeyBackgroundSel;
     public static int softkeyOutline;
     public static int softkeyOutlineSel;
     public static int softkeyText;
     public static int softkeyTextSel;
+
+    /**
+     * Custom softkey bar (for non-touchscreen)
+     */
+    public static int softkeyBarBackgroundNonTouch;
+    public static int softkeyBarOutline;
+    public static int softkeyBarText;
 
     /**
      * Common highlight used by Items
@@ -120,13 +127,16 @@ public class Colors {
         titleBarBackground = 0xDDDDDD;
         titleBarOutline = 0x9B9B9B;
         titleBarText = 0x111111;
-        softkeyBarBackground = 0xEEEEEE;
+        softkeyBarBackgroundTouch = 0xEEEEEE;
         softkeyBackground = 0xDDDDDD;
         softkeyBackgroundSel = 0xBBBBBB;
         softkeyOutline = 0x9B9B9B;
         softkeyOutlineSel = 0x838383;
         softkeyText = 0x111111;
         softkeyTextSel = 0x000000;
+        softkeyBarBackgroundNonTouch = 0xDDDDDD;
+        softkeyBarOutline = 0x9B9B9B;
+        softkeyBarText = 0x111111;
         highlightOutline = 0x5599FF;
         spacerItem = 0x888888;
         buttonBackground = 0xDDDDDD;

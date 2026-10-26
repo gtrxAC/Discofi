@@ -83,13 +83,16 @@ public class Theme extends Colors {
         titleBarBackground = darkGradient[0x2];
         titleBarOutline = darkGradient[0x0];
         titleBarText = darkGradient[0xE];
-        softkeyBarBackground = darkGradient[0x2];
+        softkeyBarBackgroundTouch = darkGradient[0x2];
         softkeyBackground = darkGradient[0x4];
         softkeyBackgroundSel = darkGradient[0x5];
         softkeyOutline = darkGradient[0x0];
         softkeyOutlineSel = darkGradient[0x0];
         softkeyText = darkGradient[0xF];
         softkeyTextSel = darkGradient[0xF];
+        softkeyBarBackgroundNonTouch = darkGradient[0x2];
+        softkeyBarOutline = darkGradient[0x0];
+        softkeyBarText = darkGradient[0xE];
         highlightOutline = 0x6688FF;
         spacerItem = darkGradient[0x0];
         buttonBackground = darkGradient[0x5];
