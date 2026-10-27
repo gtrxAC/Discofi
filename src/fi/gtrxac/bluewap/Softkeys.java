@@ -8,7 +8,8 @@ import fi.gtrxac.bluewap.ui.AppCanvas;
  * https://github.com/davidw/hecl/blob/master/midp20gui/org/hecl/midp20/lcdui/HeclCanvas.java#L684
  */
 public class Softkeys {
-    private static final boolean isStandardKeyCodes = (Platform.isNokia || Platform.isSonyEricsson);
+    private static final boolean isStandardKeyCodes =
+        (Platform.isNokia || Platform.isSonyEricsson || Platform.isKEmulator || Platform.isJ2MELoader);
 
     public static boolean isLeftSoftkey(int keyCode) {
         if (isStandardKeyCodes) {

@@ -33,6 +33,7 @@ public class Platform extends Canvas {
 
 	public static final boolean isTouch;
 	public static final boolean isJ2MELoader;
+	public static final boolean isKEmulator;
 	public static final boolean isNokia;
 	public static final boolean isSonyEricsson;
 	public static final boolean isBlackBerry;
@@ -57,6 +58,7 @@ public class Platform extends Canvas {
 			plat.indexOf("S7220") == -1 && plat.indexOf("S7350") == -1;
 
 		isJ2MELoader = "The Android Project".equals(System.getProperty("java.vendor"));
+		isKEmulator = checkClass("emulator.custom.CustomMethod");
 
 		isNokia = plat.startsWith("Nokia");
 		isSonyEricsson = plat.startsWith("SonyEr");
