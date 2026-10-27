@@ -23,7 +23,13 @@ public class App extends AppBase {
         // TLSTest.test();
         Fonts.loadFonts(Settings.fontSize);
         Theme.load();
-        pushScreen(new AccountListScreen());
+
+        if (Accounts.getActive() == null) {
+            pushScreen(new AccountListScreen());
+        }
+        else {
+            pushScreen(new MainScreen());
+        }
     }
 
     public static void loginCompleted(String token) {
