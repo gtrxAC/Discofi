@@ -25,14 +25,12 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
         
-        fetchData();
+        fetchData(false);
     }
 
-    private void fetchData() {
-        removeAllItems();
-        addItem(new LoadingItem());
-
+    private void fetchData(boolean refresh) {
         HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_GUILD_CHANNELS, this);
+        h.refresh = refresh;
         h.guild = guild;
         h.start();
     }
@@ -44,7 +42,7 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_REFRESH: {
-                fetchData();
+                fetchData(true);
                 break;
             }
         }
@@ -55,9 +53,6 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
             ListItem li = (ListItem) i;
             Channel channel = (Channel) li.object;
             App.pushScreen(new ChatScreen(channel));
-        }
-        else if (i == App.refreshButton) {
-            fetchData();
         }
     }
 
@@ -82,6 +77,6 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
 
     public void showError() {
         removeAllItems();
-        App.showLoadError(this);
+        addItem(new FailedToLoadItem());
     }
 }

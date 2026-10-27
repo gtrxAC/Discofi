@@ -127,11 +127,16 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
 
     public void showErrorOnTab(int tabIndex) {
         ListView tab = (ListView) tabs.elementAt(tabIndex);
-        App.showLoadError(tab);
+        tab.removeAllItems();
+        tab.addItem(new FailedToLoadItem());
 
         // Mark tab as loaded so it won't immediately reload when switching to it again
-        if (tabIndex == TAB_DMS) dmChannelsLoaded = true;
-        else if (tabIndex == TAB_INBOX) inboxLoaded = true;
+        if (tabIndex == TAB_DMS) {
+            dmChannelsLoaded = true;
+        }
+        else if (tabIndex == TAB_INBOX) {
+            inboxLoaded = true;
+        }
     }
 
     private void fetchTabData(int action) {
@@ -178,10 +183,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     public void itemSelected(Item i) {
-        if (i == App.refreshButton) {
-            refreshCurrentTab();
-        }
-        else if (currentTabIndex == TAB_GUILDS) {
+        if (currentTabIndex == TAB_GUILDS) {
             ListItem li = (ListItem) i;
             Guild guild = (Guild) li.object;
             App.pushScreen(new ChannelListScreen(guild));

@@ -19,8 +19,6 @@ public class App extends AppBase {
     public static String pendingFingerprint;
     public static String pendingLoginInstanceID;
 
-    public static final SmallButtonItem refreshButton = new SmallButtonItem("Refresh");
-
     public void init() {
         // TLSTest.test();
         Fonts.loadFonts(Settings.fontSize);
@@ -40,17 +38,5 @@ public class App extends AppBase {
         Settings.save();
         pendingAccount = null;
         replaceAllScreens(new AccountListScreen());
-    }
-
-    public static void showLoadError(ListScreen target) {
-        target.removeAllItems();
-
-        int align = Graphics.HCENTER | Graphics.TOP;
-        target.addItem(new StringItem("Failed to load data", Fonts.bold, align));
-        target.addItem(new StringItem("Check your connection and login details, then try again.", Fonts.plain, align));
-        target.addItem(new BlankItem(0));
-        target.addItem(refreshButton);
-
-        target.setHighlightedItem(refreshButton);
     }
 }
