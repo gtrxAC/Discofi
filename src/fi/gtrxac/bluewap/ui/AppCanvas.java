@@ -23,6 +23,14 @@ public class AppCanvas extends Canvas {
     private String currentClock;
     private String currentTitle;
 
+    // Where is the network/packet data indicator shown when in full-screen mode:
+
+    private static final boolean networkIndicatorTopLeft =
+        Platform.isNokia;
+
+    private static final boolean networkIndicatorTopRight =
+        Platform.isSonyEricsson || Platform.isSamsung || Platform.isBlackBerry;
+
     private AppCanvas() {
         super();
         setFullScreenMode(true);
@@ -73,18 +81,28 @@ public class AppCanvas extends Canvas {
         g.setColor(Colors.titleBarOutline);
         g.drawLine(0, barHeight - 1, getWidth(), barHeight - 1);
 
+        int titleX = Fonts.boldHeight/4;
+        int clockX = getWidth() - Fonts.boldHeight/4;
+
+        if (networkIndicatorTopLeft) {
+            titleX += Fonts.height;
+        }
+        else if (networkIndicatorTopRight) {
+            clockX -= Fonts.height;
+        }
+
         g.setColor(Colors.titleBarText);
         g.setFont(Fonts.bold);
         g.drawString(
             currentTitle,
-            Fonts.boldHeight/4,
+            titleX,
             (barHeight - Fonts.boldHeight)/2,
             0);
 
         g.setFont(Fonts.plain);
         g.drawString(
             currentClock,
-            getWidth() - Fonts.boldHeight/4,
+            clockX,
             (barHeight - Fonts.height)/2,
             Graphics.TOP | Graphics.RIGHT);
     }
@@ -419,6 +437,10 @@ public class AppCanvas extends Canvas {
         int availableWidth = getWidth()
             - Fonts.boldHeight/4*2
             - Fonts.plain.stringWidth("88:88");
+
+        if (networkIndicatorTopLeft || networkIndicatorTopRight) {
+            availableWidth -= Fonts.height;
+        }
 
         currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
     }

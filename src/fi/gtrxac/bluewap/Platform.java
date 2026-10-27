@@ -32,6 +32,7 @@ public class Platform extends Canvas {
 	public static final boolean isBlackBerry;
 	public static final boolean isSiemens;
 	public static final boolean isMotorola;
+	public static final boolean isSamsung;
 
 	public static final int vectorRenderScale;
 	public static final boolean useUnderlinedFont;
@@ -63,6 +64,8 @@ public class Platform extends Canvas {
 			checkClass("com.motorola.graphics.j3d.Effect3D") ||
 			checkClass("com.motorola.multimedia.Lighting") ||
 			checkClass("com.motorola.multimedia.FunLight");
+
+		isSamsung = isSamsung();
 
 		// Rendering scale used for dynamically generated vector graphics for some UI elements
 		// Larger numbers will look nicer, but above 5 there isn't much of a noticeable difference
@@ -114,7 +117,7 @@ public class Platform extends Canvas {
 	// (platform string ends with 4 uppercase letters and 1 digit).
 	// Not a perfect check (sometimes plat string is just "j2me") but it's
 	// good enough for the touchscreen-era models
-	public static boolean isSamsung() {
+	private static boolean isSamsung() {
 		if (plat.indexOf("Samsung") != -1 || plat.indexOf("GT-") != -1) return true;
 		if (plat.length() < 5) return false;
 
