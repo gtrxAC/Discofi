@@ -17,6 +17,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_REPLY = 3;
     public static final int CMD_EDIT = 4;
     public static final int CMD_DELETE = 5;
+    public static final int CMD_REFRESH = 99;
     public static final int CMD_DELETE_PROMPT_YES = 100;
     public static final int CMD_DELETE_PROMPT_NO = 101;
 
@@ -29,9 +30,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public String editDraft = "";
     public Message editDraftTarget;
 
-    // type should be SCREEN, but I used ITEM so that it shows above replyCommand
     private static final Command sendCommand = 
-        new Command("Send", "Send message", Command.ITEM, CMD_SEND);
+        new Command("Send", "Send message", Command.SCREEN, CMD_SEND);
 
     private static final Command replyCommand =
         new Command("Reply", Command.ITEM, CMD_REPLY);
@@ -41,6 +41,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
     private static final Command deleteCommand =
         new Command("Delete", Command.ITEM, CMD_DELETE);
+
+    private static final Command refreshCommand =
+        new Command("Refresh", Command.SCREEN, CMD_REFRESH);
 
     private static SmallButtonItem olderMessagesButton =
         new SmallButtonItem("Older messages");
@@ -68,6 +71,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public void fetchMessages(String paginationType, String paginationMessage, int newPage, boolean showLoadingAnimation) {
         removeCommand(sendCommand);
         removeCommand(replyCommand);
+        removeCommand(refreshCommand);
 
         if (showLoadingAnimation) {
             removeAllItems();
@@ -141,6 +145,10 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 showDeletePrompt();
                 break;
             }
+            case CMD_REFRESH: {
+                fetchMessages(null, null, 0, false);
+                break;
+            }
             case CMD_DELETE_PROMPT_YES: {
                 MessageItem item = (MessageItem) getHighlightedItem();
 
@@ -190,6 +198,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
     public void populate(JSONArray messagesJson) {
         addCommand(sendCommand);
+        addCommand(refreshCommand);
 
         addMessages(messagesJson);
         readdItems();
