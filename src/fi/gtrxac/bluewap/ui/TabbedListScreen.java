@@ -14,6 +14,7 @@ public class TabbedListScreen extends Screen {
 
     private static int tabWidth;
     private static int tabMargin;
+    private static int tabBarWidth;
     private static int tabBarHeight;
 
     public TabbedListScreen(int margin) {
@@ -47,6 +48,10 @@ public class TabbedListScreen extends Screen {
     private void drawTabs(Graphics g) {
         int tabDrawWidth = tabWidth - tabMargin;
 
+        if (NetworkIndicator.isOnTopLeft) {
+            g.translate(NetworkIndicator.width, 0);
+        }
+
         for (int i = 0; i < tabs.size(); i++) {
             boolean selected = (i == currentTabIndex);
             String tabName = (String) truncatedTabNames.elementAt(i);
@@ -79,15 +84,20 @@ public class TabbedListScreen extends Screen {
         g.setColor(Colors.tabOutlineColor);
         g.drawLine(0, lineY, selectedTabBegin, lineY);
         g.drawLine(selectedTabEnd, lineY, getWidth(), lineY);
+
+        if (NetworkIndicator.isOnTopLeft) {
+            g.translate(-NetworkIndicator.width, 0);
+        }
     }
 
     public void recalc() {
         tabMargin = Fonts.height/7;
+        tabBarWidth = getWidth() - NetworkIndicator.width;
         tabBarHeight = Platform.isTouch ? Fonts.height*7/4 : Fonts.height*3/2;
 
         if (tabs.size() == 0) return;
 
-        tabWidth = (getWidth() - tabMargin)/tabs.size();
+        tabWidth = (tabBarWidth - tabMargin)/tabs.size();
         int tabBeginY = tabBarHeight + tabMargin;
         int availableWidth = tabWidth - tabMargin*2;
 
@@ -194,16 +204,27 @@ public class TabbedListScreen extends Screen {
     public void pointerReleased(int x, int y) {
         if (tappedOnBar) {
             // handle tab selection
+            if (NetworkIndicator.isOnTopLeft) {
+                x -= NetworkIndicator.width;
+            }
+
             currentTabIndex = (x - tabMargin)/tabWidth;
 
-            if (currentTabIndex < 0) currentTabIndex = 0;
-            else if (currentTabIndex >= tabs.size()) currentTabIndex = tabs.size() - 1;
+            if (currentTabIndex < 0) {
+                currentTabIndex = 0;
+            }
+            else if (currentTabIndex >= tabs.size()) {
+                currentTabIndex = tabs.size() - 1;
+            }
 
             currentTabChanged(currentTabIndex);
         }
         else {
             ListView tab = getCurrentTab();
-            if (tab != null) tab.pointerReleased(x, y);
+            
+            if (tab != null) {
+                tab.pointerReleased(x, y);
+            }
         }
     }
 }

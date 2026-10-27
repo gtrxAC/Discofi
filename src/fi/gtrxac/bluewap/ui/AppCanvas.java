@@ -23,19 +23,6 @@ public class AppCanvas extends Canvas {
     private String currentClock;
     private String currentTitle;
 
-    // Where is the network/packet data indicator shown when in full-screen mode:
-
-    // Any Nokia except Symbian^3 (S60 5.1 and up).
-    // So far I've only tested S60 3.1 where it appears, and Belle FP2 where
-    // it doesn't, so this is only an estimate of when they might have removed it.
-
-    private static final boolean networkIndicatorTopLeft =
-        Platform.isNokia &&
-        (!Platform.isJ9S60Version("5") || Platform.isJ9S60Version("5.0"));
-
-    private static final boolean networkIndicatorTopRight =
-        Platform.isSonyEricsson || Platform.isSamsung || Platform.isBlackBerry;
-
     private AppCanvas() {
         super();
         setFullScreenMode(true);
@@ -89,11 +76,11 @@ public class AppCanvas extends Canvas {
         int titleX = Fonts.boldHeight/4;
         int clockX = getWidth() - Fonts.boldHeight/4;
 
-        if (networkIndicatorTopLeft) {
-            titleX += Fonts.height;
+        if (NetworkIndicator.isOnTopLeft) {
+            titleX += NetworkIndicator.width;
         }
-        else if (networkIndicatorTopRight) {
-            clockX -= Fonts.height;
+        else if (NetworkIndicator.isOnTopRight) {
+            clockX -= NetworkIndicator.width;
         }
 
         g.setColor(Colors.titleBarText);
@@ -454,11 +441,8 @@ public class AppCanvas extends Canvas {
 
         int availableWidth = getWidth()
             - Fonts.boldHeight/4*2
-            - Fonts.plain.stringWidth("88:88");
-
-        if (networkIndicatorTopLeft || networkIndicatorTopRight) {
-            availableWidth -= Fonts.height;
-        }
+            - Fonts.plain.stringWidth("88:88")
+            - NetworkIndicator.width;
 
         currentTitle = Util.stringToWidth(title, Fonts.bold, availableWidth);
     }
