@@ -25,8 +25,13 @@ public class AppCanvas extends Canvas {
 
     // Where is the network/packet data indicator shown when in full-screen mode:
 
+    // Any Nokia except Symbian^3 (S60 5.1 and up).
+    // So far I've only tested S60 3.1 where it appears, and Belle FP2 where
+    // it doesn't, so this is only an estimate of when they might have removed it.
+
     private static final boolean networkIndicatorTopLeft =
-        Platform.isNokia;
+        Platform.isNokia &&
+        (!Platform.isJ9S60Version("5") || Platform.isJ9S60Version("5.0"));
 
     private static final boolean networkIndicatorTopRight =
         Platform.isSonyEricsson || Platform.isSamsung || Platform.isBlackBerry;
@@ -236,17 +241,12 @@ public class AppCanvas extends Canvas {
         if (curr == null) return;
 
         if (Softkeys.isLeftSoftkey(keyCode)) {
-            if (optionsCommandShown) {
-                AppBase.pushScreen(new OptionsScreen(remainingCommands));
-            }
-            else {
-                runCommand(leftSideCommand);
-            }
+            leftSoftkeyPressed();
             return;
         }
 
         if (Softkeys.isRightSoftkey(keyCode)) {
-            runCommand(rightSideCommand);
+            rightSoftkeyPressed();
             return;
         }
 
@@ -305,21 +305,39 @@ public class AppCanvas extends Canvas {
         boolean pressedLeft = (x < getWidth()/2);
 
         if (runCommand) {
-            if (pressedLeft && optionsCommandShown) {
-                AppBase.pushScreen(new OptionsScreen(remainingCommands));
+            if (pressedLeft) {
+                leftSoftkeyPressed();
             }
             else {
-                Command c = pressedLeft ? leftSideCommand : rightSideCommand;
-                runCommand(c);
+                rightSoftkeyPressed();
             }
         }
         else {
-            if (pressedLeft) leftSoftkeyPressed = true;
-            else rightSoftkeyPressed = true;
+            if (pressedLeft) {
+                leftSoftkeyPressed = true;
+            }
+            else {
+                rightSoftkeyPressed = true;
+            }
         }
 
         AppBase.repaint();
         return true;
+    }
+
+    private void leftSoftkeyPressed() {
+        if (optionsCommandShown) {
+            AppBase.pushScreen(new OptionsScreen(remainingCommands));
+        }
+        else if (leftSideCommand != null) {
+            runCommand(leftSideCommand);
+        }
+    }
+
+    private void rightSoftkeyPressed() {
+        if (rightSideCommand != null) {
+            runCommand(rightSideCommand);
+        }
     }
 
     private void runCommand(Command c) {

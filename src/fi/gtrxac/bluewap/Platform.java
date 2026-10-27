@@ -5,6 +5,12 @@ import javax.microedition.lcdui.*;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Reference:
+ * https://github.com/shinovon/JTube/blob/master/src/jtube/PlatformUtils.java
+ * https://github.com/Computershik73/ViKaTouch/blob/52c5e1c/src/vikatouch/utils/KeyCodeAdapter.java
+ * https://github.com/davidw/hecl/blob/master/midp20gui/org/hecl/midp20/lcdui/HeclCanvas.java#L684
+ */
 public class Platform extends Canvas {
     // Dummy canvas for querying system graphics info
 	public Platform() {
@@ -40,9 +46,6 @@ public class Platform extends Canvas {
 	public static final boolean preferModernConnector;
 	public static final boolean allowSecondaryConnector;
 
-    private static int leftSoftkeyCode = -6;
-    private static int rightSoftkeyCode = -7;
-
 	static {
 		String p = System.getProperty("microedition.platform");
 		if (p == null) p = "";
@@ -58,7 +61,9 @@ public class Platform extends Canvas {
 		isNokia = plat.startsWith("Nokia");
 		isSonyEricsson = plat.startsWith("SonyEr");
 		isBlackBerry = plat.startsWith("BlackB");
-		isSiemens = checkClass("com.siemens.mp.lcdui.Image");
+
+		isSiemens = checkClass("com.siemens.mp.lcdui.Image") ||
+			checkClass("com.siemens.mp.io.File");
 
 		isMotorola = checkClass("com.motorola.multimedia.Vibrator") ||
 			checkClass("com.motorola.graphics.j3d.Effect3D") ||
@@ -112,13 +117,17 @@ public class Platform extends Canvas {
 		}
 	}
 
-	// Samsung platform strings are inconsistent but one fairly effective way to
-	// check for them is to look for a firmware version number
-	// (platform string ends with 4 uppercase letters and 1 digit).
-	// Not a perfect check (sometimes plat string is just "j2me") but it's
-	// good enough for the touchscreen-era models
 	private static boolean isSamsung() {
+		if (checkClass("com.samsung.util.Vibration")) return true;
+
 		if (plat.indexOf("Samsung") != -1 || plat.indexOf("GT-") != -1) return true;
+
+		// Samsung platform strings are inconsistent but one fairly effective way to
+		// check for them is to look for a firmware version number
+		// (platform string ends with 4 uppercase letters and 1 digit).
+		// Not a perfect check (sometimes plat string is just "j2me") but it's
+		// good enough for the touchscreen-era models
+
 		if (plat.length() < 5) return false;
 
 		for (int i = 2; i < 6; i++) {
@@ -137,4 +146,8 @@ public class Platform extends Canvas {
 			checkClass("com.symbian.midp.io.protocol.http.Protocol") ||
 			checkClass("com.symbian.lcdjava.io.File");
     }
+
+	public static boolean isJ9S60Version(String v) {
+		return plat.indexOf("sw_platform_version=" + v) != -1;
+	}
 }
