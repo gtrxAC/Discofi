@@ -25,12 +25,23 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
         addCommand(new Command("Refresh", Command.SCREEN, CMD_REFRESH));
         
-        fetchData(false);
+        loadOrFetchData();
     }
 
-    private void fetchData(boolean refresh) {
+    private void loadOrFetchData() {
+        Account acc = Accounts.getActive();
+        Vector cachedChannels = acc.channelCache.get(guild.id);
+
+        if (cachedChannels != null) {
+            populate(cachedChannels);
+        }
+        else {
+            fetchData();
+        }
+    }
+
+    private void fetchData() {
         HTTPThread h = new HTTPThread(HTTPThread.ACTION_FETCH_GUILD_CHANNELS, this);
-        h.refresh = refresh;
         h.guild = guild;
         h.start();
     }
@@ -42,7 +53,7 @@ public class ChannelListScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_REFRESH: {
-                fetchData(true);
+                fetchData();
                 break;
             }
         }

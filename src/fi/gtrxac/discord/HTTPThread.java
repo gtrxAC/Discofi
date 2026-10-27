@@ -27,7 +27,6 @@ public class HTTPThread extends Thread {
     private Screen callerScreen;
     private Account acc;
 
-    public boolean refresh;
     public String email;
     public String password;
     public String totp;
@@ -215,33 +214,23 @@ public class HTTPThread extends Thread {
     private void runFetchGuildChannels() throws DiscordException {
         ChannelListScreen list = (ChannelListScreen) callerScreen;
         list.removeAllItems();
+        list.addItem(new LoadingItem());
 
-        Vector channels = null;
-        
-        if (!refresh) {
-            channels = acc.channelCache.get(guild.id);
-        }
+        try {
+            JSONArray channelsJson = (JSONArray) acc.fetchJSON("/guilds/" + guild.id + "/channels");
+            Vector channels = parseGuildChannels(channelsJson);
 
-        // Forced refresh or not cached -> fetch and save to cache
-        if (channels == null) {
-            list.addItem(new LoadingItem());
-
-            try {
-                JSONArray channelsJson = (JSONArray) acc.fetchJSON("/guilds/" + guild.id + "/channels");
-                channels = parseGuildChannels(channelsJson);
-            }
-            catch (DiscordException e) {
-                list.showError();
-                throw e;
-            }
-            
             acc.channelCache.set(guild.id, channels);
+
+            // Save cache
+            Settings.save();
+
+            list.populate(channels);
         }
-
-        // Save cache
-        Settings.save();
-
-        list.populate(channels);
+        catch (DiscordException e) {
+            list.showError();
+            throw e;
+        }
     }
 
     /**
