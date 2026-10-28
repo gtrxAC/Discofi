@@ -25,12 +25,12 @@ public class NetworkIndicator {
     public static final int width;
 
     static {
-        Font smallFont = Fonts.get(-2, false, false, false);
-        int smallFontHeight = smallFont.getHeight();
+        Font mediumFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
+        int mediumFontHeight = mediumFont.getHeight();
 
         width = !isShown ? 0 :
-            Platform.isSonyEricsson ? smallFontHeight*3/2 :
-            Platform.isBlackBerry ? smallFontHeight/2 :
-            smallFontHeight;
+            Platform.isSonyEricsson ? mediumFontHeight*3/2 :
+            Platform.isBlackBerry ? mediumFontHeight/2 :
+            mediumFontHeight;
     }
 }
