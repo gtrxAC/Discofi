@@ -20,6 +20,7 @@ public class AppCanvas extends Canvas {
     private boolean rightSoftkeyPressed;
     private boolean optionsCommandShown;
 
+    private boolean use12hTime;
     private String currentClock;
     private String currentTitle;
 
@@ -448,20 +449,15 @@ public class AppCanvas extends Canvas {
     }
 
     public void updateClock() {
-        Calendar now = Calendar.getInstance();
+        currentClock = Util.formatTimestamp(System.currentTimeMillis(), use12hTime);
 
-        StringBuffer clock = new StringBuffer()
-            .append(now.get(Calendar.HOUR_OF_DAY))
-            .append(":");
-
-        int minute = now.get(Calendar.MINUTE);
-        if (minute < 10) clock.append("0");
-        clock.append(minute);
-        
-        currentClock = clock.toString();
-
-        if (AppCanvas.instance != null) {
+        if (instance != null) {
             AppBase.repaint();
         }
+    }
+
+    public static void setTimeFormat(boolean use12hTime) {
+        instance.use12hTime = use12hTime;
+        instance.updateClock();
     }
 }

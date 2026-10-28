@@ -34,7 +34,7 @@ public class Message {
     public Message(JSONObject data) {
         id = data.getString("id");
         author = new User(data.getObject("author"));
-        timestamp = DiscordUtil.formatTimestamp(id, false);
+        timestamp = DiscordUtil.formatTimestamp(id, Settings.use12hTime);
 
         JSONObject contentObject = getContentObject(data);
 

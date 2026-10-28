@@ -15,7 +15,7 @@ public class StringItem extends Item {
     private String[] textLines;
     private int align;
     private int x;
-    public int color;
+    protected int color;
 
     public StringItem(String text) {
         this(text, null);
@@ -30,7 +30,6 @@ public class StringItem extends Item {
         this.text = text;
         this.definedFont = font;
         this.align = align;
-        this.color = Colors.stringItemText;
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
@@ -45,6 +44,8 @@ public class StringItem extends Item {
     }
 
     public void recalc(int width) {
+        color = Colors.stringItemText;
+
         // Allow font size to change if font was not defined in constructor
         font = definedFont;
         if (font == null) font = Fonts.plain;

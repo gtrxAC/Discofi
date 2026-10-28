@@ -13,6 +13,8 @@ public class SettingsScreen extends ListScreen implements CommandListener {
 
     private RadioButtonGroup fontSizeGroup;
     private RadioButtonGroup themeGroup;
+    private RadioButtonGroup avatarGroup;
+    private RadioButtonGroup timeFormatGroup;
 
     public SettingsScreen() {
         super();
@@ -36,25 +38,41 @@ public class SettingsScreen extends ListScreen implements CommandListener {
 
         themeGroup.setTickedIndex(Settings.lightTheme ? 1 : 0);
 
+        addItem("Avatars:");
+        avatarGroup = new RadioButtonGroup();
+        addItem(new RadioButtonItem(avatarGroup, "Circle"));
+        addItem(new RadioButtonItem(avatarGroup, "Square"));
+
+        avatarGroup.setTickedIndex(Settings.squareAvatars ? 1 : 0);
+
+        addItem("Time format:");
+        timeFormatGroup = new RadioButtonGroup();
+        addItem(new RadioButtonItem(timeFormatGroup, "12 hours"));
+        addItem(new RadioButtonItem(timeFormatGroup, "24 hours"));
+
+        timeFormatGroup.setTickedIndex(Settings.use12hTime ? 0 : 1);
+
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
+    }
+
+    private void writeSettings() {
+        int[] fontSizes = { Font.SIZE_SMALL, Font.SIZE_MEDIUM, Font.SIZE_LARGE };
+        Settings.fontSize = fontSizes[fontSizeGroup.getTickedIndex()];
+
+        Settings.lightTheme = (themeGroup.getTickedIndex() == 1);
+        Settings.squareAvatars = (avatarGroup.getTickedIndex() == 1);
+        Settings.use12hTime = (timeFormatGroup.getTickedIndex() == 0);
+
+        // HTTPQueue.maxSlots = Integer.parseInt(connLimitField.getValue());
+        // if (HTTPQueue.maxSlots < 1) HTTPQueue.maxSlots = 1;
     }
 
     public void commandAction(Command c, Displayable d) {
         switch (c.getPriority()) {
             case CMD_BACK: {
-                int[] fontSizes = { Font.SIZE_SMALL, Font.SIZE_MEDIUM, Font.SIZE_LARGE };
-                Settings.fontSize = fontSizes[fontSizeGroup.getTickedIndex()];
-
-                Settings.lightTheme = (themeGroup.getTickedIndex() == 1);
-
-                // HTTPQueue.maxSlots = Integer.parseInt(connLimitField.getValue());
-                // if (HTTPQueue.maxSlots < 1) HTTPQueue.maxSlots = 1;
-                
+                writeSettings();
                 Settings.save();
-                Fonts.loadFonts(Settings.fontSize);
-                Theme.load();
-
                 App.popScreen();
                 break;
             }
@@ -62,5 +80,7 @@ public class SettingsScreen extends ListScreen implements CommandListener {
     }
 
     public void itemSelected(Item i) {
+        writeSettings();
+        Settings.refresh();
     }
 }

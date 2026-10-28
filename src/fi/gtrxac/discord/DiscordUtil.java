@@ -2,6 +2,7 @@ package fi.gtrxac.discord;
 
 import java.util.*;
 import util.*;
+import fi.gtrxac.bluewap.Util;
 
 public class DiscordUtil {
     public static final Random random = new Random();
@@ -68,58 +69,6 @@ public class DiscordUtil {
 
     public static String formatTimestamp(String id, boolean use12hTime) {
         long timestamp = (Long.parseLong(id) >> 22) + DISCORD_EPOCH;
-        return formatTimestamp(timestamp, use12hTime);
-    }
-
-    public static String formatTimestamp(long timestamp, boolean use12hTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        int todayDay = cal.get(Calendar.DAY_OF_MONTH);
-        int todayMonth = cal.get(Calendar.MONTH);
-        int todayYear = cal.get(Calendar.YEAR);
-
-        cal.setTime(new Date(timestamp));
-        int stampDay = cal.get(Calendar.DAY_OF_MONTH);
-        int stampMonth = cal.get(Calendar.MONTH);
-        int stampYear = cal.get(Calendar.YEAR);
-
-        StringBuffer out = new StringBuffer();
-
-        if (todayDay != stampDay || todayMonth != stampMonth || todayYear != stampYear) {
-            // Timestamp does not point to today -> show date in day/month format
-            // Leading zeros in numbers are optional, here I left them out for the sake of compactness
-
-            out.append(stampDay).append('/').append(stampMonth + 1);
-
-            // With leading zeros:
-            // stampMonth++;
-            // if (stampDay < 10) time.append('0');
-            // out.append(stampDay).append('/');
-            // if (stampMonth < 10) time.append('0');
-            // time.append(stampMonth);
-        } else {
-            // Today -> show time in hour:minute format
-            int hour = cal.get(Calendar.HOUR_OF_DAY);
-            int minute = cal.get(Calendar.MINUTE);
-
-            if (use12hTime) {
-                char period = hour < 12 ? 'A' : 'P';
-
-                // Convert hours to 12-hour format
-                hour = hour % 12;
-                if (hour == 0) {
-                    hour = 12; // 12 AM or 12 PM
-                }
-
-                out.append(hour).append(':');
-                if (minute < 10) out.append('0');
-                out.append(minute).append(period);
-            } else {
-                out.append(hour).append(':');
-                if (minute < 10) out.append('0');
-                out.append(minute);
-            }
-        }
-        return out.toString();
+        return Util.formatTimestamp(timestamp, use12hTime);
     }
 }

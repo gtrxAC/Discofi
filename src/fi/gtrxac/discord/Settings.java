@@ -6,6 +6,7 @@ import javax.microedition.io.*;
 import javax.microedition.rms.*;
 import javax.microedition.lcdui.Font;
 import fi.gtrxac.bluewap.*;
+import fi.gtrxac.bluewap.ui.*;
 import fi.gtrxac.discord.util.*;
 
 public class Settings implements RecordIOImpl {
@@ -36,6 +37,16 @@ public class Settings implements RecordIOImpl {
      * This may be reworked later if/when more themes are added.
      */
     public static boolean lightTheme = false;
+
+    /**
+     * Show square avatars/profile pictures in chats instead of circular ones.
+     */
+    public static boolean squareAvatars = false;
+
+    /**
+     * Use 12-hour AM/PM time format in message timestamps instead of 24-hour.
+     */
+    public static boolean use12hTime = false;
     
     public void readData(DataInputStream dis) throws IOException {
         int numAccounts = dis.readInt();
@@ -63,6 +74,8 @@ public class Settings implements RecordIOImpl {
 
         deviceVendorID = dis.readUTF();
         lightTheme = dis.readBoolean();
+        squareAvatars = dis.readBoolean();
+        use12hTime = dis.readBoolean();
     }
 
     public void writeData(DataOutputStream dos) throws IOException {
@@ -89,6 +102,8 @@ public class Settings implements RecordIOImpl {
 
         dos.writeUTF(deviceVendorID);
         dos.writeBoolean(lightTheme);
+        dos.writeBoolean(squareAvatars);
+        dos.writeBoolean(use12hTime);
     }
 
     private Settings() {}
@@ -96,9 +111,21 @@ public class Settings implements RecordIOImpl {
 
     public static void save() {
         RecordIO.save("a", instance);
+        refresh();
+    }
+
+    public static void load() {
+        RecordIO.load("a", instance);
+        refresh();
+    }
+
+    public static void refresh() {
+        Fonts.loadFonts(fontSize);
+        Theme.load();
+        AppCanvas.setTimeFormat(use12hTime);
     }
 
     static {
-        RecordIO.load("a", instance);
+        load();
     }
 }
