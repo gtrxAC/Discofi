@@ -397,7 +397,7 @@ public class HTTPThread extends Thread {
     private void runFetchIcon() {
         try {
             String iconURL =
-                acc.getCdnUrl() + "/avatars/" + iconRequest.user.id + "/" +
+                acc.getMediaProxyUrl() + "/avatars/" + iconRequest.user.id + "/" +
                 iconRequest.user.iconHash + ".jpg?size=16&quality=low";
 
             HTTP h = HTTP.createRequest(iconURL);
