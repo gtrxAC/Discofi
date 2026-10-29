@@ -216,7 +216,7 @@ public class MessageItem extends Item {
         replyImageHighlighted = highlighted;
     }
 
-    public void recalc(int width) {
+    public void recalc(int width, ListScreen screen, Item aboveItem) {
         leftMargin = Fonts.height/3;
         avatarSize = Fonts.height*5/4;
         int avatarRightMargin = Fonts.height/3;
@@ -224,24 +224,37 @@ public class MessageItem extends Item {
         contentX = leftMargin + avatarSize + avatarRightMargin;
         contentWidth = width - contentX;
 
-        textLines = Util.wordWrap(message.content, contentWidth, Fonts.plain);
+        String displayedContent = message.isUnsupported() ?
+            "(unsupported message)" :
+            message.content;
+
+        textLines = Util.wordWrap(displayedContent, contentWidth, Fonts.plain);
         height = Fonts.height*textLines.length;
 
         if (message.isForwarded) {
             height += Fonts.height;  // extra line for the "Forwarded" text
         }
 
-        if (!message.showAuthor) return;
-        calcFonts();
-        calcAuthorHeight();
-        calcTimestampAndAuthor();
+        if (message.showAuthor) {
+            calcFonts();
+            calcAuthorHeight();
+            calcTimestampAndAuthor();
+        }
 
-        if (!message.isReply) return;
-        calcReplyHeight();
-        calcUnloadedReplyContent();
+        if (message.isReply) {
+            calcReplyHeight();
+            calcUnloadedReplyContent();
+        }
 
-        if (message.replyAuthor == null) return;
-        calcReplyContent();
+        if (message.replyAuthor != null) {
+            calcReplyContent();
+        }
+
+        if (message.content.length() == 0 && !message.isUnsupported()) {
+            // Make the message more closely connected to its attachment links
+            // if the message has no text content
+            height -= screen.itemPadding/2;
+        }
     }
 
     private void calcFonts() {

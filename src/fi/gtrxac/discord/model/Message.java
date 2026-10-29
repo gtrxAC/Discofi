@@ -45,7 +45,12 @@ public class Message {
             content = parseStatusMessage(contentObject, type);
         }
         else {
-            content = contentObject.getString("content", "");
+            content = contentObject.getString("content", null);
+            
+            if (content == null) {
+                content = "";
+            }
+
             parseReply(contentObject);
             parseAttachments(contentObject);
         }
@@ -78,14 +83,28 @@ public class Message {
         try {
             Message replyMessage = new Message(data.getObject("referenced_message"));
             replyAuthor = replyMessage.author;
-            replyContent = replyMessage.content;
 
-            if (replyContent.length() == 0) {
-                replyContent = "(no content)";
+            StringBuffer replyBuf = new StringBuffer();
+            replyBuf.append(replyMessage.content.replace('\n', ' '));
+
+            if (replyMessage.attachments != null) {
+                int attCount = replyMessage.attachments.size();
+
+                if (replyBuf.length() != 0) {
+                    replyBuf.append(" ");
+                }
+
+                replyBuf.append("(")
+                    .append(attCount)
+                    .append(" file");
+
+                if (attCount != 1) {
+                    replyBuf.append("s");
+                }
+                replyBuf.append(")");
             }
-            else {
-                replyContent = replyContent.replace('\n', ' ');
-            }
+
+            replyContent = replyBuf.toString();
         }
         catch (Exception e) {}
     }
@@ -153,6 +172,13 @@ public class Message {
                 return "boosted the server to level " + (type - TYPE_BOOSTED);
             }
         }
+    }
+
+    /**
+     * Check if no supported content was successfully parsed from this message.
+     */
+    public boolean isUnsupported() {
+        return content.length() == 0 && attachments == null;
     }
 
     /**
