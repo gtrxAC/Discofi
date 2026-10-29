@@ -224,10 +224,10 @@ public class AppCanvas extends Canvas {
         updateTitle();
     }
 
-    protected void keyPressed(int keyCode) {
-        Screen curr = AppBase.getCurrentScreen();
-        if (curr == null) return;
+    private static volatile boolean isKeyPressed = false;
+    public static volatile long beginRepeatTime;
 
+    protected void keyPressed(int keyCode) {
         if (Softkeys.isLeftSoftkey(keyCode)) {
             leftSoftkeyPressed();
             return;
@@ -238,13 +238,30 @@ public class AppCanvas extends Canvas {
             return;
         }
 
+        keyEvent(keyCode);
+
+        if (!isKeyPressed) {
+            isKeyPressed = true;
+            beginRepeatTime = System.currentTimeMillis() + 500;
+            synchronized (KeyRepeatThread.instance) {
+                KeyRepeatThread.activeKey = keyCode;
+                KeyRepeatThread.instance.notify();
+            }
+        }
+    }
+
+    public void keyEvent(int keyCode) {
+        Screen curr = AppBase.getCurrentScreen();
+        if (curr == null) return;
+
         curr.keyEvent(keyCode, getGameAction(keyCode));
         AppBase.repaint();
     }
 
-    protected void keyRepeated(int keyCode) {
-        if (!Softkeys.isLeftSoftkey(keyCode) && !Softkeys.isRightSoftkey(keyCode)) {
-            keyPressed(keyCode);
+    protected void keyReleased(int key) {
+        if (isKeyPressed) {
+            isKeyPressed = false;
+            KeyRepeatThread.activeKey = 0;
         }
     }
 
