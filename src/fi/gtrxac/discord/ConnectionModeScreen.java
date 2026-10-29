@@ -41,8 +41,14 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
         addItem(new BlankItem(0));
 
-        addItem(btOption = new RadioButtonItem(group, "BT tethering"));
-        addItem("Tether to a device running BlueWAP Server. Recommended when TLS 1.2 is unavailable, or in regions without 2G/3G networks.");
+        if (Platform.supportsBluetooth) {
+            addItem(btOption = new RadioButtonItem(group, "BT tethering"));
+            addItem("Tether to a device running BlueWAP Server. Recommended when TLS 1.2 is unavailable, or in regions without 2G/3G networks.");
+        }
+        else {
+            addItem(new WarningItem(
+                "Bluetooth tethering is unavailable. Your device does not support Java Bluetooth API."));
+        }
 
         addItem(new BlankItem(0));
 
@@ -77,9 +83,11 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             insertItem(new BlankItem(0), urlFieldsPosition);
             insertItem(mediaProxyUrlField, urlFieldsPosition);
             insertItem(new LabelItem("Media proxy URL"), urlFieldsPosition);
+            
             insertItem(new BlankItem(0), urlFieldsPosition);
             insertItem(cdnUrlField, urlFieldsPosition);
             insertItem(new LabelItem("CDN URL"), urlFieldsPosition);
+
             insertItem(new BlankItem(0), urlFieldsPosition);
             insertItem(apiUrlField, urlFieldsPosition);
             insertItem(new LabelItem("API URL"), urlFieldsPosition);
@@ -114,7 +122,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     }
 
     public void itemSelected(Item i) {
-        if (i == directOption || i == btOption) {
+        if (i == directOption || (i == btOption && i != null)) {
             App.pendingAccount.connectionMode = (i == directOption) ?
                 Account.CONNECTION_MODE_DIRECT :
                 Account.CONNECTION_MODE_BLUETOOTH;

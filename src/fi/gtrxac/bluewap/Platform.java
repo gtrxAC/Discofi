@@ -41,6 +41,9 @@ public class Platform extends Canvas {
 	public static final boolean isMotorola;
 	public static final boolean isSamsung;
 
+	public static final boolean supportsBluetooth;
+	public static final boolean supportsFileConnection;
+
 	public static final int vectorRenderScale;
 	public static final boolean useUnderlinedFont;
 	public static final boolean hasRoundRectSizeBug;
@@ -73,6 +76,9 @@ public class Platform extends Canvas {
 			checkClass("com.motorola.multimedia.FunLight");
 
 		isSamsung = isSamsung();
+
+    	supportsBluetooth = checkClass("javax.bluetooth.RemoteDevice");
+		supportsFileConnection = checkClass("javax.microedition.io.file.FileConnection");
 
 		// Rendering scale used for dynamically generated vector graphics for some UI elements
 		// Larger numbers will look nicer, but above 5 there isn't much of a noticeable difference

@@ -8,6 +8,7 @@ public class LabelItem extends StringItem {
     }
 
     public void recalc(int width) {
+        super.recalc(width);
         color = Theme.labelItem;
     }
 }

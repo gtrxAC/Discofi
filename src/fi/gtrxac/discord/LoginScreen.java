@@ -68,7 +68,14 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
         addItem(tokenLoginButton = new ButtonItem("Use token"));
         addItem(tokenJarImportButton = new ButtonItem("Import from JAR"));
-        addItem(tokenFileImportButton = new ButtonItem("Import from file"));
+
+        if (Platform.supportsFileConnection) {
+            addItem(tokenFileImportButton = new ButtonItem("Import from file"));
+        }
+        else {
+            addItem(new WarningItem(
+                "Token file import is unavailable as your device does not support FileConnection API. Use JAR import instead."));
+        }
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
@@ -108,7 +115,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
             jarToken = jarToken.replace('"', ' ').trim();
             verifyAndCompleteLogin(jarToken);
         }
-        else if (i == tokenFileImportButton) {
+        else if (i == tokenFileImportButton && i != null) {
             App.pushScreen(new TokenImportScreen());
         }
     }
