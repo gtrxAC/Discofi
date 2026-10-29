@@ -408,6 +408,22 @@ public class Account {
     }
 
     /**
+     * Tell the API that the user is typing in a channel. Discord clears the
+     * indicator automatically after about ten seconds.
+     */
+    public void sendTyping(String channelId) {
+        try {
+            HTTP h = createApiRequest("POST", "/channels/" + channelId + "/typing");
+            h.setData("");
+            h.getResponseCode();
+            h.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Fetch the logged in user's profile and cache the username on this account.
      */
     public void fetchUserProfile() throws DiscordException {

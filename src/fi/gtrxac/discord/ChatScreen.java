@@ -128,10 +128,12 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
             case CMD_SEND: {
+                sendTypingIndicator();
                 App.disp.setCurrent(new MessageBox(this, messageDraft));
                 break;
             }
             case CMD_REPLY: {
+                sendTypingIndicator();
                 MessageItem item = (MessageItem) getHighlightedItem();
                 App.pushScreen(new ReplyScreen(channel, item.message, messageDraft));
                 break;
@@ -165,6 +167,20 @@ public class ChatScreen extends ListScreen implements CommandListener {
                 break;
             }
         }
+    }
+
+    public static volatile long lastSentTypingTime;
+
+    private void sendTypingIndicator() {
+        // to avoid API spam, only allow sending typing indicator once every 10 sec
+        long now = System.currentTimeMillis();
+        if (now < lastSentTypingTime + 10000) return;
+
+        HTTPThread h = new HTTPThread(HTTPThread.ACTION_SEND_TYPING);
+        h.channel = channel;
+        h.start();
+
+        // lastSentTypingTime is updated by thread
     }
 
     private void showDeletePrompt() {

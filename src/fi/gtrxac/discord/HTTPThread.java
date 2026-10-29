@@ -22,6 +22,7 @@ public class HTTPThread extends Thread {
     public static final int ACTION_FETCH_ATTACHMENT = 9;
     public static final int ACTION_DELETE_MESSAGE = 10;
     public static final int ACTION_EDIT_MESSAGE = 11;
+    public static final int ACTION_SEND_TYPING = 12;
 
     private int action;
     private Screen callerScreen;
@@ -76,6 +77,7 @@ public class HTTPThread extends Thread {
                 case ACTION_FETCH_ATTACHMENT: runFetchAttachment(); break;
                 case ACTION_DELETE_MESSAGE: runDeleteMessage(); break;
                 case ACTION_EDIT_MESSAGE: runEditMessage(); break;
+                case ACTION_SEND_TYPING: runSendTyping(); break;
             }
         }
         catch (DiscordException e) {
@@ -523,5 +525,12 @@ public class HTTPThread extends Thread {
         }
 
         chatScreen.fetchMessages(null, null, 0, false);
+    }
+
+    private void runSendTyping() {
+        ChatScreen chatScreen = (ChatScreen) callerScreen;
+
+        acc.sendTyping(channel.id);
+        chatScreen.lastSentTypingTime = System.currentTimeMillis();
     }
 }
