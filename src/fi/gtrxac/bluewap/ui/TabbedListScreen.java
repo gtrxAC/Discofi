@@ -82,7 +82,7 @@ public class TabbedListScreen extends Screen {
         int lineY = tabBarHeight - 1;
 
         g.setColor(Colors.tabOutlineColor);
-        g.drawLine(0, lineY, selectedTabBegin, lineY);
+        g.drawLine(-NetworkIndicator.width, lineY, selectedTabBegin, lineY);
         g.drawLine(selectedTabEnd, lineY, getWidth(), lineY);
 
         if (NetworkIndicator.isOnTopLeft) {
