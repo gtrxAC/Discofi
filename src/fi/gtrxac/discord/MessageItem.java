@@ -159,7 +159,13 @@ public class MessageItem extends Item {
 
     private void drawAvatarPlaceholder(Graphics g, int x, int y, int size) {
         g.setColor(Theme.avatarPlaceholder);
-        g.fillArc(x, y, size, size, 0, 360);
+
+        if (Settings.squareAvatars) {
+            g.fillRect(x, y, size, size);
+        }
+        else {
+            g.fillArc(x, y, size, size, 0, 360);
+        }
     }
 
     private void drawMessageContent(Graphics g, int y, boolean highlighted) {

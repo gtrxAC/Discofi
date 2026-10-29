@@ -35,6 +35,10 @@ public class IconManager implements Runnable {
         return null;
     }
 
+    public static void reset() {
+        resizedIconCache.clear();
+    }
+
     private static void addRequest(User user, int size, MessageItem callback) {
         synchronized (requests) {
             // Find if there is an existing matching request
@@ -107,8 +111,10 @@ public class IconManager implements Runnable {
                     Image icon = iconCache.get(req.user.iconHash);
                     icon = ImageUtils.resize(icon, req.targetSize, req.targetSize, true, true);
 
-                    boolean smooth = (App.disp.numAlphaLevels() > 2);
-                    icon = CircleCutout.make(icon, smooth);
+                    if (!Settings.squareAvatars) {
+                        boolean smooth = (App.disp.numAlphaLevels() > 2);
+                        icon = CircleCutout.make(icon, smooth);
+                    }
 
                     resizedIconCache.set(req.user.iconHash, req.targetSize, icon);
                     requestFulfilled(req);

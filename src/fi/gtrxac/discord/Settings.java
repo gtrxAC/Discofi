@@ -119,10 +119,14 @@ public class Settings implements RecordIOImpl {
         refresh();
     }
 
+    /**
+     * Reset variables that are dependent on any settings.
+     */
     public static void refresh() {
         Fonts.loadFonts(fontSize);
         Theme.load();
         AppCanvas.setTimeFormat(use12hTime);
+        IconManager.reset();
     }
 
     static {

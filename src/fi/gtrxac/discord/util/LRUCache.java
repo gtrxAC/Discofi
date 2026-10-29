@@ -31,6 +31,10 @@ public class LRUCache {
         cache.put(key, entry);
     }
 
+    public void clear() {
+        cache.clear();
+    }
+
     protected void deleteOldestItem() {
         if (cache.size() < size) return;
 
