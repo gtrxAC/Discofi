@@ -406,4 +406,14 @@ public class Account {
         JSONObject created = (JSONObject) postJSON("/channels/" + channel.id + "/messages", body);
         return new Message(created);
     }
+
+    /**
+     * Fetch the logged in user's profile and cache the username on this account.
+     */
+    public void fetchUserProfile() throws DiscordException {
+        JSONObject me = (JSONObject) fetchJSON("/users/@me");
+
+        String globalName = me.getString("global_name", null);
+        username = globalName != null ? globalName : me.getString("username", null);
+    }
 }

@@ -1,6 +1,7 @@
 package fi.gtrxac.discord.model;
 
 import fi.gtrxac.discord.*;
+import fi.gtrxac.bluewap.Util;
 import fi.gtrxac.discord.DiscordUtil;
 import cc.nnproject.json.*;
 import java.util.*;
@@ -45,12 +46,7 @@ public class Message {
             content = parseStatusMessage(contentObject, type);
         }
         else {
-            content = contentObject.getString("content", null);
-            
-            if (content == null) {
-                content = "";
-            }
-
+            content = parseContent(contentObject);
             parseReply(contentObject);
             parseAttachments(contentObject);
         }
@@ -71,6 +67,27 @@ public class Message {
         catch (Exception e) {}
 
         return result;
+    }
+
+    private String parseContent(JSONObject contentObject) {
+        String content = contentObject.getString("content", null);
+        if (content == null) return "";
+
+        try {
+            // Parse the logged in user's mention into human-readable form.
+            // This does not affect mentions of other users, and it is just temporary for now.
+            // TODO: Later we will use rich text to make mentions have a blue background.
+
+            Account acc = Accounts.getActive();
+            String mentionCode = "<@" + acc.getUserID() + ">";
+            String mentionText = "@" + acc.getDisplayTitle();
+
+            return Util.replace(content, mentionCode, mentionText);
+        }
+        catch (DiscordException e) {
+            e.printStackTrace();
+            return content;
+        }
     }
 
     private void parseReply(JSONObject data) {

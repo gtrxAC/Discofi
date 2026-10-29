@@ -57,6 +57,12 @@ public class HTTPThread extends Thread {
 
     public void run() {
         try {
+            // Fetch account's username before making the first API request from this account.
+            if (acc.username == null) {
+                acc.fetchUserProfile();
+                Settings.save();
+            }
+
             switch (action) {
                 case ACTION_PASSWORD_LOGIN: runPasswordLogin(); break;
                 case ACTION_SUBMIT_TOTP: runSubmitTotp(); break;
