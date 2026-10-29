@@ -235,26 +235,27 @@ public class MessageItem extends Item {
             height += Fonts.height;  // extra line for the "Forwarded" text
         }
 
-        if (message.showAuthor) {
-            calcFonts();
-            calcAuthorHeight();
-            calcTimestampAndAuthor();
-        }
-
-        if (message.isReply) {
-            calcReplyHeight();
-            calcUnloadedReplyContent();
-        }
-
-        if (message.replyAuthor != null) {
-            calcReplyContent();
-        }
+        calcExtras();
 
         if (message.content.length() == 0 && !message.isUnsupported()) {
             // Make the message more closely connected to its attachment links
             // if the message has no text content
             height -= screen.itemPadding/2;
         }
+    }
+
+    private void calcExtras() {
+        if (!message.showAuthor) return;
+        calcFonts();
+        calcAuthorHeight();
+        calcTimestampAndAuthor();
+
+        if (!message.isReply) return;
+        calcReplyHeight();
+        calcUnloadedReplyContent();
+
+        if (message.replyAuthor == null) return;
+        calcReplyContent();
     }
 
     private void calcFonts() {

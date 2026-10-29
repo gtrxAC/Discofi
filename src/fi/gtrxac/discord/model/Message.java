@@ -211,7 +211,7 @@ public class Message {
         if (!above.author.id.equals(author.id)) return true;
 
         // This message is a reply -> true
-        if (replyAuthor != null) return true;
+        if (isReply) return true;
 
         // This message only consists of an attachment -> true
         if (attachments != null && content.length() == 0) return true;
