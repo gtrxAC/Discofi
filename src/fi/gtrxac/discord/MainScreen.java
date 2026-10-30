@@ -25,8 +25,9 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     private ListView guildsTab;
     private ListView dmsTab;
     private ListView inboxTab;
-    private boolean dmChannelsLoaded;
-    private boolean inboxLoaded;
+
+    private boolean dmsTabNeedsLoad = true;
+    private boolean inboxTabNeedsLoad = true;
 
     public MainScreen() {
         super();
@@ -76,6 +77,7 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             try {
                 Vector dmChannels = acc.getDMChannels(false);
                 populateDMsTab(dmChannels);
+                dmsTabNeedsLoad = false;
             }
             catch (DiscordException e) {
                 e.show();
@@ -110,7 +112,6 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             
             dmsTab.addItem(new ListItem(c.getName(), c));
         }
-        dmChannelsLoaded = true;
     }
 
     public void populateInboxTab(Vector inbox) {
@@ -122,21 +123,12 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             
             inboxTab.addItem(new MessageItem(m));
         }
-        inboxLoaded = true;
     }
 
     public void showErrorOnTab(int tabIndex) {
         ListView tab = (ListView) tabs.elementAt(tabIndex);
         tab.removeAllItems();
         tab.addItem(new FailedToLoadItem());
-
-        // Mark tab as loaded so it won't immediately reload when switching to it again
-        if (tabIndex == TAB_DMS) {
-            dmChannelsLoaded = true;
-        }
-        else if (tabIndex == TAB_INBOX) {
-            inboxLoaded = true;
-        }
     }
 
     private void fetchTabData(int action) {
@@ -145,12 +137,14 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     private boolean currentTabNeedsLoading() {
-        return (currentTabIndex == TAB_DMS && !dmChannelsLoaded) ||
-            (currentTabIndex == TAB_INBOX && !inboxLoaded);
+        return (currentTabIndex == TAB_DMS && dmsTabNeedsLoad) ||
+            (currentTabIndex == TAB_INBOX && inboxTabNeedsLoad);
     }
 
     public void currentTabChanged(int currentTabIndex) {
-        if (currentTabNeedsLoading()) refreshCurrentTab();
+        if (currentTabNeedsLoading()) {
+            refreshCurrentTab();
+        }
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -215,10 +209,12 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
             }
             case TAB_DMS: {
                 fetchTabData(HTTPThread.ACTION_FETCH_DM_CHANNELS);
+                dmsTabNeedsLoad = false;
                 break;
             }
             case TAB_INBOX: {
                 fetchTabData(HTTPThread.ACTION_FETCH_INBOX);
+                inboxTabNeedsLoad = false;
                 break;
             }
         }
