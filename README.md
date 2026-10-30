@@ -2,8 +2,8 @@
 
 Microcord is a new Discord client for Java devices, currently in development. Its goal is to be an evolution of [Discord J2ME](https://github.com/gtrxAC/discord-j2me) and [Droidcord](https://github.com/leap0x7b/Droidcord) with a focus on proxyless connectivity, user-friendly UI, and maintainability.
 
-> [!INFO]
-> **Note that Microcord is not yet a fully featured replacement for Discord J2ME.**
+> [!IMPORTANT]
+> **Microcord is not yet a fully featured replacement for Discord J2ME.**
 >
 > It lacks some features of Discord J2ME (like emojis) but also has some features not present in Discord J2ME (like the inbox).
 
