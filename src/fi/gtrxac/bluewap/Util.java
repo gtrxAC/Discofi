@@ -322,7 +322,7 @@ public class Util {
         }
 
 		// For a little bit nicer display, remove one trailing space if there is one
-		if (charIsWhitespace(str.charAt(str.length() - 1))) {
+		if (str.length() > 0 && charIsWhitespace(str.charAt(str.length() - 1))) {
             str = str.substring(0, str.length() - 1);
 		}
 
