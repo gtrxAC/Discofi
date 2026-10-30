@@ -377,7 +377,8 @@ public class HTTPThread extends Thread {
         }
 
         url.append(hasParameter ? '&' : '?')
-            .append("limit=20");
+            .append("limit=")
+            .append(Settings.messageLoadCount);
 
         return url.toString();
     }

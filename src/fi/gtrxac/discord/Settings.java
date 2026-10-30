@@ -47,6 +47,16 @@ public class Settings implements RecordIOImpl {
      * Use 12-hour AM/PM time format in message timestamps instead of 24-hour.
      */
     public static boolean use12hTime = false;
+
+    /**
+     * How many messages to load per page.
+     */
+    public static int messageLoadCount = 20;
+
+    /**
+     * When going to a message sending screen, send the typing indicator to show others that you are typing. 
+     */
+    public static boolean sendTypingIndicator = true;
     
     public void readData(DataInputStream dis) throws IOException {
         int numAccounts = dis.readInt();
@@ -76,6 +86,8 @@ public class Settings implements RecordIOImpl {
         lightTheme = dis.readBoolean();
         squareAvatars = dis.readBoolean();
         use12hTime = dis.readBoolean();
+        messageLoadCount = dis.readUnsignedByte();
+        sendTypingIndicator = dis.readBoolean();
     }
 
     public void writeData(DataOutputStream dos) throws IOException {
@@ -104,6 +116,8 @@ public class Settings implements RecordIOImpl {
         dos.writeBoolean(lightTheme);
         dos.writeBoolean(squareAvatars);
         dos.writeBoolean(use12hTime);
+        dos.writeByte(messageLoadCount);
+        dos.writeBoolean(sendTypingIndicator);
     }
 
     private Settings() {}

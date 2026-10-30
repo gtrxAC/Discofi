@@ -172,6 +172,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static volatile long lastSentTypingTime;
 
     private void sendTypingIndicator() {
+        if (!Settings.sendTypingIndicator) return;
+
         // to avoid API spam, only allow sending typing indicator once every 10 sec
         long now = System.currentTimeMillis();
         if (now < lastSentTypingTime + 10000) return;
@@ -236,7 +238,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public void readdItems() {
         Vector newItems = new Vector();
 
-        if (messages.size() >= 20) {
+        if (messages.size() >= Settings.messageLoadCount) {
             newItems.addElement(olderMessagesButton);
         }
 
