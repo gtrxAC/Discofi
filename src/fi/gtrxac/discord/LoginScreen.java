@@ -21,7 +21,10 @@ public class LoginScreen extends ListScreen implements CommandListener {
     private ButtonItem loginButton;
     private ButtonItem tokenLoginButton;
     private ButtonItem tokenJarImportButton;
+
+//#ifndef NO_FILECONNECTION
     private ButtonItem tokenFileImportButton;
+//#endif
 
     public LoginScreen() {
         super();
@@ -69,6 +72,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
         addItem(tokenLoginButton = new ButtonItem("Use token"));
         addItem(tokenJarImportButton = new ButtonItem("Import from JAR"));
 
+//#ifndef NO_FILECONNECTION
         if (Platform.supportsFileConnection) {
             addItem(tokenFileImportButton = new ButtonItem("Import from file"));
         }
@@ -76,6 +80,12 @@ public class LoginScreen extends ListScreen implements CommandListener {
             addItem(new WarningItem(
                 "Token file import is unavailable as your device does not support FileConnection API. Use JAR import instead."));
         }
+//#else
+        if (Platform.supportsFileConnection) {
+            addItem(new WarningItem(
+                "Token file import is unavailable in Microcord Lite. Use JAR import or install the standard version of Microcord to use file import."));
+        }
+//#endif
 
         setCommandListener(this);
         addCommand(new Command("Back", Command.BACK, CMD_BACK));
@@ -115,9 +125,11 @@ public class LoginScreen extends ListScreen implements CommandListener {
             jarToken = jarToken.replace('"', ' ').trim();
             verifyAndCompleteLogin(jarToken);
         }
+//#ifndef NO_FILECONNECTION
         else if (i == tokenFileImportButton && i != null) {
             App.pushScreen(new TokenImportScreen());
         }
+//#endif
     }
 
     public void passwordLogin() {

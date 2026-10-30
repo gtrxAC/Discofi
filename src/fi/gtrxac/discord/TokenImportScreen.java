@@ -1,3 +1,4 @@
+//#ifndef NO_FILECONNECTION
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
@@ -49,3 +50,4 @@ public class TokenImportScreen extends FilePickerScreen {
         try { fc.close(); } catch (Exception e) {}
     }
 }
+//#endif

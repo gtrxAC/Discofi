@@ -41,6 +41,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
         addItem(new BlankItem(0));
 
+//#ifndef NO_BLUETOOTH
         if (Platform.supportsBluetooth) {
             addItem(btOption = new RadioButtonItem(group, "BT tethering"));
             addItem("Tether to a device running BlueWAP Server. Recommended when TLS 1.2 is unavailable, or in regions without 2G/3G networks.");
@@ -49,6 +50,12 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             addItem(new WarningItem(
                 "Bluetooth tethering is unavailable. Your device does not support Java Bluetooth API."));
         }
+//#else
+        if (Platform.supportsBluetooth) {
+            addItem(new WarningItem(
+                "Bluetooth tethering is unavailable in Microcord Lite. To use tethering, install the standard version of Microcord."));
+        }
+//#endif
 
         addItem(new BlankItem(0));
 
@@ -122,6 +129,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
     }
 
     public void itemSelected(Item i) {
+//#ifndef NO_BLUETOOTH
         if (i == directOption || (i == btOption && i != null)) {
             App.pendingAccount.connectionMode = (i == directOption) ?
                 Account.CONNECTION_MODE_DIRECT :
@@ -129,6 +137,13 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 
             setUrlFieldsVisibility(false);
         }
+//#else
+        if (i == directOption) {
+            App.pendingAccount.connectionMode = Account.CONNECTION_MODE_DIRECT;
+
+            setUrlFieldsVisibility(false);
+        }
+//#endif
         else if (i == proxyOption) {
             App.pendingAccount.connectionMode = Account.CONNECTION_MODE_PROXY;
 
@@ -183,6 +198,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
             App.pendingAccount.mediaProxyUrl = mediaProxyUrl;
         }
 
+//#ifndef NO_BLUETOOTH
         if (App.pendingAccount.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
             BluetoothHTTP.selectedConnectionUrl == null) {
 
@@ -191,5 +207,8 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
         else {
             App.pushScreen(new LoginScreen());
         }
+//#else
+        App.pushScreen(new LoginScreen());
+//#endif
     }
 }

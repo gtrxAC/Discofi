@@ -115,6 +115,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             Accounts.setActive(accountIndex);
             Account acc = Accounts.getActive();
 
+//#ifndef NO_BLUETOOTH
             if (acc.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
                 BluetoothHTTP.selectedConnectionUrl == null) {
 
@@ -123,6 +124,9 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             else {
                 App.replaceScreen(new MainScreen());
             }
+//#else
+            App.replaceScreen(new MainScreen());
+//#endif
         }
     }
 

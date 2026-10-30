@@ -16,12 +16,14 @@ public class Accounts {
 
         Account acc = getActive();
 
+//#ifndef NO_BLUETOOTH
         if (acc != null) {
             HTTP.CONNECTION_TYPE =
                 (acc.connectionMode == Account.CONNECTION_MODE_BLUETOOTH) ?
                 HTTP.CONNECTION_TYPE_BLUETOOTH :
                 HTTP.CONNECTION_TYPE_STANDARD;
         }
+//#endif
     }
 
     public static int getActiveIndex() {

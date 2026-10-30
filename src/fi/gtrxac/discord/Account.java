@@ -14,8 +14,11 @@ import java.util.*;
 public class Account {
     // HTTP connection methods (direct over system HTTP, direct over BlueWAP, proxy over system HTTP)
     public static final int CONNECTION_MODE_DIRECT = 0;
-    public static final int CONNECTION_MODE_BLUETOOTH = 1;
     public static final int CONNECTION_MODE_PROXY = 2;
+    
+//#ifndef NO_BLUETOOTH
+    public static final int CONNECTION_MODE_BLUETOOTH = 1;
+//#endif
 
     // Version numbers for account save data.
     public static final int VERSION_BASE = 1;

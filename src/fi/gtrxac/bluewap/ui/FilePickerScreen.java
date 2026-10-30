@@ -1,3 +1,4 @@
+//#ifndef NO_FILECONNECTION
 package fi.gtrxac.bluewap.ui;
 
 import javax.microedition.lcdui.Command;
@@ -160,3 +161,4 @@ public abstract class FilePickerScreen extends ListScreen implements CommandList
         }
     }
 }
+//#endif

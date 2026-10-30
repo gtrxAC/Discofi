@@ -1,14 +1,26 @@
 [
   {
-    "name": "app_debug",
+    "name": "microcord_debug",
     "defines": ["DEBUG"],
     "bootclasspath": ["sdk/lib/jsr75_file.jar", "sdk/lib/jsr82.jar", "sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
     "excludes": []
   },
   {
-    "name": "app",
+    "name": "microcord",
     "defines": [],
     "bootclasspath": ["sdk/lib/jsr75_file.jar", "sdk/lib/jsr82.jar", "sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
+    "excludes": []
+  },
+  {
+    "name": "microcord_samsung",
+    "defines": ["SAMSUNG_LG_TOUCH_ATTRIBUTES"],
+    "bootclasspath": ["sdk/lib/jsr75_file.jar", "sdk/lib/jsr82.jar", "sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
+    "excludes": []
+  },
+  {
+    "name": "microcord_lite",
+    "defines": ["NO_BLUETOOTH", "NO_FILECONNECTION", "NO_HTTP_BLUETOOTH_SUPPORT"],
+    "bootclasspath": ["sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
     "excludes": []
   }
 ]
