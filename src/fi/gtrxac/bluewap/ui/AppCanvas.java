@@ -466,7 +466,8 @@ public class AppCanvas extends Canvas {
     }
 
     public void updateClock() {
-        currentClock = Util.formatTimestamp(System.currentTimeMillis(), use12hTime);
+        long now = new Date().getTime();
+        currentClock = Util.formatTimestamp(now, use12hTime);
 
         if (instance != null) {
             AppBase.repaint();
