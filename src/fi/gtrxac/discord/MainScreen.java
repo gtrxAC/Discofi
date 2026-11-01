@@ -7,6 +7,7 @@ import fi.gtrxac.bluewap.*;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 public class MainScreen extends TabbedListScreen implements CommandListener, ListViewItemListener {
@@ -190,11 +191,17 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     }
 
     private void promptQuit() {
-        Dialog quitPrompt = new Dialog("Are you sure you want to quit Microcord?");
-        quitPrompt.setCommandListener(this);
-        quitPrompt.addCommand(new Command("Yes", Command.OK, CMD_QUIT_PROMPT_YES));
-        quitPrompt.addCommand(new Command("No", Command.BACK, CMD_QUIT_PROMPT_NO));
-        App.pushScreen(quitPrompt);
+        Font largerBold = Fonts.get(1, true, false, false);
+
+        Dialog d = new Dialog();
+        d.listView.addItem(new StringItem("Quit", largerBold));
+        d.listView.addItem("Are you sure you want to quit Microcord?");
+
+        d.setCommandListener(this);
+        d.addCommand(new Command("Yes", Command.OK, CMD_QUIT_PROMPT_YES));
+        d.addCommand(new Command("No", Command.BACK, CMD_QUIT_PROMPT_NO));
+
+        App.pushScreen(d);
     }
 
     private void refreshCurrentTab() {
