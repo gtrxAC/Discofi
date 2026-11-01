@@ -116,9 +116,7 @@ public class AccountListScreen extends ListScreen implements CommandListener {
             Account acc = Accounts.getActive();
 
 //#ifndef NO_BLUETOOTH
-            if (acc.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
-                BluetoothHTTP.selectedConnectionUrl == null) {
-
+            if (acc.needsTetherDevice()) {
                 App.pushScreen(new BluetoothDeviceScreen());
             }
             else {

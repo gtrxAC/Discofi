@@ -1,6 +1,7 @@
 package fi.gtrxac.discord;
 
 import fi.gtrxac.bluewap.ui.*;
+import fi.gtrxac.bluewap.client.*;
 import fi.gtrxac.tinytls.TLSTest;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.Command;
@@ -23,9 +24,19 @@ public class App extends AppBase {
         // TLSTest.test();
         Settings.load();
 
-        if (Accounts.getActive() == null) {
+        Account acc = Accounts.getActive();
+
+        if (acc == null) {
             pushScreen(new AccountListScreen());
         }
+//#ifndef NO_BLUETOOTH
+        else if (acc.needsTetherDevice()) {
+            // Add an accountlist screen to the background so if the user
+            // cancels BT device selection, they can go back to change accounts/settings
+            pushScreen(new AccountListScreen());
+            pushScreen(new BluetoothDeviceScreen());
+        }
+//#endif
         else {
             pushScreen(new MainScreen());
         }

@@ -188,7 +188,7 @@ public class BluetoothDeviceScreen extends ListScreen implements BluetoothClient
             // Continue the login flow
             App.replaceScreen(new LoginScreen());
         }
-        else if (prev instanceof AccountListScreen) {
+        else if (prev == null || prev instanceof AccountListScreen) {
             // Log into the account that was just selected
             App.replaceAllScreens(new MainScreen());
         }

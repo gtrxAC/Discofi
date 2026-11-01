@@ -3,7 +3,7 @@ package fi.gtrxac.discord;
 import fi.gtrxac.discord.model.*;
 import java.util.Vector;
 import cc.nnproject.json.*;
-import fi.gtrxac.bluewap.http.HTTP;
+import fi.gtrxac.bluewap.http.*;
 import java.io.*;
 import java.util.*;
 
@@ -435,4 +435,14 @@ public class Account {
         String globalName = me.getString("global_name", null);
         username = globalName != null ? globalName : me.getString("username", null);
     }
+
+//#ifndef NO_BLUETOOTH
+    /**
+     * Check if the account requires a Bluetooth tethering device which hasn't been defined yet.
+     */
+    public boolean needsTetherDevice() {
+        return connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
+            BluetoothHTTP.selectedConnectionUrl == null;
+    }
+//#endif
 }

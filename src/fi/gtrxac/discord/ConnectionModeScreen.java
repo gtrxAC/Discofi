@@ -199,9 +199,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
         }
 
 //#ifndef NO_BLUETOOTH
-        if (App.pendingAccount.connectionMode == Account.CONNECTION_MODE_BLUETOOTH &&
-            BluetoothHTTP.selectedConnectionUrl == null) {
-
+        if (App.pendingAccount.needsTetherDevice()) {
             App.pushScreen(new BluetoothDeviceScreen());
         }
         else {
