@@ -8,7 +8,7 @@ public class ChannelCategoryItem extends StringItem {
     private static int padding;
 
     public ChannelCategoryItem(String text) {
-        super(text, Fonts.bold);
+        super(text);
     }
 
     public void draw(Graphics g, ListScreen screen, int width, boolean highlighted) {
@@ -21,6 +21,7 @@ public class ChannelCategoryItem extends StringItem {
     }
 
     public void recalc(int width) {
+        definedFont = Fonts.bold;
         color = Theme.channelCategoryText;
         
         padding = Fonts.height/7;

@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Graphics;
 public class StringItem extends Item {
     protected String text;
     
-    private Font definedFont;
+    protected Font definedFont;
     private Font font;
     private String[] textLines;
     private int align;
