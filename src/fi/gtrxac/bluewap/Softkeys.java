@@ -25,7 +25,7 @@ public class Softkeys {
             return (keyCode == -21 || keyCode == 21);
         }
 
-        String keyName = AppCanvas.instance.getKeyName(keyCode);
+        String keyName = AppCanvas.instance.getKeyName(keyCode).toLowerCase();
 
 		return keyName.indexOf("soft") != -1 &&
 			(keyName.indexOf("1") != -1 || keyName.indexOf("left") != -1);
@@ -45,7 +45,7 @@ public class Softkeys {
             return (keyCode == -22 || keyCode == 22);
         }
 
-        String keyName = AppCanvas.instance.getKeyName(keyCode);
+        String keyName = AppCanvas.instance.getKeyName(keyCode).toLowerCase();
 
 		return keyName.indexOf("soft") != -1 &&
 			(keyName.indexOf("2") != -1 || keyName.indexOf("right") != -1);
