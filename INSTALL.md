@@ -4,9 +4,12 @@
 
 This is a guide for installing Discofi (J2ME) on supported devices. Note that the setup is a bit more involved compared to other Java apps. The steps may be familiar to users of old Discord J2ME with Direct connection. Also see the list of [officially supported devices](/README.md#officially-supported-devices).
 
-To avoid account restrictions, **use the "Direct" connection option and login with email and password whenever possible.** Password login may sometimes fail with a CAPTCHA, in which case you may need to enable 2FA on your account and try the login again **while connected to a Wi-Fi network that you have previously used Discord on**. If your device does not support Wi-Fi, log in on a device that supports Wi-Fi and then send the token to the other device.
-
-Do **not** follow old Discord J2ME setup guides that ask you to get your token from browser dev tools.
+> [!IMPORTANT]
+> To avoid account restrictions, **use the "Direct" connection option and login with email and password whenever possible.** If you get a CAPTCHA when logging in, you may need to enable 2FA on your account and try the login again **while connected to a Wi-Fi network that you have previously used Discord on**.
+> 
+> *If you need to use Wi-Fi and your device does not support it, log in on a device that supports Wi-Fi (e.g. another J2ME phone or an Android device with [Discofi-Android](https://github.com/gtrxAC/Discofi-Android)) and then send the token to the other device.*
+> 
+> Do **not** follow old Discord J2ME setup guides that ask you to get your token from browser dev tools.
 
 **Install the app by following the appropriate steps for your device below:**
 
@@ -14,12 +17,13 @@ Do **not** follow old Discord J2ME setup guides that ask you to get your token f
 ***Any Symbian (non-UIQ) phone with MIDP 2.0 support. S60v3 and Symbian^3 are recommended.***
 1. If your device runs **Symbian 9.1 (S60v3) or above**, make sure it is jailbroken. To jailbreak the device, you can follow any online guide, such as the [LPCwiki guide](https://lpcwiki.miraheze.org/wiki/Jailbreaking_S60_devices).
 2. Install the [nnproject TLS 1.2 patch](https://nnproject.cc/tls/) onto your device.
-3. Download or send Discofi to your device.
+3. Install Discofi onto your device.
+4. Recommended to prevent access point popups: go to the **App. mgr.** (depending on the phone, it may be in the Installations or Tools folder), select Discofi, and define an access point for it.
 
 ## Symbian UIQ3
 ***Any Symbian UIQ3 phone (mostly Sony Ericsson Symbian phones like the P990).***
 1. Install the TLS 1.2 patch onto your device using [UIQ3 Hack Tool](https://www.avalibeyaz.com/uiq3/).
-2. Download or send Discofi to your device.
+2. Install Discofi onto your device.
 
 ## Sony Ericsson
 ***Sony Ericsson phones with DB2020 chipset or newer, as well as some DB2010 devices. This includes most models released since 2006, but not low-end "ODM" models. (check your device's chipset [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones))***
