@@ -6,6 +6,7 @@ import cc.nnproject.json.*;
 import fi.gtrxac.bluewap.http.*;
 import java.io.*;
 import java.util.*;
+import fi.gtrxac.bluewap.Platform;
 
 /**
  * Created by gtrx on 29.8.2026.
@@ -27,7 +28,7 @@ public class Account {
     public static final int VERSION_ADDED_MEDIA_PROXY_URL = 4;
     public static final int VERSION_CURRENT = 4;
 
-    public static final String DEFAULT_CDN_URL = "http://cdn.gtrxac.fi";
+    public static final String DEFAULT_CDN_PROXY_URL = "http://cdn.gtrxac.fi";
     public static final String DEFAULT_MEDIA_PROXY_URL = "http://media.discordapp.net";
 
     public String token = "";
@@ -47,7 +48,7 @@ public class Account {
     public final ChannelCache channelCache = new ChannelCache();
 
     public Account() {
-        cdnUrl = DEFAULT_CDN_URL;
+        cdnUrl = DEFAULT_CDN_PROXY_URL;
         mediaProxyUrl = DEFAULT_MEDIA_PROXY_URL;
     }
 
@@ -131,11 +132,38 @@ public class Account {
             apiUrl : "https://discord.com";
     }
 
+    /**
+     * Get CDN URL that can be used in the system browser to download a file.
+     * 
+     * On devices that support system-level TLS,
+     * this can be official Discord CDN URL when no proxy is in use.
+     * 
+     * On other devices, a proxy is always needed for system browser,
+     * and this currently defaults to cdn.gtrxac.fi.
+     */
     public String getCdnUrl() {
-        return (connectionMode == CONNECTION_MODE_PROXY) ?
-            cdnUrl : "https://cdn.discordapp.com";
+        boolean supportsSystemTls =
+            (Platform.isSymbian() || Platform.isJ2MELoader || Platform.isKEmulator);
+
+        String defaultCdnUrl = supportsSystemTls ? "https://cdn.discordapp.com" : DEFAULT_CDN_PROXY_URL;
+
+        return (connectionMode == CONNECTION_MODE_PROXY) ? cdnUrl : defaultCdnUrl;
     }
 
+    /**
+     * Get media proxy URL that can be used to download a preview image
+     * of a Discord CDN asset (attachment, pfp, etc.)
+     * 
+     * This defaults to Discord's own media proxy (does not connect to any third-party proxy)
+     * but can be overridden if using a API/CDN proxy.
+     * 
+     * As of writing, Discord media proxy works over plain HTTP, but there have
+     * been concerns with it. At one point, it started being slow over
+     * plain HTTP while working fine over HTTPS.
+     * 
+     * As such, the media proxy is reconfigurable mainly for future-proofing
+     * in case they ever drop plain HTTP support.
+     */
     public String getMediaProxyUrl() {
         return (connectionMode == CONNECTION_MODE_PROXY) ?
             mediaProxyUrl : "http://media.discordapp.net";
