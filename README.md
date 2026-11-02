@@ -7,8 +7,8 @@ Discofi is a new Discord client for select Java devices (Nokia/Sony Ericsson), c
 >
 > It lacks some features of Discord J2ME (like emojis) but also has some features not present in Discord J2ME (like the inbox).
 
-### <div style="text-align: center;">[Downloads and Installation Guide](/INSTALL.md)</div>
-### <div style="text-align: center;">[Support Server](/INSTALL.md) <small>(go to #discord-j2me-wap)</small></div>
+### <div style="text-align: center;">[Downloads and Installation Guide](INSTALL.md)</div>
+### <div style="text-align: center;">[Support Server](https://discord.gg/2GKuJjQagp) <small>(go to #discord-j2me-wap)</small></div>
 
 ![](/img/screenshots.png)
 
