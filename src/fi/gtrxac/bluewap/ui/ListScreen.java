@@ -69,20 +69,22 @@ public class ListScreen extends Screen implements Runnable {
 
         int itemsEndY = AppCanvas.getBaseY() + AppCanvas.instance.getHeight();
 
-        for (int i = 0; i < items.size(); i++) {
-            Item item = (Item) items.elementAt(i);
-        
-            if (item.needsRecalc) {
-                recalcItems(i, false);
-            }
-            if (g.getTranslateY() + item.height > 0) {
-                // g.setColor(0xFF0000);
-                // g.drawRect(0, 0, contentWidth, item.height);
-                item.draw(g, this, contentWidth, highlightedIndex == i);
-            }
-            g.translate(0, item.height + itemPadding);
+        synchronized (this) {
+            for (int i = 0; i < items.size(); i++) {
+                Item item = (Item) items.elementAt(i);
+            
+                if (item.needsRecalc) {
+                    recalcItems(i, false);
+                }
+                if (g.getTranslateY() + item.height > 0) {
+                    // g.setColor(0xFF0000);
+                    // g.drawRect(0, 0, contentWidth, item.height);
+                    item.draw(g, this, contentWidth, highlightedIndex == i);
+                }
+                g.translate(0, item.height + itemPadding);
 
-            if (g.getTranslateY() >= itemsEndY) break;
+                if (g.getTranslateY() >= itemsEndY) break;
+            }
         }
     }
 
