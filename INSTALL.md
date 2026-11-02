@@ -47,7 +47,7 @@ Discofi requires a **certificate** to be installed onto the phone to allow its i
 11. Download Discofi onto the phone. This *must* be done by downloading a **signed JAD (.sjad)** file via the phone's browser. You can get a signed JAD by uploading the JAR to [gtrxac.fi/fh](https://gtrxac.fi/fh).
 
 ## Nokia Series 40
-***Nokia phones running S40 3rd Edition Feature Pack 1 or newer. This includes most models released since 2006, but not low-end "DCT4" models running S40 Lite. (check your device's S40 version [here](https://lpcwiki.miraheze.org/wiki/Series_40#List_of_phones_running_%22New%22_Series_40))***
+***Nokia phones running S40 3rd Edition Feature Pack 1 or newer. This includes most models released since 2006, but not low-end "DCT4" models running S40 Lite. (check your device's S40 version [here](https://lpcwiki.miraheze.org/wiki/Series_40#List_of_phones))***
 
 Discofi requires a **certificate** to be installed onto the phone to allow its installation. The certificate can be installed with an Android device using aNokiCert (recommended), a Windows PC using MobiMB, or a Linux/Windows PC using Gammu.
 
