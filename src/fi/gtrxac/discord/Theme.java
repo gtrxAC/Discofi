@@ -3,7 +3,7 @@ package fi.gtrxac.discord;
 import fi.gtrxac.bluewap.ui.*;
 
 /**
- * Adds Microcord-specific color entries which are used
+ * Adds Discofi-specific color entries which are used
  * in addition to the BlueWAP UI framework's colors.
  */
 public class Theme extends Colors {

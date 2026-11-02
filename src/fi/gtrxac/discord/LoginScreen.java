@@ -83,7 +83,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
 //#else
         if (Platform.supportsFileConnection) {
             addItem(new WarningItem(
-                "Token file import is unavailable in Microcord Lite. Use JAR import or install the standard version of Microcord to use file import."));
+                "Token file import is unavailable in Discofi Lite. Use JAR import or install the standard version of Discofi to use file import."));
         }
 //#endif
 
@@ -116,7 +116,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
             if (jarToken == null) {
                 new DiscordException(
                     "Token not found",
-                    "To use this option, add your token to the app's JAR manifest.\nOn your PC or smartphone, open the Microcord JAR as a ZIP, edit the META-INF/MANIFEST.MF file, and add a line containing:\n\"Token: (your token)\"",
+                    "To use this option, add your token to the app's JAR manifest.\nOn your PC or smartphone, open the Discofi JAR as a ZIP, edit the META-INF/MANIFEST.MF file, and add a line containing:\n\"Token: (your token)\"",
                     null)
                     .show();
 

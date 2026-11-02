@@ -1,24 +1,24 @@
 [
   {
-    "name": "microcord_debug",
+    "name": "discofi_debug",
     "defines": ["DEBUG"],
     "bootclasspath": ["sdk/lib/jsr75_file.jar", "sdk/lib/jsr82.jar", "sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
     "excludes": []
   },
   {
-    "name": "microcord",
+    "name": "discofi",
     "defines": [],
     "bootclasspath": ["sdk/lib/jsr75_file.jar", "sdk/lib/jsr82.jar", "sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
     "excludes": []
   },
   {
-    "name": "microcord_samsung",
+    "name": "discofi_samsung",
     "defines": ["SAMSUNG_LG_TOUCH_ATTRIBUTES"],
     "bootclasspath": ["sdk/lib/jsr75_file.jar", "sdk/lib/jsr82.jar", "sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
     "excludes": []
   },
   {
-    "name": "microcord_lite",
+    "name": "discofi_lite",
     "defines": ["NO_BLUETOOTH", "NO_FILECONNECTION", "NO_HTTP_BLUETOOTH_SUPPORT"],
     "bootclasspath": ["sdk/lib/midp20.jar", "sdk/lib/cldc10.jar"],
     "excludes": []

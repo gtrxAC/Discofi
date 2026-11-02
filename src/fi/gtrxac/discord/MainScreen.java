@@ -193,9 +193,11 @@ public class MainScreen extends TabbedListScreen implements CommandListener, Lis
     private void promptQuit() {
         Font largerBold = Fonts.get(1, true, false, false);
 
+        String appName = App.instance.getAppProperty("MIDlet-Name");
+
         Dialog d = new Dialog();
         d.listView.addItem(new StringItem("Quit", largerBold));
-        d.listView.addItem("Are you sure you want to quit Microcord?");
+        d.listView.addItem("Are you sure you want to quit " + appName + "?");
 
         d.setCommandListener(this);
         d.addCommand(new Command("Yes", Command.OK, CMD_QUIT_PROMPT_YES));

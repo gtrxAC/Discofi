@@ -53,7 +53,7 @@ public class ConnectionModeScreen extends ListScreen implements CommandListener 
 //#else
         if (Platform.supportsBluetooth) {
             addItem(new WarningItem(
-                "Bluetooth tethering is unavailable in Microcord Lite. To use tethering, install the standard version of Microcord."));
+                "Bluetooth tethering is unavailable in Discofi Lite. To use tethering, install the standard version of Discofi."));
         }
 //#endif
 

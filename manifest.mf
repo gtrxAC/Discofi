@@ -1,5 +1,5 @@
-MIDlet-1: Microcord, /i.png, fi.gtrxac.discord.App
-MIDlet-Name: Microcord
+MIDlet-1: Discofi, /i.png, fi.gtrxac.discord.App
+MIDlet-Name: Discofi
 MIDlet-Vendor: gtrxAC
 MIDlet-Version: 1.0.0
 MicroEdition-Configuration: CLDC-1.0
