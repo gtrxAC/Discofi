@@ -6,10 +6,6 @@ import javax.microedition.lcdui.*;
 public class KeyRepeatThread extends Thread {
     public static volatile int activeKey;
     public static final KeyRepeatThread instance = new KeyRepeatThread();
-
-    private KeyRepeatThread() {
-        start();
-    }
     
     public void run() {
         while (true) {
@@ -22,8 +18,8 @@ public class KeyRepeatThread extends Thread {
 
             while (true) {
                 long curr = System.currentTimeMillis();
-                if (curr >= AppCanvas.instance.beginRepeatTime) break;
-                Util.sleep((int) (AppCanvas.instance.beginRepeatTime - curr));
+                if (curr >= AppCanvas.beginRepeatTime) break;
+                Util.sleep((int) (AppCanvas.beginRepeatTime - curr));
             }
 
             while (activeKey != 0) {

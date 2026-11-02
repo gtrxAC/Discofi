@@ -30,6 +30,8 @@ public class AppCanvas extends Canvas {
         
         new ClockThread().start();
         updateClock();
+
+        KeyRepeatThread.instance.start();
     }
 
     protected void paint(Graphics g) {
@@ -243,6 +245,7 @@ public class AppCanvas extends Canvas {
         if (!isKeyPressed) {
             isKeyPressed = true;
             beginRepeatTime = System.currentTimeMillis() + 500;
+
             synchronized (KeyRepeatThread.instance) {
                 KeyRepeatThread.activeKey = keyCode;
                 KeyRepeatThread.instance.notify();
