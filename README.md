@@ -1,15 +1,18 @@
 # Discofi
 
-Discofi is a new Discord client for Java devices, currently in development. Its goal is to be an evolution of [Discord J2ME](https://github.com/gtrxAC/discord-j2me) and [Droidcord](https://github.com/leap0x7b/Droidcord) with a focus on proxyless connectivity, user-friendly UI, and maintainability.
+Discofi is a new Discord client for select Java devices (Nokia/Sony Ericsson), currently in development. Its goal is to be an evolution of [Discord J2ME](https://github.com/gtrxAC/discord-j2me) and [Droidcord](https://github.com/leap0x7b/Droidcord) with a focus on proxyless connectivity, user-friendly UI, and maintainability.
 
 > [!IMPORTANT]
 > **Discofi is not yet a fully featured replacement for Discord J2ME.**
 >
 > It lacks some features of Discord J2ME (like emojis) but also has some features not present in Discord J2ME (like the inbox).
 
-This repo is for the J2ME version. There is a separate repo for the [Android version](https://github.com/gtrxAC/Discofi-Android), but the plan is to eventually merge these into one project and potentially add support for other Java-based platforms like desktop.
+### <div style="text-align: center;">[Downloads and Installation Guide](/INSTALL.md)</div>
+### <div style="text-align: center;">[Support Server](/INSTALL.md) <small>(go to #discord-j2me-wap)</small></div>
 
 ![](/img/screenshots.png)
+
+This repo is for the J2ME version. There is a separate repo for the [Android version](https://github.com/gtrxAC/Discofi-Android), but the plan is to eventually merge these into one project and potentially add support for other Java-based platforms like desktop.
 
 ## Status
 ### Working

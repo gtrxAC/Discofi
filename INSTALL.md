@@ -1,24 +1,28 @@
 # Installation Guide
 
-This is a guide for installing Discofi on supported devices. The steps are generally similar to installing old Discord J2ME with Direct connection. Also see the list of [officially supported devices](/README.md#officially-supported-devices).
+### <div style="text-align: center;">[Download (Codeberg)](https://codeberg.org/gtrxAC/Discofi/releases) - [Download (GitHub)](https://github.com/gtrxAC/Discofi/releases/latest)</div>
 
-To avoid account restrictions, **always use the "Direct" connection option and login with email and password when possible.** Do not follow old Discord J2ME setup guides that ask you to get your token.
+This is a guide for installing Discofi (J2ME) on supported devices. Note that the setup is a bit more involved compared to other Java apps. The steps may be familiar to users of old Discord J2ME with Direct connection. Also see the list of [officially supported devices](/README.md#officially-supported-devices).
 
-**Follow the appropriate steps for your device below:**
+To avoid account restrictions, **use the "Direct" connection option and login with email and password whenever possible.** Password login may sometimes fail with a CAPTCHA, in which case you may need to enable 2FA on your account and try the login again **while connected to a Wi-Fi network that you have previously used Discord on**. If your device does not support Wi-Fi, log in on a device that supports Wi-Fi and then send the token to the other device.
+
+Do **not** follow old Discord J2ME setup guides that ask you to get your token from browser dev tools.
+
+**Install the app by following the appropriate steps for your device below:**
 
 ## Symbian S60, S80, and Symbian^3
 ***Any Symbian (non-UIQ) phone with MIDP 2.0 support. S60v3 and Symbian^3 are recommended.***
 1. If your device runs **Symbian 9.1 (S60v3) or above**, make sure it is jailbroken. To jailbreak the device, you can follow any online guide, such as the [LPCwiki guide](https://lpcwiki.miraheze.org/wiki/Jailbreaking_S60_devices).
 2. Install the [nnproject TLS 1.2 patch](https://nnproject.cc/tls/) onto your device.
-3. Download Discofi onto your device.
+3. Download or send Discofi to your device.
 
 ## Symbian UIQ3
 ***Any Symbian UIQ3 phone (mostly Sony Ericsson Symbian phones like the P990).***
 1. Install the TLS 1.2 patch onto your device using [UIQ3 Hack Tool](https://www.avalibeyaz.com/uiq3/).
-2. Download Discofi onto your device.
+2. Download or send Discofi to your device.
 
 ## Sony Ericsson
-***Sony Ericsson phones with DB2020 chipset or newer, as well as some DB2010 devices. This includes most models released since 2006, but not low-end "ODM" models. (check your device [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones))***
+***Sony Ericsson phones with DB2020 chipset or newer, as well as some DB2010 devices. This includes most models released since 2006, but not low-end "ODM" models. (check your device's chipset [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones))***
 
 To install Discofi on Sony Ericsson devices, a **data cable** for your device is required (usually DCU-60, DCU-65, or equivalent).
 
@@ -36,12 +40,14 @@ Discofi requires a **certificate** to be installed onto the phone to allow its i
 8. Copy these two files to the **/tpa/preset/default** folder on the phone.
 9. Disconnect and reboot the phone.
 10. Make sure the phone's date and time are set correctly.
-11. Download Discofi onto the phone. This *must* be done by downloading a JAD file via the phone's browser.
+11. Download Discofi onto the phone. This *must* be done by downloading a **signed JAD (.sjad)** file via the phone's browser. You can get a signed JAD by uploading the JAR to [gtrxac.fi/fh](https://gtrxac.fi/fh).
 
 ## Nokia Series 40
-***Nokia feature phones running S40 3rd Edition Feature Pack 1 or newer. This includes most models released since 2006, but not low-end "DCT4" models running S40 Lite. (check your device [here](https://lpcwiki.miraheze.org/wiki/Series_40#List_of_phones_running_%22New%22_Series_40))***
+***Nokia phones running S40 3rd Edition Feature Pack 1 or newer. This includes most models released since 2006, but not low-end "DCT4" models running S40 Lite. (check your device's S40 version [here](https://lpcwiki.miraheze.org/wiki/Series_40#List_of_phones_running_%22New%22_Series_40))***
 
 Discofi requires a **certificate** to be installed onto the phone to allow its installation. The certificate can be installed with an Android device using aNokiCert (recommended), a Windows PC using MobiMB, or a Linux/Windows PC using Gammu.
+
+After installing the certificate, download Discofi onto the phone. This *must* be done by downloading a **signed JAD (.sjad)** file via the phone's browser. You can get a signed JAD by uploading the JAR to [gtrxac.fi/fh](https://gtrxac.fi/fh).
 
 ### aNokiCert method (Android)
 1. Download the [certificate](https://gtrxac.fi/fh/exp.cer) onto your Android device.
