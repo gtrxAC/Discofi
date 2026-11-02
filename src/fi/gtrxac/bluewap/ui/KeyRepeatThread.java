@@ -22,7 +22,7 @@ public class KeyRepeatThread extends Thread {
                 Util.sleep((int) (AppCanvas.beginRepeatTime - curr));
             }
 
-            while (activeKey != 0) {
+            while (activeKey != 0 && AppCanvas.instance.isShown()) {
                 try {
                     AppCanvas.instance.keyEvent(activeKey);
                     AppBase.repaint();
