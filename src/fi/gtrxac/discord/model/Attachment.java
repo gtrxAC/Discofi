@@ -48,9 +48,8 @@ public class Attachment {
         isVideo = (isContentType("video/"))
                 || (filename != null && endsWithAny(filename.toLowerCase(), VIDEO_EXTENSIONS));
 
-        // Anything with dimensions can be rendered by the media proxy; images
-        // without dimensions (very rare) can still be fetched as-is.
-        previewable = (proxyUrl != null) && (width > 0 || isContentType("image/"));
+        // Anything with dimensions can be rendered by the media proxy
+        previewable = (proxyUrl != null && width > 0);
     }
 
     private boolean isContentType(String check) {
