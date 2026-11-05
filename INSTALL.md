@@ -1,6 +1,6 @@
 # Installation Guide
 
-### <div style="text-align: center;">[Download (Codeberg)](https://codeberg.org/gtrxAC/Discofi/releases) - [Download (GitHub)](https://github.com/gtrxAC/Discofi/releases/latest)</div>
+### <div style="text-align: center;">[Download (Codeberg)](https://codeberg.org/gtrxAC/Discofi/releases/latest) - [Download (GitHub)](https://github.com/gtrxAC/Discofi/releases/latest)</div>
 
 This is a guide for installing Discofi (J2ME) on supported devices. Note that the setup is a bit more involved compared to other Java apps. The steps may be familiar to users of old Discord J2ME with Direct connection. Also see the list of [officially supported devices](/README.md#officially-supported-devices).
 
@@ -17,8 +17,9 @@ This is a guide for installing Discofi (J2ME) on supported devices. Note that th
 ***Any Symbian (non-UIQ) phone with MIDP 2.0 support. S60v3 and Symbian^3 are recommended.***
 1. If your device runs **Symbian 9.1 (S60v3) or above**, make sure it is jailbroken. To jailbreak the device, you can follow any online guide, such as the [LPCwiki guide](https://lpcwiki.miraheze.org/wiki/Jailbreaking_S60_devices).
 2. Install the [nnproject TLS 1.2 patch](https://nnproject.cc/tls/) onto your device.
-3. Install Discofi onto your device.
-4. Recommended to prevent access point popups: go to the **App. mgr.** (depending on the phone, it may be in the Installations or Tools folder), select Discofi, and define an access point for it.
+3. Make sure the phone's date and time are set correctly.
+4. Install Discofi onto your device.
+5. Recommended to prevent access point popups: go to the **App. mgr.** (depending on the phone, it may be in the Installations or Tools folder), select Discofi, and define an access point for it.
 
 ## Symbian UIQ3
 ***Any Symbian UIQ3 phone (mostly Sony Ericsson Symbian phones like the P990).***
