@@ -97,7 +97,7 @@ public class MessageItem extends Item {
     private void drawReplyOnScreen(Graphics g, boolean highlighted) {
         if (Settings.fontSize == Font.SIZE_SMALL) {
             synchronized (replyImageLock) {
-                updateReplyImage(highlighted);
+                checkUpdateReplyImage(highlighted);
                 g.drawImage(replyImage, contentX, Fonts.height/6, 0);
             }
         }
@@ -193,13 +193,17 @@ public class MessageItem extends Item {
 
     // Callback
     public void avatarLoaded() {
-        synchronized (replyImageLock) {
-            replyImage = null;
-        }
+        updateReplyImage();
         App.repaint();
     }
 
-    private void updateReplyImage(boolean highlighted) {
+    private void updateReplyImage() {
+        synchronized (replyImageLock) {
+            replyImage = null;
+        }
+    }
+
+    private void checkUpdateReplyImage(boolean highlighted) {
         if (replyImage != null && replyImageHighlighted == highlighted) return;
 
         replyImage = null;
@@ -253,6 +257,7 @@ public class MessageItem extends Item {
         if (!message.isReply) return;
         calcReplyHeight();
         calcUnloadedReplyContent();
+        updateReplyImage();
 
         if (message.replyAuthor == null) return;
         calcReplyContent();
@@ -297,8 +302,11 @@ public class MessageItem extends Item {
     }
 
     private void calcUnloadedReplyContent() {
-        unloadedReplyText = getDisplayedReplyContent(
-            "Message could not be loaded", smallerItalicFont, 0);
+        // Replies usually don't load in the inbox screen, so there we instead have "Replied to you"
+        String fullText = (App.getCurrentScreen() instanceof ChatScreen) ?
+            "Message could not be loaded" : "Replied to you";
+
+        unloadedReplyText = getDisplayedReplyContent(fullText, smallerItalicFont, 0);
     }
 
     private void calcReplyContent() {
