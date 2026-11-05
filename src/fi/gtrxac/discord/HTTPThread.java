@@ -59,7 +59,7 @@ public class HTTPThread extends Thread {
     public void run() {
         try {
             // Fetch account's username before making the first API request from this account.
-            if (acc.username == null) {
+            if (acc != null && acc.username == null) {
                 acc.fetchUserProfile();
                 Settings.save();
             }
