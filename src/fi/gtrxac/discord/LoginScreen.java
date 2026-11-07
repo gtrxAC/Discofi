@@ -17,6 +17,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
     private TextFieldItem emailField;
     private TextFieldItem passwordField;
     private TextFieldItem tokenField;
+    private LinkItem loginTipsLink;
     private ButtonItem continueButton;
     private ButtonItem loginButton;
     private ButtonItem tokenLoginButton;
@@ -40,7 +41,9 @@ public class LoginScreen extends ListScreen implements CommandListener {
             setHighlightedItem(continueButton);
         }
 
-        addItem("To log in with email and password, enable multi-factor authentication (authenticator app) on your account.");
+        addItem("To use password login, you may need to enable 2FA and use a Wi-Fi network that you've previously used Discord on.");
+
+        addItem(loginTipsLink = new LinkItem("Need help logging in?"));
 
         addItem(new LabelItem("Email"));
         addItem(emailField = new TextFieldItem("Email", App.pendingAccount.email, 100, TextField.EMAILADDR));
@@ -58,7 +61,7 @@ public class LoginScreen extends ListScreen implements CommandListener {
 
         addItem(new BlankItem(Fonts.height/4));
 
-        addItem("Token login is unsafe and only intended for advanced users.");
+        addItem("Token login is only intended for advanced users and may be unsafe.");
 
         if (hasToken) {
             addItem(new StringItem("Don't share your token with others!", Fonts.bold));
@@ -124,6 +127,18 @@ public class LoginScreen extends ListScreen implements CommandListener {
             }
             jarToken = jarToken.replace('"', ' ').trim();
             verifyAndCompleteLogin(jarToken);
+        }
+        else if (i == loginTipsLink) {
+            Dialog d = new Dialog();
+            d.listView.addItem("If you get CAPTCHAs, enable multi-factor authentication (authenticator app) on your account and connect to a Wi-Fi network that you've previously used Discord on.");
+            d.listView.addItem("If you need to use Wi-Fi and your device doesn't support it:");
+            d.listView.addItem("1. Log in to Discofi on a device that supports Wi-Fi.");
+            d.listView.addItem("2. Get the token by editing the account and going to the login step.");
+            d.listView.addItem("3. Send the token to this device.");
+            d.listView.addItem("4. Import the token or paste it into the token field.");
+            d.listView.addItem("5. Avoid using Discofi on both devices simultaneously.");
+
+            App.pushScreen(d);
         }
 //#ifndef NO_FILECONNECTION
         else if (i == tokenFileImportButton && i != null) {
