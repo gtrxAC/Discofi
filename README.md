@@ -66,10 +66,9 @@ Due to this, and the lack of a good Discord client for legacy Android, I decided
 ## Officially supported devices
 Any device meeting the [system requirements](#system-requirements) should be able to run the app, but technical support will mainly be provided for these officially supported devices, and the app will be developed mainly with them in mind.
 * Symbian devices with the [nnproject TLS patch](https://nnproject.cc/tls/) installed
-* Sony Ericsson devices with DB2020 chipset or newer
-  * This includes most devices from 2006 onwards; check your device [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones)
+* Sony Ericsson devices running Java Platform 6 or later
+  * This includes most devices from 2006 onwards; check your device [here](https://en.wikipedia.org/wiki/Sony_Ericsson_Java_Platform)
   * Data cable is required
-  * Newer DB2010 devices may also work well (e.g. W300, W810, Z530)
 * Nokia devices running Series 40 3rd Edition FP1 or later
   * TLS on these phones is quite CPU-intensive, so it's recommended to find one with a faster CPU or use a Symbian/Sony Ericsson device instead
   * Low-end devices with Series 40 Lite (DCT4 platform) are not supported
@@ -78,11 +77,14 @@ Any device meeting the [system requirements](#system-requirements) should be abl
 | Specification | Minimum | Recommended |
 |-|-|-|
 | **Java ME support** | MIDP 2.0, CLDC 1.0 | MIDP 2.0, CLDC 1.0
-| **Extra APIs** | none | JSR-75 FileConnection<br>JSR-82 Bluetooth API
-| **JAR size limit** | 200 kB (may increase) | 1 MB
-| **Heap size (RAM)** | 1 MB (may increase) | 2 MB
+| **Extra APIs** | none\* | JSR-75 FileConnection<br>JSR-82 Bluetooth API
+| **JAR size limit** | 200 kB | 1 MB
+| **Heap size (RAM)** | 1 MB\*\* | 2 MB
 | **Display** | any color/grayscale screen | 128 × 160 or higher
 | **Others** | none | TLS 1.2 support
+
+\* If the recommended APIs are not supported, you may have to use the Lite version.<br/>
+\*\* Larger servers may fail to load with only 1 MB of heap memory.
 
 ## For developers
 The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-template/).

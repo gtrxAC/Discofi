@@ -2,7 +2,7 @@
 
 ### <div style="text-align: center;">[Download (Codeberg)](https://codeberg.org/gtrxAC/Discofi/releases/latest) - [Download (GitHub)](https://github.com/gtrxAC/Discofi/releases/latest)</div>
 
-This is a guide for installing Discofi (J2ME) on supported devices. Note that the setup is a bit more involved compared to other Java apps. The steps may be familiar to users of old Discord J2ME with Direct connection. Also see the list of [officially supported devices](/README.md#officially-supported-devices).
+This is a guide for installing Discofi (J2ME) on supported devices. Note that the setup is a bit more involved compared to other Java apps. The steps may be familiar to users of old Discord J2ME with Direct connection. Also see the list of [officially supported devices](README.md#officially-supported-devices).
 
 > [!IMPORTANT]
 > To avoid account restrictions, **use the "Direct" connection option and login with email and password whenever possible.** If you get a CAPTCHA when logging in, you may need to enable 2FA on your account and try the login again **while connected to a Wi-Fi network that you have previously used Discord on**.
@@ -27,7 +27,7 @@ This is a guide for installing Discofi (J2ME) on supported devices. Note that th
 2. Install Discofi onto your device.
 
 ## Sony Ericsson
-***Sony Ericsson phones with DB2020 chipset or newer, as well as some DB2010 devices. This includes most models released since 2006, but not low-end "ODM" models. (check your device's chipset [here](https://lpcwiki.miraheze.org/wiki/Sony_Ericsson_platform#List_of_phones))***
+***Sony Ericsson phones running Java Platform 6 or newer. This includes most models released since 2006, but not low-end "ODM" models. (check your device's Java Platform [here](https://en.wikipedia.org/wiki/Sony_Ericsson_Java_Platform))***
 
 To install Discofi on Sony Ericsson devices, a **data cable** for your device is required (usually DCU-60, DCU-65, or equivalent).
 
