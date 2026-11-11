@@ -21,6 +21,8 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public static final int CMD_DELETE_PROMPT_YES = 100;
     public static final int CMD_DELETE_PROMPT_NO = 101;
 
+    public static final int PAGE_INDETERMINATE = -1;
+
     public Channel channel;
     private Vector messages;
     public int page;
@@ -208,26 +210,47 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public void itemSelected(Item i) {
         if (i == olderMessagesButton) {
             Message first = (Message) messages.elementAt(0);
-            fetchMessages("before", first.id, page + 1, false);
+            int newPage = (page == PAGE_INDETERMINATE) ? PAGE_INDETERMINATE : (page + 1);
+
+            fetchMessages("before", first.id, newPage, false);
         }
         else if (i == newerMessagesButton) {
             Message last = (Message) messages.lastElement();
-            fetchMessages("after", last.id, page - 1, false);
+            int newPage = (page == PAGE_INDETERMINATE) ? PAGE_INDETERMINATE : (page - 1);
+
+            fetchMessages("after", last.id, newPage, false);
         }
     }
 
-    public void populate(JSONArray messagesJson) {
+    public void populate(JSONArray messagesJson, String paginationType) {
         addCommand(sendCommand);
         addCommand(refreshCommand);
 
-        addMessages(messagesJson);
+        addMessages(messagesJson, paginationType);
         readdItems();
 
         hasLoaded = true;
     }
 
-    private void addMessages(JSONArray messagesJson) {
+    private void addMessages(JSONArray messagesJson, String paginationType) {
+        Vector oldMessages = messages;
+
         messages = new Vector(messagesJson.size());
+
+        // Loaded a non-full page of messages when selecting "Newer messages" -> keep some of the old ones
+        if (page == PAGE_INDETERMINATE && "after".equals(paginationType) &&
+            messagesJson.size() < Settings.messageLoadCount) {
+
+            for (int i = messagesJson.size(); i < oldMessages.size(); i++) {
+                Object oldMessage = oldMessages.elementAt(i);
+                messages.addElement(oldMessage);
+            }
+            
+            // Also, that means we are at the newest messages
+            page = 0;
+        }
+
+        oldMessages = null;
 
         for (int i = messagesJson.size() - 1; i >= 0; i--) {
             JSONObject messageJson = messagesJson.getObject(i);
@@ -246,7 +269,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
 
         addMessageItems(newItems);
 
-        if (page > 0) {
+        if (page > 0 || page == PAGE_INDETERMINATE) {
             newItems.addElement(newerMessagesButton);
         }
         else {
@@ -294,5 +317,25 @@ public class ChatScreen extends ListScreen implements CommandListener {
             if (msg.showAuthor) clusterStartID = msg.id;
             above = msg;
         }
+    }
+
+    /**
+     * Return true on success, i.e. if the message is on the current page
+     */
+    public boolean jumpToMessage(String messageID) {
+        // Recalc to make sure correct item heights are used to calculate scroll
+        recalcNow();
+
+        for (int i = 0; i < items.size(); i++) {
+            Item item = (Item) items.elementAt(i);
+
+            if (!(item instanceof MessageItem)) continue;
+            if (!((MessageItem) item).message.id.equals(messageID)) continue;
+
+            setHighlightedItem(item);
+            return true;
+        }
+
+        return false;
     }
 }

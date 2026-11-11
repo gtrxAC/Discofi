@@ -29,6 +29,7 @@ public class Message {
     public boolean isStatus;
     public boolean isForwarded;
     public boolean isReply;
+    public String replyID;
     public User replyAuthor;
     public String replyContent;
 
@@ -99,6 +100,7 @@ public class Message {
 
         try {
             Message replyMessage = new Message(data.getObject("referenced_message"));
+            replyID = replyMessage.id;
             replyAuthor = replyMessage.author;
 
             StringBuffer replyBuf = new StringBuffer();

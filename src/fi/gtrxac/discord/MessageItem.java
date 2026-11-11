@@ -343,4 +343,24 @@ public class MessageItem extends Item {
             return Util.stringToWidth(text, font, replyContentAvailableWidth);
         }
     }
+
+    public void itemSelected() {
+        Screen curr = App.getCurrentScreen();
+
+        if (curr instanceof ChatScreen) {
+            String replyID = message.replyID;
+            if (replyID == null) return;
+
+            ChatScreen chatScreen = (ChatScreen) curr;
+
+            // jump to reply, or load the page that has it
+            if (!chatScreen.jumpToMessage(replyID)) {
+                chatScreen.fetchMessages(
+                    "around", replyID, ChatScreen.PAGE_INDETERMINATE, false);
+            }
+        }
+        else if (curr instanceof MainScreen) {
+            // TODO: For inbox tab: open chat and go to that message
+        }
+    }
 }

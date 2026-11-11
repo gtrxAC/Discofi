@@ -342,13 +342,23 @@ public class HTTPThread extends Thread {
             JSONArray messagesJson = (JSONArray) acc.fetchJSON(url);
 
             chatScreen.page = newPage;
-            chatScreen.populate(messagesJson);
+            chatScreen.populate(messagesJson, paginationType);
 
-            boolean scrollToTop = ("after".equals(paginationType));
-
-            int highlightIndex = scrollToTop ? 0 : (chatScreen.items.size() - 1);
-
-            chatScreen.setHighlightedIndex(highlightIndex);
+            if ("after".equals(paginationType)) {
+                // If we loaded a non-full page of messages and the anchor
+                // message is still visible, scroll to it, else scroll to top.
+                if (!chatScreen.jumpToMessage(paginationMessage)) {
+                    chatScreen.setHighlightedIndex(0);
+                }
+            }
+            else if ("around".equals(paginationType)) {
+                // Scroll to the anchor message that we jumped to
+                chatScreen.jumpToMessage(paginationMessage);
+            }
+            else {
+                // "before" or not specified -> Scroll to bottom
+                chatScreen.setHighlightedIndex(chatScreen.items.size() - 1);
+            }
         }
         catch (DiscordException e) {
             if (!chatScreen.hasLoaded) {

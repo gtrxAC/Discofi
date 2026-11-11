@@ -24,6 +24,7 @@ This repo is for the J2ME version. There is a separate repo for the [Android ver
 * Sending messages and replies
 * Viewing attachments
 * Message editing and deleting
+* Jumping to replies
 * Settings for theme, message count, etc.
 * Bluetooth tethering (BlueWAP)
 
