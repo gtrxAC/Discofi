@@ -65,4 +65,48 @@ public class ChannelCache extends LRUCache {
     public Vector get(String guildID) {
         return (Vector) super.get(guildID);
     }
+
+    /**
+     * Find a channel by its ID in all cached guilds, first searching the primary guild if specified.
+     */
+    public Channel getChannelByID(String primaryGuildID, String channelID) {
+        if (channelID == null) return null;
+
+        if (primaryGuildID != null) {
+            Channel result = getChannelByIDInGuild(primaryGuildID, channelID);
+            if (result != null) return result;
+        }
+
+        for (Enumeration e = cache.keys(); e.hasMoreElements(); ) {
+            String guildID = (String) e.nextElement();
+
+            if (primaryGuildID != null && guildID.equals(primaryGuildID)) continue;
+
+            Channel result = getChannelByIDInGuild(guildID, channelID);
+            if (result != null) return result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a channel by ID in the specified guild.
+     */
+    public Channel getChannelByIDInGuild(String guildID, String channelID) {
+        if (guildID == null || channelID == null) return null;
+
+        Vector categories = get(guildID);
+
+        for (int i = 0; i < categories.size(); i++) {
+            ChannelCategory category = (ChannelCategory) categories.elementAt(i);
+
+            for (int j = 0; j < category.children.size(); j++) {
+                Channel channel = (Channel) category.children.elementAt(j);
+
+                if (channel.id.equals(channelID)) return channel;
+            }
+        }
+
+        return null;
+    }
 }

@@ -25,10 +25,12 @@ public class Message {
     public boolean showAuthor;
     public String timestamp;
     public Vector attachments;
+    public String channelID;
 
     public boolean isStatus;
     public boolean isForwarded;
     public boolean isReply;
+
     public String replyID;
     public User replyAuthor;
     public String replyContent;
@@ -37,6 +39,7 @@ public class Message {
         id = data.getString("id");
         author = new User(data.getObject("author"));
         timestamp = DiscordUtil.formatTimestamp(id, Settings.use12hTime);
+        channelID = data.getString("channel_id", null);
 
         JSONObject contentObject = getContentObject(data);
 

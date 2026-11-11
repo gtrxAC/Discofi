@@ -360,7 +360,14 @@ public class MessageItem extends Item {
             }
         }
         else if (curr instanceof MainScreen) {
-            // TODO: For inbox tab: open chat and go to that message
+            // For inbox tab: open chat and go to that message
+            // For now, this only works if the channel is in a cached guild
+            Account acc = Accounts.getActive();
+            Channel channel = acc.channelCache.getChannelByID(null, message.channelID);
+            if (channel == null) return;
+            
+            App.pushScreen(new ChatScreen(
+                channel, "around", message.id, ChatScreen.PAGE_INDETERMINATE));
         }
     }
 }
