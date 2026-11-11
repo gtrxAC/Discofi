@@ -98,7 +98,9 @@ public class ChatScreen extends ListScreen implements CommandListener {
     protected void highlightedItemChanged() {
         Item highlighted = getHighlightedItem();
 
-        boolean messageHighlighted = (highlighted instanceof MessageItem);
+        // Don't allow message actions on status messages
+        boolean messageHighlighted = (highlighted instanceof MessageItem) &&
+            !((MessageItem) highlighted).message.isStatus;
 
         boolean ownMessageHighlighted =
             messageHighlighted && ((MessageItem) highlighted).message.isOwn();
