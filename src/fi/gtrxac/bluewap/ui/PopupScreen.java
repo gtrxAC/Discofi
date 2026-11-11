@@ -36,7 +36,7 @@ public class PopupScreen extends Screen implements CommandListener {
     public void recalc() {
         viewWidth = Math.min(maxWidth, getWidth()*19/20);
         listView.setPosition(0, 0, viewWidth, 100);
-        listView.fullRecalc();
+        listView.recalcNow();
 
         Item viewLastItem = (Item) listView.items.lastElement();
 
@@ -48,7 +48,7 @@ public class PopupScreen extends Screen implements CommandListener {
         viewY = getHeight() - viewHeight;
 
         listView.setPosition(viewX, viewY, viewWidth, viewHeight);
-        listView.fullRecalc();
+        listView.recalcNow();
     }
 
     public void keyEvent(int keyCode, int gameAction) {

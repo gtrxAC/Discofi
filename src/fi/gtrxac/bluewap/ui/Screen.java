@@ -23,11 +23,11 @@ public abstract class Screen implements CommandListener {
     }
 
     public void prepareAndDraw(Graphics g) {
-        if (needsRecalc) fullRecalc();
+        if (needsRecalc) recalcNow();
         draw(g);
     }
 
-    public void fullRecalc() {
+    public void recalcNow() {
         width = getContainerWidth();
         height = getContainerHeight();
         contentWidth = width - margin*2;
