@@ -263,7 +263,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
     public void readdItems() {
         Vector newItems = new Vector();
 
-        if (messages.size() >= Settings.messageLoadCount) {
+        if (messages.size() >= Settings.messageLoadCount || page == PAGE_INDETERMINATE) {
             newItems.addElement(olderMessagesButton);
         }
 
