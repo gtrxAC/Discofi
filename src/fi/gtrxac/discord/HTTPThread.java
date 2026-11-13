@@ -288,9 +288,7 @@ public class HTTPThread extends Thread {
                     break;
                 }
                 case Channel.TYPE_GUILD_TEXT:
-                case Channel.TYPE_GUILD_NEWS:
-                case Channel.TYPE_GUILD_FORUM:
-                case Channel.TYPE_GUILD_MEDIA: {
+                case Channel.TYPE_GUILD_NEWS: {
                     textChannelsJson.addElement(channelJson);
                     break;
                 }
@@ -298,6 +296,11 @@ public class HTTPThread extends Thread {
                     voiceChannelsJson.addElement(channelJson);
                     break;
                 }
+                // Not supported yet:
+                // case Channel.TYPE_GUILD_FORUM:
+                // case Channel.TYPE_GUILD_MEDIA: {
+                    
+                // }
             }
         }
 
