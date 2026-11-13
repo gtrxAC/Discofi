@@ -71,6 +71,7 @@ public class Theme extends Colors {
         listScreenBackground = darkGradient[0x3];
         listScreenScrollbar = darkGradient[0x8];
         listScreenScrollbarSel = darkGradient[0xB];
+        listScreenEmptyText = darkGradient[0xA];
         bannerBackground = darkGradient[0x5];
         bannerOutline = darkGradient[0x2];
         bannerText = darkGradient[0xF];

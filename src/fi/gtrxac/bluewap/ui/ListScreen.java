@@ -49,7 +49,19 @@ public class ListScreen extends Screen implements Runnable {
             g.setClip(0, 0, getWidth(), getHeight());
         }
         drawScrollbar(g);
-        drawItems(g);
+
+        if (items.size() > 0) {
+            drawItems(g);
+        }
+        else {
+            g.setColor(Colors.listScreenEmptyText);
+            g.setFont(Fonts.plain);
+            g.drawString(
+                "Nothing to see here",
+                getWidth()/2,
+                getHeight()/2 - Fonts.height/2,
+                Graphics.HCENTER | Graphics.TOP);
+        }
     }
 
     private void drawBanner(Graphics g) {

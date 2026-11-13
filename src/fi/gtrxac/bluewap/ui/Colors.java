@@ -7,6 +7,7 @@ public class Colors {
     public static int listScreenBackground;
     public static int listScreenScrollbar;
     public static int listScreenScrollbarSel;
+    public static int listScreenEmptyText;
     public static int bannerBackground;
     public static int bannerOutline;
     public static int bannerText;
@@ -115,6 +116,7 @@ public class Colors {
         listScreenBackground = 0xFFFFFF;
         listScreenScrollbar = 0xCCCCCC;
         listScreenScrollbarSel = 0x888888;
+        listScreenEmptyText = 0x666666;
         bannerBackground = 0xEEEEEE;
         bannerOutline = 0xAAAAAA;
         bannerText = 0x000000;

@@ -272,7 +272,7 @@ public class ChatScreen extends ListScreen implements CommandListener {
         if (page > 0 || page == PAGE_INDETERMINATE) {
             newItems.addElement(newerMessagesButton);
         }
-        else {
+        else if (newItems.size() > 0) {
             newItems.addElement(new BlankItem(-itemPadding));
         }
 
