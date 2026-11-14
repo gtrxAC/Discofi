@@ -1,5 +1,6 @@
 package fi.gtrxac.discord;
 
+import fi.gtrxac.discord.model.*;
 import cc.nnproject.json.*;
 
 public class MessageParser {
@@ -52,7 +53,7 @@ public class MessageParser {
         if (tagEndIndex == -1) return false;
 
         // Everything that's inside the < >
-        String tagContent = inputContent.substring(readOffset, tagEndIndex);
+        String tagContent = inputContent.substring(readOffset + 1, tagEndIndex);
         if (tagContent.length() == 0) return false;
 
         if (tagContent.charAt(0) == '@') {
@@ -60,13 +61,9 @@ public class MessageParser {
             String userID = tagContent.substring(1);
             return parseUserMention(userID);
         }
-        else if (tagContent.charAt(0) == '&') {
-            // TODO: Role mention
-            return false;
-        }
         else if (tagContent.charAt(0) == '#') {
-            // TODO: Channel mention
-            return false;
+            String channelID = tagContent.substring(1);
+            return parseChannelMention(channelID);
         }
 
         return false;
@@ -97,17 +94,37 @@ public class MessageParser {
         }
         catch (JSONException e) {}
 
-        // If it's a valid ID but the mention data was not found, show "@unknown"
-        if (userID.length() < 17) return false;
+        if (!isValidID(userID)) return false;
+        
+        outputContent.append("@unknown");
+        return true;
+    }
+
+    private boolean parseChannelMention(String channelID) {
+        Account acc = Accounts.getActive();
+        Channel channel = acc.channelCache.getChannelByID(null, channelID);
+
+        if (channel != null) {
+            outputContent.append(channel.name);
+            return true;
+        }
+
+        if (!isValidID(channelID)) return false;
+
+        outputContent.append("#unknown");
+        return true;
+    }
+
+    private boolean isValidID(String id) {
+        if (id.length() < 17) return false;
 
         try {
-            Long.parseLong(userID);
+            Long.parseLong(id);
         }
         catch (NumberFormatException e) {
             return false;
         }
 
-        outputContent.append("@unknown");
         return true;
     }
 }
