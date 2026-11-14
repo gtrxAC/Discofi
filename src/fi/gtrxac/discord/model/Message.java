@@ -74,23 +74,16 @@ public class Message {
     }
 
     private String parseContent(JSONObject contentObject) {
-        String content = contentObject.getString("content", null);
-        if (content == null) return "";
-
         try {
-            // Parse the logged in user's mention into human-readable form.
-            // This does not affect mentions of other users, and it is just temporary for now.
-            // TODO: Later we will use rich text to make mentions have a blue background.
-
-            Account acc = Accounts.getActive();
-            String mentionCode = "<@" + acc.getUserID() + ">";
-            String mentionText = "@" + acc.getDisplayTitle();
-
-            return Util.replace(content, mentionCode, mentionText);
+            MessageParser parser = new MessageParser(contentObject);
+            return parser.parse();
         }
-        catch (DiscordException e) {
+        catch (Exception e) {
             e.printStackTrace();
-            return content;
+
+            String rawContent = contentObject.getString("content", null);
+            if (rawContent == null) return "";
+            return rawContent;
         }
     }
 
