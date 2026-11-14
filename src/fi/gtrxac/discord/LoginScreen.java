@@ -131,6 +131,12 @@ public class LoginScreen extends ListScreen implements CommandListener {
         else if (i == loginTipsLink) {
             Dialog d = new Dialog();
             d.listView.addItem("If you get CAPTCHAs, enable multi-factor authentication (authenticator app) on your account and connect to a Wi-Fi network that you've previously used Discord on.");
+
+            if (App.pendingAccount.connectionMode == Account.CONNECTION_MODE_PROXY) {
+                d.listView.addItem(new StringItem(
+                    "You may also need to connect without a proxy.", Fonts.bold));
+            }
+
             d.listView.addItem("If you need to use Wi-Fi and your device doesn't support it:");
             d.listView.addItem("1. Log in to Discofi on a device that supports Wi-Fi.");
             d.listView.addItem("2. Get the token by editing the account and going to the login step.");
