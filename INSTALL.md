@@ -19,7 +19,8 @@ This is a guide for installing Discofi (J2ME) on supported devices. Note that th
 2. Install the [nnproject TLS 1.2 patch](https://nnproject.cc/tls/) onto your device.
 3. Make sure the phone's date and time are set correctly.
 4. Install Discofi onto your device.
-5. Recommended to prevent access point popups: go to the **App. mgr.** (depending on the phone, it may be in the Installations or Tools folder), select Discofi, and define an access point for it.
+5. *Recommended to prevent access point popups:* go to the **App. mgr.** (depending on the phone, it may be in the Installations or Tools folder), select Discofi, and define an access point for it.
+6. *Recommended to enable editing/deleting messages (Symbian 9.3 and up):* install the [nnproject JVM patches](https://nnproject.cc/hmidp/) onto your device.
 
 ## Symbian UIQ3
 ***Any Symbian UIQ3 phone (mostly Sony Ericsson Symbian phones like the P990).***
