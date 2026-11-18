@@ -65,6 +65,14 @@ public class MessageParser {
             String channelID = tagContent.substring(1);
             return parseChannelMention(channelID);
         }
+        else if (tagContent.charAt(0) == ':') {
+            // Basic emoji
+            return parseEmojiMention(tagContent.substring(1));
+        }
+        else if (tagContent.charAt(0) == 'a' && tagContent.length() > 1 && tagContent.charAt(1) == ':') {
+            // Animated emoji
+            return parseEmojiMention(tagContent.substring(2));
+        }
 
         return false;
     }
@@ -113,6 +121,42 @@ public class MessageParser {
 
         outputContent.append("#unknown");
         return true;
+    }
+
+    /**
+     * Try to parse a custom emoji mention. emojiContent is the tag content
+     * without the leading < > or the "a:" prefix, i.e. "name:id".
+     * On success, appends the :name: form of the emoji to the output, and
+     * returns true. On failure, return false.
+     */
+    private boolean parseEmojiMention(String emojiContent) {
+        int separatorIndex = emojiContent.indexOf(':');
+        if (separatorIndex == -1) return false;
+
+        String emojiName = emojiContent.substring(0, separatorIndex);
+        String emojiID = emojiContent.substring(separatorIndex + 1);
+
+        if (!isValidEmojiName(emojiName)) return false;
+        if (!isValidID(emojiID)) return false;
+
+        outputContent.append(':').append(emojiName).append(':');
+        return true;
+    }
+
+    private boolean isValidEmojiName(String name) {
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!isValidEmojiCharacter(c)) return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidEmojiCharacter(char c) {
+        return (c >= 'a' && c <= 'z') ||
+            (c >= 'A' && c <= 'Z') ||
+            (c >= '0' && c <= '9') ||
+            c == '_';
     }
 
     private boolean isValidID(String id) {
