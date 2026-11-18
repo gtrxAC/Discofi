@@ -536,7 +536,8 @@ public class HTTPThread extends Thread {
     private void throwUnsupportedMethodException(String title, String description) throws DiscordException {
         Vector tips = new Vector();
 
-        if (Platform.isSymbian) {
+        // Java patch can enable all HTTP methods, supports 9.3 and up
+        if (Platform.isJ9S60Version("")) {
             tips.addElement("install Java patches from nnproject.cc/hmidp");
         }
         tips.addElement("use a different connection mode");
