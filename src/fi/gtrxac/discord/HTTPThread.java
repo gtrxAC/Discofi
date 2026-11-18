@@ -480,13 +480,9 @@ public class HTTPThread extends Thread {
         }
         catch (Exception e) {
             if (e == StandardHTTP.requestMethodException) {
-                Vector tips = new Vector();
-                tips.addElement("use a different connection mode");
-
-                throw new DiscordException(
+                throwUnsupportedMethodException(
                     "Deleting messages is not supported",
-                    "Your device does not support the HTTP DELETE method",
-                    tips);
+                    "Your device does not support the HTTP DELETE method");
             }
 
             throw new DiscordException(e);
@@ -523,13 +519,9 @@ public class HTTPThread extends Thread {
         }
         catch (Exception e) {
             if (e == StandardHTTP.requestMethodException) {
-                Vector tips = new Vector();
-                tips.addElement("use a different connection mode");
-
-                throw new DiscordException(
+                throwUnsupportedMethodException(
                     "Editing messages is not supported",
-                    "Your device does not support the HTTP PATCH method",
-                    tips);
+                    "Your device does not support the HTTP PATCH method");
             }
 
             throw new DiscordException(e);
@@ -539,6 +531,17 @@ public class HTTPThread extends Thread {
         }
 
         chatScreen.fetchMessages(null, null, 0, false);
+    }
+
+    private void throwUnsupportedMethodException(String title, String description) throws DiscordException {
+        Vector tips = new Vector();
+
+        if (Platform.isSymbian) {
+            tips.addElement("install Java patches from nnproject.cc/hmidp");
+        }
+        tips.addElement("use a different connection mode");
+
+        throw new DiscordException(title, description, tips);
     }
 
     private void runSendTyping() {

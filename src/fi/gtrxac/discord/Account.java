@@ -143,7 +143,7 @@ public class Account {
      */
     public String getCdnUrl() {
         boolean supportsSystemTls =
-            (Platform.isSymbian() || Platform.isJ2MELoader || Platform.isKEmulator);
+            (Platform.isSymbian || Platform.isJ2MELoader || Platform.isKEmulator);
 
         String defaultCdnUrl = supportsSystemTls ? "https://cdn.discordapp.com" : DEFAULT_CDN_PROXY_URL;
 

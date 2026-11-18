@@ -40,6 +40,7 @@ public class Platform extends Canvas {
 	public static final boolean isSiemens;
 	public static final boolean isMotorola;
 	public static final boolean isSamsung;
+	public static final boolean isSymbian;
 
 	public static final boolean supportsBluetooth;
 	public static final boolean supportsFileConnection;
@@ -76,6 +77,7 @@ public class Platform extends Canvas {
 			checkClass("com.motorola.multimedia.FunLight");
 
 		isSamsung = isSamsung();
+		isSymbian = isSymbian();
 
     	supportsBluetooth = checkClass("javax.bluetooth.RemoteDevice");
 		supportsFileConnection = checkClass("javax.microedition.io.file.FileConnection");
@@ -106,7 +108,7 @@ public class Platform extends Canvas {
 		// Which type of Connector(s) to prefer/use for TLS on different platforms:
 
 		// Symbian: always use standard Connector, as you're meant to use TLS 1.2 patch
-		if (isSymbian()) {
+		if (isSymbian) {
 			preferModernConnector = false;
 			allowSecondaryConnector = false;
 		}
@@ -147,7 +149,7 @@ public class Platform extends Canvas {
 		return Character.isDigit(last);
 	}
 
-    public static boolean isSymbian() {
+    private static boolean isSymbian() {
         return plat.indexOf("platform=S60") != -1 ||
 			System.getProperty("com.symbian.midp.serversocket.support") != null ||
 			System.getProperty("com.symbian.default.to.suite.icon") != null ||
