@@ -80,12 +80,11 @@ Any device meeting the [system requirements](#system-requirements) should be abl
 | **Java ME support** | MIDP 2.0, CLDC 1.0 | MIDP 2.0, CLDC 1.0
 | **Extra APIs** | none\* | JSR-75 FileConnection<br>JSR-82 Bluetooth API
 | **JAR size limit** | 200 kB | 1 MB
-| **Heap size (RAM)** | 1 MB\*\* | 2 MB
+| **Heap size (RAM)** | 1.5 MB | 2 MB
 | **Display** | any color/grayscale screen | 128 × 160 or higher
 | **Others** | none | TLS 1.2 support
 
-\* If the recommended APIs are not supported, you may have to use the Lite version.<br/>
-\*\* Larger servers may fail to load with only 1 MB of heap memory.
+\* If the recommended APIs are not supported, you may have to use the Lite version.
 
 ## For developers
 The build system is based on my [j2me-template](https://github.com/gtrxAC/j2me-template/).

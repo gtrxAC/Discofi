@@ -56,11 +56,6 @@ public class Platform extends Canvas {
 		if (p == null) p = "";
 		plat = p;
 
-		// On the Samsung S7220 and S7350, hasPointerEvents() returns true
-		// even though they are not touchscreen phones
-		isTouch = (new Platform()).hasPointerEvents() && 
-			plat.indexOf("S7220") == -1 && plat.indexOf("S7350") == -1;
-
 		isJ2MELoader = "The Android Project".equals(System.getProperty("java.vendor"));
 		isKEmulator = checkClass("emulator.custom.CustomMethod");
 
@@ -78,6 +73,7 @@ public class Platform extends Canvas {
 
 		isSamsung = isSamsung();
 		isSymbian = isSymbian();
+		isTouch = isTouch();
 
     	supportsBluetooth = checkClass("javax.bluetooth.RemoteDevice");
 		supportsFileConnection = checkClass("javax.microedition.io.file.FileConnection");
@@ -93,17 +89,11 @@ public class Platform extends Canvas {
 		// and they do not look different from the standard font on Motorola
 		// They seem to be safe to use on all Nokia, Sony Ericsson, BlackBerry phones
 		// Other devices need more testing
-		useUnderlinedFont = isNokia || isSonyEricsson || isBlackBerry;
+		useUnderlinedFont = (isNokia || isSonyEricsson || isBlackBerry);
 
 		// On some Motorola phones (seemingly those with only one font size, like the V3 and L6)
 		// drawRoundRect() will draw with a width and height one pixel larger than specified
-		Image img = Image.createImage(5, 5);
-		Graphics g = img.getGraphics();
-		g.setColor(0x000000);
-		g.drawRoundRect(0, 0, 3, 3, 2, 2);
-		int[] pixel = new int[1];
-		img.getRGB(pixel, 0, 5, 4, 1, 1, 1);
-		hasRoundRectSizeBug = ((pixel[0] & 0x00FFFFFF) == 0x000000);
+		hasRoundRectSizeBug = (isMotorola && hasRoundRectSizeBug());
 
 		// Which type of Connector(s) to prefer/use for TLS on different platforms:
 
@@ -127,6 +117,21 @@ public class Platform extends Canvas {
 		}
 	}
 
+	private static boolean isTouch() {
+		// This touchscreen check would crash the app on S60v2, so we return
+		// false for all Nokia Symbian pre-9.3 phones, as they are all keypad
+		// phones.
+		// We have to check for Nokia because UIQ is a thing, and I don't know
+		// how to check for UIQ.
+		// This could still crash on non-Nokia S60v2 phones, but those are rare.
+		if (isNokia && isSymbian && !isJ9S60Version("")) return false;
+		
+		// On the Samsung S7220 and S7350, hasPointerEvents() returns true
+		// even though they are not touchscreen phones.
+		return (new Platform()).hasPointerEvents() && 
+			plat.indexOf("S7220") == -1 && plat.indexOf("S7350") == -1;
+	}
+
 	private static boolean isSamsung() {
 		if (checkClass("com.samsung.util.Vibration")) return true;
 
@@ -147,6 +152,16 @@ public class Platform extends Canvas {
 
 		char last = plat.charAt(plat.length() - 1);
 		return Character.isDigit(last);
+	}
+
+	private static boolean hasRoundRectSizeBug() {
+		Image img = Image.createImage(5, 5);
+		Graphics g = img.getGraphics();
+		g.setColor(0x000000);
+		g.drawRoundRect(0, 0, 3, 3, 2, 2);
+		int[] pixel = new int[1];
+		img.getRGB(pixel, 0, 5, 4, 1, 1, 1);
+		return ((pixel[0] & 0x00FFFFFF) == 0x000000);
 	}
 
     private static boolean isSymbian() {

@@ -120,6 +120,7 @@ public class Message {
             }
 
             replyContent = replyBuf.toString();
+            replyContent = Util.stringToLength(replyContent, 90);
         }
         catch (Exception e) {}
     }
