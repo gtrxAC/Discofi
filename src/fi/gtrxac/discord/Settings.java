@@ -76,10 +76,13 @@ public class Settings implements RecordIOImpl {
         getPairedDeviceNames = dis.readBoolean();
 
         int deviceNameCount = dis.readInt();
-        deviceNameCache = new Hashtable(deviceNameCount);
 
-        for (int i = 0; i < deviceNameCount; i++) {
-            deviceNameCache.put(dis.readUTF(), dis.readUTF());
+        if (deviceNameCount > 0) {
+            deviceNameCache = new Hashtable(deviceNameCount);
+
+            for (int i = 0; i < deviceNameCount; i++) {
+                deviceNameCache.put(dis.readUTF(), dis.readUTF());
+            }
         }
 
         deviceVendorID = dis.readUTF();
