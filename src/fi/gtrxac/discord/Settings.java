@@ -67,8 +67,11 @@ public class Settings implements RecordIOImpl {
             for (int i = 0; i < numAccounts; i++) {
                 Accounts.list.addElement(new Account(dis));
             }
+        }
 
-            int activeAccount = dis.readInt();
+        int activeAccount = dis.readInt();
+
+        if (activeAccount >= 0 && activeAccount < numAccounts) {
             Accounts.setActive(activeAccount);
         }
 
