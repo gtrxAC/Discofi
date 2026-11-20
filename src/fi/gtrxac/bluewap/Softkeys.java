@@ -16,7 +16,10 @@ public class Softkeys {
             return (keyCode == -6);
         }
         if (Platform.isBlackBerry) {
-            return (keyCode == 0x80000);
+            // a for azerty
+            return (keyCode == 'q' || keyCode == 'a' || keyCode == 'Q' || keyCode == 'A');
+
+            // return (keyCode == 0x80000);  // from hecl - I don't know which key this corresponds to
         }
         if (Platform.isSiemens) {
             return (keyCode == -1);
@@ -36,7 +39,8 @@ public class Softkeys {
             return (keyCode == -7);
         }
         if (Platform.isBlackBerry) {
-            return (keyCode == 0x1b0000);
+            return (keyCode == 'p' || keyCode == 'P');
+            // return (keyCode == 0x1b0000);
         }
         if (Platform.isSiemens) {
             return (keyCode == -4);
