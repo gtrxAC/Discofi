@@ -68,11 +68,13 @@ After installing the certificate, download Discofi onto the phone. This *must* b
 2. Using MobiMB, Gammu, or another program that can manage the file system of Nokia phones, copy both downloaded files to the **C:/predefhiddenfolder/certificates/user** folder on the phone.
 
 ## Other/unsupported devices
-Discofi may be directly installed on the device like any other Java app (JAR), though note that **Direct connection may be unavailable** in this case, so you may have to connect to Discord using **Bluetooth tethering** or proxy (not recommended).
+Discofi may be directly installed on the device like any other Java app (JAR), though note that **Direct connection may be unavailable** in this case, so you may have to connect to Discord using [Bluetooth tethering](#connect-using-bluetooth-tethering) or proxy (not recommended).
 
 **The Discofi team is not responsible for account restrictions, bans, or connection errors caused by using a proxy.**
 
 Please make sure your device meets the [system requirements](/README.md#system-requirements). Meeting the minimum requirements means the app will probably install and launch without problems, but it will not guarantee a good user experience.
+
+### Build variants
 
 Make sure you **download the correct build** for your device:
 
@@ -81,3 +83,12 @@ Make sure you **download the correct build** for your device:
 | **discofi** | Generic build for most devices
 | **discofi_samsung** | For **Samsung and LG** touchscreen phones; hides virtual keypad
 | **discofi_lite** | For devices that cannot run the generic build; lacks BT and file system functionality
+
+### Connect using Bluetooth tethering
+Bluetooth tethering is the recommended way to use Discofi on devices that **don't support Direct connection** (TLS 1.2). It can also be used to connect in situations where 2G/3G networks and Wi-Fi are unavailable.
+
+1. Install and run [BlueWAP Server](https://github.com/gtrxAC/BlueWAP/releases/latest) (bluewap_server.jar) on another device that has internet access and supports TLS 1.2 (e.g. an Android 5.0+ phone with J2ME Loader).
+2. Depending on the device, you may need to follow the setup instructions shown in BlueWAP Server.
+3. In Discofi, create a new account or edit an existing one.
+4. Select the **BT tethering** connection method and select **Next**.
+5. Select **Search devices** and look for the server device's name or BT address. The BT address may be shown on the server device's screen, or you can find it from the device's settings.
